@@ -1,5 +1,5 @@
 import sqlite3
-import ddl
+import DDL as ddl
 
 """
 1. DROP all TABLES

@@ -1,4 +1,4 @@
-from genData import GenerateTableData
+from GenData import GenerateTableData
 
 # region DDL
 # Serverworld, Player, MEntities, Block
@@ -153,4 +153,3 @@ def fillAllDatabasesRand(cursor, nr=1):
             tmpData = GenerateTableData.generatePopulatedBy(nr)
         elif table == "buildOf":
             tmpData = GenerateTableData.generateBuildOf(nr)
-        print(tmpData)
