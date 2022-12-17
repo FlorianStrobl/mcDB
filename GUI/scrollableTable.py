@@ -66,6 +66,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.widthFrame = widthFrame
         self.scrollFrame.pack(side="top", fill="both", expand=True)
         self.currentEntrys = []
+        self.app = app
 
     def fill(self,tableData):
         widthCurrentFrame = self.widthFrame-20
@@ -76,6 +77,7 @@ class scrollableTable(customtkinter.CTkFrame):
                 myEntry = customtkinter.CTkEntry(self.scrollFrame.viewPort,corner_radius=0,width=widthCurrentFrame/numberColumns)
                 myEntry.grid(row=row, column=col)
                 myEntry.insert(0, tableData[row][col])
+
 
     def printMsg(self, msg):
         print(msg)

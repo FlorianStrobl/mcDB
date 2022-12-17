@@ -7,7 +7,7 @@ setTables(tables[])
 """
 
 
-def onNewTableShow(tableName):
+def onTableButtonClick(tableName):
     print(tableName)
 
 # Wird mehrmals aufgerufen
