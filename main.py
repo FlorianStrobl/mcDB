@@ -1,5 +1,6 @@
 import sqlite3
 import SQL
+import tmpData
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
@@ -8,7 +9,11 @@ SQL.createAllTables(cursor) # create all tables
 SQL.fillAllTablesRand(cursor, 100) # fill random data into the tables
 # Start UI
 
-print(SQL.selectTable(cursor, "Wood", "absolute_position"))
+tmp = tmpData.TMP()
+tmp.setData(SQL.selectTable(cursor, "Wood"))
+tmp.printThis()
+
+# select data from TMP
 
 """
 1. DROP all TABLES
