@@ -22,7 +22,7 @@ cursor = connection.cursor()
 
 ddl.dropAllDatabases(cursor)
 ddl.createAllDatabases(cursor)
-ddl.fillAllDatabasesRand(cursor, 10)
+ddl.fillAllDatabasesRand(cursor, 150)
 
 # cursor.execute("""INSERT INTO Serverworld (serverworld_id, name, icon)
 # VALUES (7,"s","j");""")

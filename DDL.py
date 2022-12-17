@@ -130,11 +130,11 @@ def fillAllDatabasesRand(cursor, nr=1):
             for data in tmpData:
                 if data[2] is None:
                     cursor.execute(
-                        f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0] % (2**32)}, '{data[1]}', null)"
+                        f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0] & (2**33-1)}, '{data[1]}', null)"
                     )
                 else:
                     cursor.execute(
-                        f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES({data[0] % (2**32)}, '{data[1]}', '{data[2]}')"
+                        f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0] & (2**33-1)}, '{data[1]}', '{data[2]}')"
                     )
             cursor.connection.commit()
         elif table == "Player":

@@ -19,9 +19,8 @@ class HelperFuncs:
         names = []
         while len(names) < n:
             name = random.choice(possibleNames)
-            if n < len(possibleNames):
-                # and not name in names
-                names.append(name)
+            # not name in names
+            names.append(name)
         return names
 
     # generiere n icons mit Wert: String oder None
@@ -104,7 +103,6 @@ class HelperFuncs:
 class GenerateTableData:
     def generateServerworlds(n=1):
         serverworld = []
-
         serverworld_ids = HelperFuncs.generateUID(n)
         for i in range(len(serverworld_ids)):
             serverworld_ids[i] = HelperFuncs.convertUIDStrToInt(serverworld_ids[i])
