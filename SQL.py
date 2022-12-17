@@ -1,8 +1,8 @@
-from GenData import GenerateTableData
+from GenData import GenerateTableData as GTD
 import DDL
 
 # get [keys, values] from an object
-def getKeyValues(dictionnary) -> [[str], [str]]:
+def getKeyValues(dictionnary: dict) -> [[str], [str]]:
     keys = []
     values = []
     for key, value in dictionnary.items():
@@ -43,11 +43,11 @@ def dropAllTables(cursor) -> None:
 
 
 # sqlite3: INSERT INTO, random values
-def fillAllTablesRand(cursor, nr=1):
+def fillAllTablesRand(cursor, nr: int = 1) -> None:
     allTables = getAllTableStr()[0]  # keys
     for table in allTables:
         if table == "Serverworld":
-            tmpData = GenerateTableData.generateServerworlds(nr)
+            tmpData = GTD.generateServerworlds(nr)
             for data in tmpData:
                 if data[2] is None:
                     cursor.execute(
@@ -59,18 +59,18 @@ def fillAllTablesRand(cursor, nr=1):
                     )
             cursor.connection.commit()
         elif table == "Player":
-            tmpData = GenerateTableData.generatePlayers(nr)
+            tmpData = GTD.generatePlayers(nr)
         elif table == "MEntities":
-            tmpData = GenerateTableData.generateMEntities(nr)
+            tmpData = GTD.generateMEntities(nr)
         elif table == "Block":
-            tmpData = GenerateTableData.generateBlocks(nr)
+            tmpData = GTD.generateBlocks(nr)
         elif table == "Wood":
-            tmpData = GenerateTableData.generateWoods(nr)
+            tmpData = GTD.generateWoods(nr)
         elif table == "Dirt":
-            tmpData = GenerateTableData.generateDirt(nr)
+            tmpData = GTD.generateDirt(nr)
         elif table == "plays":
-            tmpData = GenerateTableData.generatePlays(nr)
+            tmpData = GTD.generatePlays(nr)
         elif table == "populatedBy":
-            tmpData = GenerateTableData.generatePopulatedBy(nr)
+            tmpData = GTD.generatePopulatedBy(nr)
         elif table == "buildOf":
-            tmpData = GenerateTableData.generateBuildOf(nr)
+            tmpData = GTD.generateBuildOf(nr)

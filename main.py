@@ -1,11 +1,11 @@
 import sqlite3
-import Funcs
+import SQL
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
-Funcs.dropAllTables(cursor) # delete current db
-Funcs.createAllTables(cursor) # create all tables
-Funcs.fillAllTablesRand(cursor, 15) # fill random data into the tables
+SQL.dropAllTables(cursor) # delete current db
+SQL.createAllTables(cursor) # create all tables
+SQL.fillAllTablesRand(cursor, 15) # fill random data into the tables
 # Start UI
 
 # cursor.execute("""SELECT * from Serverworld""").fetchall()
@@ -18,9 +18,10 @@ Funcs.fillAllTablesRand(cursor, 15) # fill random data into the tables
 -> buttons (select * from table) => data tmp (workArray)
 -> ultimative SQL "searchbar" (select columns from table where)
   => data tmp (workArray)
-  -> show/select data tmp
+  -> select/show data tmp
   -> update data tmp
-  -> create/insert data tmp
+    -> preview tmp array with lambda
+  -> insert/create data tmp
   -> delete data tmp
     -> save data tmp to database
 """
