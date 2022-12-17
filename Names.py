@@ -4,8 +4,8 @@ Puppy Paradise
 Kitten Korner
 Rainbow Road
 Butterfly Effect
-Dragon's Den
-The Lion's Pride
+Dragon`s Den
+The Lion`s Pride
 The Wolfpack
 Imperial Japan
 The Roman Empire
@@ -22,23 +22,22 @@ Asgard
 Big Brains
 The Sandbox
 Cloudland
-Gamer's Paradise
+Gamer`s Paradise
 Team Fortress
 Final Fantasy VII
 Minecraftia
 City of Cats
-The Pirate's Den
+The Pirate`s Den
 Neo Tokyo
 Eve Online"""
-
-names2 ="""Aspect
+names2 = """Aspect
 Kraken
 Bender
 Lynch
 Big Papa
 Mad Dog
 Bowser
-O'Doyle
+O`Doyle
 Bruise
 Psycho
 Cannon
