@@ -2,6 +2,7 @@ import tkinter
 import customtkinter
 from scrollableTable import scrollableTable
 from interface import *
+import random
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")
@@ -30,27 +31,18 @@ tablesNames = {
 }
 
 
-def onTableButtonClick(buttonName):
-    # Backend Code
-    print(buttonName)
-
-
-# Title needs to be in "tables names"
+# GUI SPAWN FUNCTIONS
 xStart = 60
-
-
 def placeTableButton(title, event):
     global xStart
     customtkinter.CTkButton(master=app, text=title, command=event).place(x=40, y=xStart)
 
     xStart += 35
 
-
 def spawnTableButtons():
     for name in tablesNames.keys():
         print(name)
         placeTableButton(name, tablesNames[name])
-
 
 spawnTableButtons()
 
@@ -61,6 +53,8 @@ spawnTableButtons()
 
 
 
-scrollableTable(app).place(x=250,y=75, width=515, height=300)
+table = scrollableTable(app,500)
+table.place(x=250,y=75, width=500, height=300)
+table.fill([[random.randint(0,1000),"hi","Hello","test","miau","be"] for i in range(100)])
 
 app.mainloop()
