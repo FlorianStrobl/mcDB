@@ -1,4 +1,4 @@
-names1 = """Mongol Empire
+names1: str = """Mongol Empire
 Cuddle Kingdom
 Puppy Paradise
 Kitten Korner
@@ -30,7 +30,7 @@ City of Cats
 The Pirate`s Den
 Neo Tokyo
 Eve Online"""
-names2 = """Aspect
+names2: str = """Aspect
 Kraken
 Bender
 Lynch
