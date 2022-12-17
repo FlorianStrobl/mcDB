@@ -1,3 +1,13 @@
+# Serverworld(serverworld_id: int, name: str, icon: str | null)
+# Player(player_id: int, username: str, skin: str)
+# MEntities(m_entities_id: int, entity_postion: str, birthday: int, entity_type: int)
+# Block(absolute_position: str, block_type: int)
+# Wood(absolute_position: str, isOnFire: int)
+# Dirt(absolute_position: str, hasGras: int)
+# plays(player_id: int, serverworld_id: int, session_begin: int, player_position: str, role: str)
+# populatedBy(m_entities_id: int, serverworld_id: int)
+# buildOf(absolute_position: str, serverworld_id: int)
+
 # Serverworld, Player, MEntities, Block
 tablesStrong: dict = {
     "Serverworld": """CREATE TABLE IF NOT EXISTS Serverworld (

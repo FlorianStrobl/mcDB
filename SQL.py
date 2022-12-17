@@ -152,3 +152,11 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 except:
                     print("ERROR, while inserting: ", data)
             cursor.connection.commit()
+
+# sqlite3: SELECT, e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
+def selectTable(cursor, tableName: str, columnNames: str = "*", where: str = "True") -> []:
+    try:
+        return cursor.execute(f"SELECT {columnNames} FROM {tableName} where {where}").fetchall()
+    except:
+        print("ERROR, while fetching data from table: ", tableName)
+    return []

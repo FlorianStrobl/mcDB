@@ -8,7 +8,7 @@ SQL.createAllTables(cursor) # create all tables
 SQL.fillAllTablesRand(cursor, 100) # fill random data into the tables
 # Start UI
 
-# cursor.execute("""SELECT * from Serverworld""").fetchall()
+print(SQL.selectTable(cursor, "Wood", "absolute_position"))
 
 """
 1. DROP all TABLES
