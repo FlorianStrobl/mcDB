@@ -6,7 +6,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 Funcs.dropAllTables(cursor) # delete current db
 Funcs.createAllTables(cursor) # create all tables
 Funcs.fillAllTablesRand(cursor, 150) # fill random data into the tables
-
+# Start UI
 
 # cursor.execute("""SELECT * from Serverworld""").fetchall()
 

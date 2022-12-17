@@ -1,5 +1,5 @@
 # Serverworld, Player, MEntities, Block
-tablesStrong = {
+tablesStrong: dict = {
     "Serverworld": """CREATE TABLE IF NOT EXISTS Serverworld (
     serverworld_id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
@@ -26,7 +26,7 @@ tablesStrong = {
 }
 
 # Wood, Dirt
-tablesWeak = {
+tablesWeak: dict = {
     "Wood": """CREATE TABLE IF NOT EXISTS Wood (
     absolute_position TEXT NOT NULL,
     isOnFire INTEGER NOT NULL,
@@ -43,10 +43,10 @@ tablesWeak = {
 }
 
 # plays, populatedBy, buildOf
-tableRelations = {
+tableRelations: dict = {
     "plays": """CREATE TABLE IF NOT EXISTS plays (
-    player_id INTEGER NOT NULL,
-    serverworld_id INTEGER NOT NULL,
+    player_id INTEGER,
+    serverworld_id INTEGER,
     session_begin INTEGER NOT NULL,
     player_position TEXT NOT NULL,
     role TEXT NOT NULL,
@@ -60,9 +60,9 @@ tableRelations = {
     );""",
 
     "populatedBy": """CREATE TABLE IF NOT EXISTS populatedBy (
-    m_entities_id INTEGER NOT NULL,
-    serverworld_id INTEGER NOT NULL,
-    primary key(m_entities_id, serverworld_id),
+    m_entities_id INTEGER,
+    serverworld_id INTEGER,
+    PRIMARY KEY(m_entities_id, serverworld_id),
     FOREIGN KEY(m_entities_id) REFERENCES MEntities(m_entities_id)
       on UPDATE cascade
       on DELETE cascade,
@@ -72,13 +72,13 @@ tableRelations = {
     );""",
 
     "buildOf": """CREATE TABLE IF NOT EXISTS buildOf (
-    absolute_position TEXT NOT NULL,
-    serverworld_id TEXT NOT NULL,
-    primary key(absolute_position, serverworld_id),
+    absolute_position TEXT,
+    serverworld_id INTEGER,
+    PRIMARY KEY(absolute_position, serverworld_id),
     FOREIGN KEY(absolute_position) REFERENCES Block(absolute_position)
       on UPDATE cascade
       on DELETE cascade,
-    FOREIGN KEY(serverworld_id) REFERENCES Chunk(serverworld_id)
+    FOREIGN KEY(serverworld_id) REFERENCES Serverworld(serverworld_id)
       on UPDATE cascade
       on DELETE cascade
     );"""
