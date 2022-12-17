@@ -30,7 +30,10 @@ def getAllTableStr() -> [[str], [str]]:
 def createAllTables(cursor) -> None:
     # from all the tables
     for tableStr in getAllTableStr()[1]:
-        cursor.execute(tableStr)
+        try:
+            cursor.execute(tableStr)
+        except:
+            print("ERROR, while trying to create table: ", tableStr)
     cursor.connection.commit()
 
 
@@ -38,7 +41,10 @@ def createAllTables(cursor) -> None:
 def dropAllTables(cursor) -> None:
     keys = getAllTableStr()[0]
     for key in keys:
-        cursor.execute(f"DROP TABLE IF EXISTS {key};")
+        try:
+            cursor.execute(f"DROP TABLE IF EXISTS {key};")
+        except:
+            print("ERROR, while dropping table: ", key)
     cursor.connection.commit()
 
 
@@ -49,73 +55,100 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
         if table == "Serverworld":
             tmpData = GTD.generateServerworlds(nr)
             for data in tmpData:
-                if data[2] is None:
-                    cursor.execute(
-                        f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', null)"
-                    )
-                else:
-                    cursor.execute(
-                        f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
-                    )
+                try:
+                    if data[2] is None:
+                        cursor.execute(
+                            f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', null)"
+                        )
+                    else:
+                        cursor.execute(
+                            f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
+                        )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "Player":
             tmpData = GTD.generatePlayers(nr)
             for data in tmpData:
-                cursor.execute(
-                    f"INSERT INTO Player (player_id, username, skin) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO Player (player_id, username, skin) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "MEntities":
             tmpData = GTD.generateMEntities(nr)
             for data in tmpData:
-                cursor.execute(
-                    f"INSERT INTO MEntities (m_entities_id, entity_postion, birthday, entity_type) VALUES ({data[0]}, '{data[1]}', {data[2]}, {data[3]})"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO MEntities (m_entities_id, entity_postion, birthday, entity_type) VALUES ({data[0]}, '{data[1]}', {data[2]}, {data[3]})"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "Block":
             tmpData = GTD.generateBlocks(nr)
             for data in tmpData:
-                cursor.execute(
-                    f"INSERT INTO Block (absolute_position, block_type) VALUES ('{data[0]}', {data[1]})"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO Block (absolute_position, block_type) VALUES ('{data[0]}', {data[1]})"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "Wood":
             tmpData = GTD.generateWoods(nr)
             for data in tmpData:
                 # TODO absolute_position has to exist in Block
-                cursor.execute(
-                    f"INSERT INTO Wood (absolute_position, isOnFire) VALUES ('{data[0]}', {data[1]})"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO Wood (absolute_position, isOnFire) VALUES ('{data[0]}', {data[1]})"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr)
             for data in tmpData:
                 # TODO absolute_position has to exist in Block
-                cursor.execute(
-                    f"INSERT INTO Dirt (absolute_position, hasGras) VALUES ('{data[0]}', {data[1]})"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO Dirt (absolute_position, hasGras) VALUES ('{data[0]}', {data[1]})"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "plays":
             tmpData = GTD.generatePlays(nr)
             # TODO
             for data in tmpData:
-                cursor.execute(
-                    f"INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES ({data[0]}, {data[1]}, {data[2]}, '{data[3]}', '{data[4]}')"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES ({data[0]}, {data[1]}, {data[2]}, '{data[3]}', '{data[4]}')"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "populatedBy":
             tmpData = GTD.generatePopulatedBy(nr)
             # TODO
             for data in tmpData:
-                cursor.execute(
-                    f"INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES ({data[0]}, {data[1]})"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES ({data[0]}, {data[1]})"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
         elif table == "buildOf":
             tmpData = GTD.generateBuildOf(nr)
             # TODO
             for data in tmpData:
-                cursor.execute(
-                    f"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES ('{data[0]}', {data[1]})"
-                )
+                try:
+                    cursor.execute(
+                        f"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES ('{data[0]}', {data[1]})"
+                    )
+                except:
+                    print("ERROR, while inserting: ", data)
             cursor.connection.commit()
