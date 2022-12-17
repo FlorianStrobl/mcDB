@@ -1,11 +1,19 @@
 import sqlite3
-import DDL as ddl
+import Funcs
+
+cursor = sqlite3.connect("minecraftDatabase.db").cursor()
+
+Funcs.dropAllTables(cursor) # delete current db
+Funcs.createAllTables(cursor) # create all tables
+Funcs.fillAllTablesRand(cursor, 150) # fill random data into the tables
+
+
+# cursor.execute("""SELECT * from Serverworld""").fetchall()
 
 """
 1. DROP all TABLES
 2. CREATE all TABLES
 3. fill all tables with random data
-
 4. UI
 -> buttons (select * from table) => data tmp (workArray)
 -> ultimative SQL "searchbar" (select columns from table where)
@@ -16,15 +24,3 @@ import DDL as ddl
   -> delete data tmp
     -> save data tmp to database
 """
-
-connection = sqlite3.connect("minecraftDatabase.db")
-cursor = connection.cursor()
-
-ddl.dropAllDatabases(cursor)
-ddl.createAllDatabases(cursor)
-ddl.fillAllDatabasesRand(cursor, 150)
-
-# cursor.execute("""INSERT INTO Serverworld (serverworld_id, name, icon)
-# VALUES (7,"s","j");""")
-
-# print(cursor.execute("""select * from Serverworld""").fetchall())

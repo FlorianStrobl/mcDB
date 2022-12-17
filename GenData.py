@@ -1,19 +1,19 @@
+from Names import *
 import random
 import uuid
 import time
-from Names import *
-
+from typing import Union
 
 class HelperFuncs:
-    # generieren n UIDs mit dem Wert: String
-    def generateUID(n=1):
+    # generieren n UIDs
+    def generateUID(n: int = 1) -> [str]:
         UIDs = []
         for i in range(n):
             UIDs.append(uuid.uuid4().hex)
         return UIDs
 
-    # generiere n Servernamen mit dem Wert: String
-    def generateServernames(n=1):
+    # generiere n Servernamen
+    def generateServernames(n: int = 1) -> [str]:
         possibleNames = names1.splitlines()
 
         names = []
@@ -23,8 +23,8 @@ class HelperFuncs:
             names.append(name)
         return names
 
-    # generiere n icons mit Wert: String oder None
-    def generateIcons(n=1):
+    # generiere n icons
+    def generateIcons(n: int = 1) -> [Union[str, None]]:
         icons = []
         for i in range(n):
             if random.random() < 0.2:
@@ -33,36 +33,36 @@ class HelperFuncs:
                 icons.append("https://mc-icons/" + uuid.uuid4().hex)
         return icons
 
-    # generiere n Skins mit dem Wert: String
-    def generateSkins(n=1):
+    # generiere n Skins
+    def generateSkins(n: int = 1) -> [str]:
         icons = []
         for i in range(n):
             icons.append("https://mc-skin/" + uuid.uuid4().hex)
         return icons
 
-    # generiere n Timestamps mit dem Wert: Integer
-    def generateTimestamp(n=1):
+    # generiere n Timestamps
+    def generateTimestamp(n: int = 1) -> [int]:
         timestamps = []
         for i in range(n):
             timestamps.append(int(time.time()) + int(random.random() * 10000000))
         return timestamps
 
-    # generiere n enum values mit dem Wert: int (zwischen 0 und maxVal)
-    def generateDecodedEnumValue(n=1, maxVal=10):
+    # generiere n enum values zwischen 0 und maxVal
+    def generateDecodedEnumValue(n: int = 1, maxVal: int = 10) -> [int]:
         values = []
         for i in range(n):
             values.append(int(random.random() * maxVal))
         return values
 
-    # genriere n Booleans mit dem Wert: bool
-    def generateBoolean(n=1):
+    # genriere n Booleans
+    def generateBoolean(n: int = 1) -> [bool]:
         bools = []
         for i in range(n):
             bools.append(int(random.random() < 0.5))
         return bools
 
-    # generiere n Positionen mit dem Wert: str((int, int, int))
-    def generateAbsolutePosition(n=1):
+    # generiere n Positionen mit dem Format (int, int, int)
+    def generateAbsolutePosition(n: int = 1) -> [str]:
         positions = []
         for i in range(n):
             positions.append(
@@ -76,16 +76,16 @@ class HelperFuncs:
             )
         return positions
 
-    # generiere n Roles mit dem Wert: String
-    def generateRoles(n=1):
+    # generiere n Roles
+    def generateRoles(n: int = 1) -> [str]:
         possibleRoles = ["Admin", "Moderator", "Player"]
         roles = []
         while len(roles) < n:
             roles.append(random.choice(possibleRoles))
         return roles
 
-    # generiere n Usernames mit dem Wert: String
-    def generateUsernames(n=1):
+    # generiere n Usernames
+    def generateUsernames(n: int = 1) -> [str]:
         possibleNames = names2.splitlines()
 
         names = []
@@ -96,12 +96,12 @@ class HelperFuncs:
                 names.append(name)
         return names
 
-    def convertUIDStrToInt(uid):
+    def convertUIDStrToInt(uid: str) -> int:
         return int(uid, 16)
 
 
 class GenerateTableData:
-    def generateServerworlds(n=1):
+    def generateServerworlds(n: int = 1) -> [(int, str, Union[str, None])]:
         serverworld = []
         serverworld_ids = HelperFuncs.generateUID(n)
         for i in range(len(serverworld_ids)):

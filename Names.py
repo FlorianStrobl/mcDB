@@ -30,8 +30,7 @@ City of Cats
 The Pirate`s Den
 Neo Tokyo
 Eve Online"""
-
-names2 ="""Aspect
+names2 = """Aspect
 Kraken
 Bender
 Lynch
