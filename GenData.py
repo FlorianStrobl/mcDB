@@ -4,6 +4,7 @@ import uuid
 import time
 from typing import Union
 
+TRIM = 2**33-1
 
 class HelperFuncs:
     # generate UIDs in hex format
@@ -105,7 +106,7 @@ class GenerateTableData:
 
         # add data to array
         for i in range(n):
-            serverworlds.append((serverworld_ids[i], names[i], icons[i]))
+            serverworlds.append((serverworld_ids[i] & TRIM, names[i], icons[i]))
 
         return serverworlds
 
@@ -118,7 +119,7 @@ class GenerateTableData:
 
         # add data to array
         for i in range(n):
-            players.append((player_ids[i], usernames[i], skins[i]))
+            players.append((player_ids[i] & TRIM, usernames[i], skins[i]))
 
         return players
 
@@ -133,7 +134,7 @@ class GenerateTableData:
         # add data to array
         for i in range(n):
             entities.append(
-                (m_entities_ids[i], entity_positions[i], birthdays[i], entity_types[i])
+                (m_entities_ids[i] & TRIM, entity_positions[i], birthdays[i], entity_types[i])
             )
 
         return entities
@@ -187,8 +188,8 @@ class GenerateTableData:
         for i in range(n):
             plays.append(
                 (
-                    player_ids[i],
-                    serverworld_ids[i],
+                    player_ids[i] & TRIM,
+                    serverworld_ids[i] & TRIM,
                     session_begins[i],
                     player_positions[i],
                     roles[i],
@@ -205,7 +206,7 @@ class GenerateTableData:
 
         # add data to array
         for i in range(n):
-            populatedBy.append((m_entities_ids[i], serverworld_ids[i]))
+            populatedBy.append((m_entities_ids[i] & TRIM, serverworld_ids[i] & TRIM))
 
         return populatedBy
 
@@ -217,6 +218,6 @@ class GenerateTableData:
 
         # add data to array
         for i in range(n):
-            buildOfs.append((absolute_positions[i], serverworld_ids[i]))
+            buildOfs.append((absolute_positions[i], serverworld_ids[i] & TRIM))
 
         return buildOfs

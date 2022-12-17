@@ -29,7 +29,7 @@ tablesStrong: dict = {
 tablesWeak: dict = {
     "Wood": """CREATE TABLE IF NOT EXISTS Wood (
 
-    absolute_position TEXT,
+    absolute_position TEXT NOT NULL UNIQUE,
     isOnFire INTEGER DEFAULT 0,
 
     PRIMARY KEY(absolute_position),
@@ -41,7 +41,7 @@ tablesWeak: dict = {
 
     "Dirt": """CREATE TABLE IF NOT EXISTS Dirt (
 
-    absolute_position TEXT,
+    absolute_position TEXT NOT NULL UNIQUE,
     hasGras INTEGER DEFAULT 0,
 
     PRIMARY KEY(absolute_position),
@@ -56,8 +56,8 @@ tablesWeak: dict = {
 tableRelations: dict = {
     "plays": """CREATE TABLE IF NOT EXISTS plays (
 
-    player_id INTEGER,
-    serverworld_id INTEGER,
+    player_id INTEGER NOT NULL,
+    serverworld_id INTEGER NOT NULL,
     session_begin INTEGER NOT NULL,
     player_position TEXT NOT NULL,
     role TEXT NOT NULL,
@@ -75,8 +75,8 @@ tableRelations: dict = {
 
     "populatedBy": """CREATE TABLE IF NOT EXISTS populatedBy (
 
-    m_entities_id INTEGER,
-    serverworld_id INTEGER,
+    m_entities_id INTEGER NOT NULL,
+    serverworld_id INTEGER NOT NULL,
 
     PRIMARY KEY(m_entities_id, serverworld_id),
 
@@ -91,8 +91,8 @@ tableRelations: dict = {
 
     "buildOf": """CREATE TABLE IF NOT EXISTS buildOf (
 
-    absolute_position TEXT,
-    serverworld_id INTEGER,
+    absolute_position TEXT NOT NULL,
+    serverworld_id INTEGER NOT NULL,
 
     PRIMARY KEY(absolute_position, serverworld_id),
 
