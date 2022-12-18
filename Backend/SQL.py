@@ -136,11 +136,11 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
 def selectTable(
     cursor, tableName: str, columnNames: str = "*", where: str = "True"
-) -> list[tuple]:
+) -> list[list]:
     try:
-        return cursor.execute(
+        return [list(v) for v in cursor.execute(
             f"SELECT {columnNames} FROM {tableName} where {where}"
-        ).fetchall()
+        ).fetchall()]
     except:
         Logger.error(
             "while fetching data with the SQLite3 instruction: ",

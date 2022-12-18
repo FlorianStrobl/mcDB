@@ -4,7 +4,7 @@ import uuid
 import time
 from typing import Union, Optional
 
-TRIM = 2**65 - 1  # max 64 bit integers
+TRIM = 2**63 - 1  # max 64 bit integers
 
 
 class HelperFuncs:
