@@ -2,7 +2,7 @@ from Names import *
 import random
 import uuid
 import time
-from typing import Union
+from typing import Union, Optional
 
 TRIM = 2**65-1 # max 64 bit integers
 
@@ -22,8 +22,8 @@ class HelperFuncs:
             names.append(random.choice(possibleNames))
         return names
 
-    def generateIcons(n: int = 1) -> [Union[str, None]]:
-        icons: [Union[str, None]] = []
+    def generateIcons(n: int = 1) -> list[Optional[str]]:
+        icons = []
         for i in range(n):
             if random.random() < 0.2:
                 icons.append(None)  # 20% of the time the server icon is null
@@ -97,7 +97,7 @@ class HelperFuncs:
 
 
 class GenerateTableData:
-    def generateServerworlds(n: int = 1) -> list[(int, str, Union[str, None])]:
+    def generateServerworlds(n: int = 1) -> list[(int, str, Optional[str])]:
         serverworlds = []
 
         serverworld_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))

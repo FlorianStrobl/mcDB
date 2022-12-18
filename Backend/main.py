@@ -17,9 +17,6 @@ tmp.setData(
   data=SQL.selectTable(cursor, "Wood"),
   columnNames=SQL.selectTableColumns(cursor, "Wood"),
   tableName="Wood")
-print(tmp.getMetaData())
-
-# select data from TMP
 
 """
 1. DROP all TABLES

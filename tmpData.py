@@ -1,5 +1,5 @@
 from numpy import *
-from typing import Union
+from typing import Union, Optional
 
 class TMP:
   data: list = []
@@ -12,7 +12,7 @@ class TMP:
   def columnLen(self) -> int:
     return len(self.columnNames)
 
-  def setData(self, data: Union[list, None], columnNames: Union[list[str], None] = None, tableName: Union[str, None] = None) -> None:
+  def setData(self, data: Optional[list], columnNames: Optional[list[str]] = None, tableName: Optional[str] = None) -> None:
     if not data is None:
       self.data = data
     if not tableName is None:
@@ -23,7 +23,7 @@ class TMP:
   def getData(self) -> list:
     return self.data
 
-  def getMetaData(self) -> [str, list[str]]:
+  def getMetaData(self) -> list[str, list[str]]:
     return [self.tableName, self.columnNames]
 
   def filterData(self, _lambda) -> list:
