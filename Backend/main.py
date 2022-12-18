@@ -1,16 +1,16 @@
-import sys
-sys.path.append(".\Backend")
-sys.path.append(".\GUI")
-
+import addImport
 import sqlite3
 import SQL
 from TmpData import *
+from Logger import *
+
+Logger.error("test", 53, "46", "jklsfd", True)
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
-SQL.dropAllTables(cursor) # delete current db
-SQL.createAllTables(cursor) # create all tables
-SQL.fillAllTablesRand(cursor, 100) # fill random data into the tables
+SQL.dropAllTables(cursor)  # delete current db
+SQL.createAllTables(cursor)  # create all tables
+SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
 # Start UI
 
 tmp = TMP()
