@@ -2,8 +2,10 @@
 # Player(player_id: bigint, username: str, skin: str)
 # MEntities(m_entities_id: bigint, entity_postion: str, birthday: int, entity_type: int)
 # Block(absolute_position: str, block_type: int)
+
 # Wood(absolute_position: str, isOnFire: int)
 # Dirt(absolute_position: str, hasGras: int)
+
 # plays(player_id: bigint, serverworld_id: bigint, session_begin: int, player_position: str, role: str)
 # populatedBy(m_entities_id: bigint, serverworld_id: bigint)
 # buildOf(absolute_position: str, serverworld_id: bigint)
