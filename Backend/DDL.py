@@ -9,7 +9,7 @@
 # buildOf(absolute_position: str, serverworld_id: bigint)
 
 # Serverworld, Player, MEntities, Block
-tablesStrong: dict = {
+tablesStrong: dict[str, str] = {
     "Serverworld": """CREATE TABLE IF NOT EXISTS Serverworld (
     serverworld_id bigint PRIMARY KEY,
     name TEXT NOT NULL,
@@ -36,7 +36,7 @@ tablesStrong: dict = {
 }
 
 # Wood, Dirt
-tablesWeak: dict = {
+tablesWeak: dict[str, str] = {
     "Wood": """CREATE TABLE IF NOT EXISTS Wood (
 
     absolute_position TEXT NOT NULL UNIQUE,
@@ -63,7 +63,7 @@ tablesWeak: dict = {
 }
 
 # plays, populatedBy, buildOf
-tableRelations: dict = {
+tableRelations: dict[str, str] = {
     "plays": """CREATE TABLE IF NOT EXISTS plays (
 
     player_id bigint NOT NULL,

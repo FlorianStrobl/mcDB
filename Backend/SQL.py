@@ -1,8 +1,9 @@
 from GenData import GenerateTableData as GTD
 import DDL
+from Logger import *
 
 # get [keys, values] from an object
-def getKeyValues(dictionnary: dict) -> [[str], [str]]:
+def getKeyValues(dictionnary: dict) -> [list[str], list[str]]:
     keys = []
     values = []
     for key, value in dictionnary.items():
@@ -12,7 +13,7 @@ def getKeyValues(dictionnary: dict) -> [[str], [str]]:
 
 
 # get DDL.py values
-def getAllTableStr() -> [[str], [str]]:
+def getAllTableStr() -> [list[str], list[str]]:
     keys = (
         getKeyValues(DDL.tablesStrong)[0]
         + getKeyValues(DDL.tablesWeak)[0]
@@ -33,7 +34,7 @@ def createAllTables(cursor) -> None:
         try:
             cursor.execute(tableStr)
         except:
-            print("ERROR, while trying to create table: ", tableStr)
+            Logger.error("while trying to create table", tableStr)
     cursor.connection.commit()
 
 
@@ -44,7 +45,7 @@ def dropAllTables(cursor) -> None:
         try:
             cursor.execute(f"DROP TABLE IF EXISTS {key};")
         except:
-            print("ERROR, while dropping table: ", key)
+            Logger.error("while dropping table", key)
     cursor.connection.commit()
 
 
@@ -65,7 +66,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                             f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
                         )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "Player":
             tmpData = GTD.generatePlayers(nr)
@@ -75,7 +76,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Player (player_id, username, skin) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "MEntities":
             tmpData = GTD.generateMEntities(nr)
@@ -85,7 +86,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO MEntities (m_entities_id, entity_postion, birthday, entity_type) VALUES ({data[0]}, '{data[1]}', {data[2]}, {data[3]})"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "Block":
             tmpData = GTD.generateBlocks(nr)
@@ -95,7 +96,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Block (absolute_position, block_type) VALUES ('{data[0]}', {data[1]})"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "Wood":
             tmpData = GTD.generateWoods(nr)
@@ -106,7 +107,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Wood (absolute_position, isOnFire) VALUES ('{data[0]}', {data[1]})"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr)
@@ -117,7 +118,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Dirt (absolute_position, hasGras) VALUES ('{data[0]}', {data[1]})"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "plays":
             tmpData = GTD.generatePlays(nr)
@@ -128,7 +129,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES ({data[0]}, {data[1]}, {data[2]}, '{data[3]}', '{data[4]}')"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "populatedBy":
             tmpData = GTD.generatePopulatedBy(nr)
@@ -139,7 +140,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES ({data[0]}, {data[1]})"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
         elif table == "buildOf":
             tmpData = GTD.generateBuildOf(nr)
@@ -150,13 +151,26 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES ('{data[0]}', {data[1]})"
                     )
                 except:
-                    print("ERROR, while inserting: ", data)
+                    Logger.error("while inserting", data)
             cursor.connection.commit()
 
+
 # sqlite3: SELECT, e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
-def selectTable(cursor, tableName: str, columnNames: str = "*", where: str = "True") -> []:
+def selectTable(
+    cursor, tableName: str, columnNames: str = "*", where: str = "True"
+) -> list[tuple]:
     try:
-        return cursor.execute(f"SELECT {columnNames} FROM {tableName} where {where}").fetchall()
+        return cursor.execute(
+            f"SELECT {columnNames} FROM {tableName} where {where}"
+        ).fetchall()
     except:
-        print("ERROR, while fetching data from table: ", tableName)
+        Logger.error("while fetching data from table", tableName)
+    return []
+
+def selectTableColumns(cursor, tableName: str) -> list:
+    try:
+        cursor.execute(f"SELECT * from {tableName}")
+        return [description[0] for description in cursor.description]
+    except:
+        Logger.error("while fetching the column names from table", tableName)
     return []

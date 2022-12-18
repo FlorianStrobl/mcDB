@@ -4,7 +4,6 @@ import SQL
 from TmpData import *
 from Logger import *
 
-Logger.error("test", 53, "46", "jklsfd", True)
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
@@ -14,8 +13,11 @@ SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
 # Start UI
 
 tmp = TMP()
-tmp.setData(SQL.selectTable(cursor, "Wood"))
-#tmp.printThis()
+tmp.setData(
+  data=SQL.selectTable(cursor, "Wood"),
+  columnNames=SQL.selectTableColumns(cursor, "Wood"),
+  tableName="Wood")
+print(tmp.getMetaData())
 
 # select data from TMP
 

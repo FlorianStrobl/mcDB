@@ -4,20 +4,20 @@ import uuid
 import time
 from typing import Union
 
-TRIM = 2**65-1
+TRIM = 2**65-1 # max 64 bit integers
 
 class HelperFuncs:
     # generate UIDs in hex format
-    def generateUID(n: int = 1) -> [str]:
-        UIDs: [str] = []
+    def generateUID(n: int = 1) -> list[str]:
+        UIDs = []
         for i in range(n):
             UIDs.append(uuid.uuid4().hex)
         return UIDs
 
-    def generateServernames(n: int = 1) -> [str]:
-        possibleNames: [str] = names1.splitlines()
+    def generateServernames(n: int = 1) -> list[str]:
+        possibleNames = names1.splitlines()
 
-        names: [str] = []
+        names = []
         while len(names) < n:
             names.append(random.choice(possibleNames))
         return names
@@ -31,34 +31,34 @@ class HelperFuncs:
                 icons.append("https://mc-icons/" + uuid.uuid4().hex)
         return icons
 
-    def generateSkins(n: int = 1) -> [str]:
-        icons: [str] = []
+    def generateSkins(n: int = 1) -> list[str]:
+        icons = []
         for i in range(n):
             icons.append("https://mc-skin/" + uuid.uuid4().hex)
         return icons
 
-    def generateTimestamp(n: int = 1) -> [int]:
-        timestamps: [int] = []
+    def generateTimestamp(n: int = 1) -> list[int]:
+        timestamps = []
         for i in range(n):
             timestamps.append(int(time.time()) + int(random.random() * 10000000))
         return timestamps
 
     # generate enum values between 0 and maxVal
-    def generateDecodedEnumValue(n: int = 1, maxVal: int = 10) -> [int]:
-        values: [int] = []
+    def generateDecodedEnumValue(n: int = 1, maxVal: int = 10) -> list[int]:
+        values = []
         for i in range(n):
             values.append(int(random.random() * maxVal))
         return values
 
-    def generateBoolean(n: int = 1) -> [int]:
-        bools: [int] = []
+    def generateBoolean(n: int = 1) -> list[int]:
+        bools = []
         for i in range(n):
             bools.append(int(random.random() < 0.5))
         return bools
 
     # generate positions with the format (int, int, int) from 0 to MAX_VAL
-    def generateAbsolutePosition(n: int = 1, maxVal: int = 30_000_000) -> [str]:
-        positions: [str] = []
+    def generateAbsolutePosition(n: int = 1, maxVal: int = 30_000_000) -> list[str]:
+        positions = []
         for i in range(n):
             positions.append(
                 str(
@@ -72,17 +72,17 @@ class HelperFuncs:
         return positions
 
     # generate roles which can be "Admin", "Moderator", "Player"
-    def generateRoles(n: int = 1) -> [str]:
+    def generateRoles(n: int = 1) -> list[str]:
         possibleRoles = ["Admin", "Moderator", "Player"]
-        roles: [str] = []
+        roles = []
         while len(roles) < n:
             roles.append(random.choice(possibleRoles))
         return roles
 
-    def generateUsernames(n: int = 1) -> [str]:
+    def generateUsernames(n: int = 1) -> list[str]:
         possibleNames = names2.splitlines()
 
-        names: [str] = []
+        names = []
         while len(names) < n:
             names.append(random.choice(possibleNames))
         return names
@@ -90,14 +90,14 @@ class HelperFuncs:
     def convertUIDStrToInt(uid: str) -> int:
         return int(uid, 16)
 
-    def convertUIDsStrToInts(uids: [str]) -> [int]:
+    def convertUIDsStrToInts(uids: list[str]) -> list[int]:
         for i in range(len(uids)):
             uids[i] = HelperFuncs.convertUIDStrToInt(uids[i])
         return uids
 
 
 class GenerateTableData:
-    def generateServerworlds(n: int = 1) -> [(int, str, Union[str, None])]:
+    def generateServerworlds(n: int = 1) -> list[(int, str, Union[str, None])]:
         serverworlds = []
 
         serverworld_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
@@ -110,7 +110,7 @@ class GenerateTableData:
 
         return serverworlds
 
-    def generatePlayers(n: int = 1) -> [(int, str, str)]:
+    def generatePlayers(n: int = 1) -> list[(int, str, str)]:
         players = []
 
         player_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
@@ -123,7 +123,7 @@ class GenerateTableData:
 
         return players
 
-    def generateMEntities(n: int = 1) -> [(int, str, int, int)]:
+    def generateMEntities(n: int = 1) -> list[(int, str, int, int)]:
         entities = []
 
         m_entities_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
@@ -139,7 +139,7 @@ class GenerateTableData:
 
         return entities
 
-    def generateBlocks(n: int = 1) -> [(str, int)]:
+    def generateBlocks(n: int = 1) -> list[(str, int)]:
         blocks = []
 
         absolute_positions = HelperFuncs.generateAbsolutePosition(n)
@@ -151,7 +151,7 @@ class GenerateTableData:
 
         return blocks
 
-    def generateWoods(n: int = 1) -> [(str, int)]:
+    def generateWoods(n: int = 1) -> list[(str, int)]:
         woods = []
 
         absolute_positions = HelperFuncs.generateAbsolutePosition(n)
@@ -163,7 +163,7 @@ class GenerateTableData:
 
         return woods
 
-    def generateDirt(n: int = 1) -> [(str, int)]:
+    def generateDirt(n: int = 1) -> list[(str, int)]:
         dirts = []
 
         absolute_positions = HelperFuncs.generateAbsolutePosition(n)
@@ -175,7 +175,7 @@ class GenerateTableData:
 
         return dirts
 
-    def generatePlays(n: int = 1) -> [(int, int, int, str, str)]:
+    def generatePlays(n: int = 1) -> list[(int, int, int, str, str)]:
         plays = []
 
         player_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
@@ -198,7 +198,7 @@ class GenerateTableData:
 
         return plays
 
-    def generatePopulatedBy(n: int = 1) -> [(int, int)]:
+    def generatePopulatedBy(n: int = 1) -> list[(int, int)]:
         populatedBy = []
 
         m_entities_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
@@ -210,7 +210,7 @@ class GenerateTableData:
 
         return populatedBy
 
-    def generateBuildOf(n: int = 1) -> [(str, int)]:
+    def generateBuildOf(n: int = 1) -> list[(str, int)]:
         buildOfs = []
 
         absolute_positions = HelperFuncs.generateAbsolutePosition(n)
