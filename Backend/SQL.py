@@ -167,6 +167,7 @@ def selectTable(
         Logger.error("while fetching data from table", tableName)
     return []
 
+
 def selectTableColumns(cursor, tableName: str) -> list:
     try:
         cursor.execute(f"SELECT * from {tableName}")

@@ -4,7 +4,8 @@ import uuid
 import time
 from typing import Union, Optional
 
-TRIM = 2**65-1 # max 64 bit integers
+TRIM = 2**65 - 1  # max 64 bit integers
+
 
 class HelperFuncs:
     # generate UIDs in hex format
@@ -134,7 +135,12 @@ class GenerateTableData:
         # add data to array
         for i in range(n):
             entities.append(
-                (m_entities_ids[i] & TRIM, entity_positions[i], birthdays[i], entity_types[i])
+                (
+                    m_entities_ids[i] & TRIM,
+                    entity_positions[i],
+                    birthdays[i],
+                    entity_types[i],
+                )
             )
 
         return entities

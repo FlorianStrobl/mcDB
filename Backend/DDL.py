@@ -15,24 +15,21 @@ tablesStrong: dict[str, str] = {
     name TEXT NOT NULL,
     icon TEXT
     );""",
-
     "Player": """CREATE TABLE IF NOT EXISTS Player (
     player_id bigint PRIMARY KEY,
     username TEXT NOT NULL,
     skin TEXT NOT NULL
     );""",
-
     "MEntities": """CREATE TABLE IF NOT EXISTS MEntities (
     m_entities_id bigint PRIMARY KEY,
     entity_postion TEXT NOT NULL,
     birthday INTEGER NOT NULL,
     entity_type INTEGER NOT NULL
     );""",
-
     "Block": """CREATE TABLE IF NOT EXISTS Block  (
     absolute_position TEXT PRIMARY KEY,
     block_type INTEGER NOT NULL
-  );"""
+  );""",
 }
 
 # Wood, Dirt
@@ -48,7 +45,6 @@ tablesWeak: dict[str, str] = {
       on UPDATE cascade
       on DELETE cascade
     );""",
-
     "Dirt": """CREATE TABLE IF NOT EXISTS Dirt (
 
     absolute_position TEXT NOT NULL UNIQUE,
@@ -59,7 +55,7 @@ tablesWeak: dict[str, str] = {
     FOREIGN KEY(absolute_position) REFERENCES Block(absolute_position)
       on UPDATE cascade
       on DELETE cascade
-    );"""
+    );""",
 }
 
 # plays, populatedBy, buildOf
@@ -82,7 +78,6 @@ tableRelations: dict[str, str] = {
       on UPDATE cascade
       on DELETE cascade
     );""",
-
     "populatedBy": """CREATE TABLE IF NOT EXISTS populatedBy (
 
     m_entities_id bigint NOT NULL,
@@ -98,7 +93,6 @@ tableRelations: dict[str, str] = {
       on UPDATE cascade
       on DELETE cascade
     );""",
-
     "buildOf": """CREATE TABLE IF NOT EXISTS buildOf (
 
     absolute_position TEXT NOT NULL,
@@ -113,5 +107,5 @@ tableRelations: dict[str, str] = {
     FOREIGN KEY(serverworld_id) REFERENCES Serverworld(serverworld_id)
       on UPDATE cascade
       on DELETE cascade
-    );"""
+    );""",
 }

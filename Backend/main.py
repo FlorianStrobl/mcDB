@@ -14,9 +14,10 @@ SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
 
 tmp = TMP()
 tmp.setData(
-  data=SQL.selectTable(cursor, "Wood"),
-  columnNames=SQL.selectTableColumns(cursor, "Wood"),
-  tableName="Wood")
+    data=SQL.selectTable(cursor, "Wood"),
+    columnNames=SQL.selectTableColumns(cursor, "Wood"),
+    tableName="Wood",
+)
 
 """
 1. DROP all TABLES
