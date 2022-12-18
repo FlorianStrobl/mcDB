@@ -1,29 +1,29 @@
-# Serverworld(serverworld_id: int, name: str, icon: str | null)
-# Player(player_id: int, username: str, skin: str)
-# MEntities(m_entities_id: int, entity_postion: str, birthday: int, entity_type: int)
+# Serverworld(serverworld_id: bigint, name: str, icon: str | null)
+# Player(player_id: bigint, username: str, skin: str)
+# MEntities(m_entities_id: bigint, entity_postion: str, birthday: int, entity_type: int)
 # Block(absolute_position: str, block_type: int)
 # Wood(absolute_position: str, isOnFire: int)
 # Dirt(absolute_position: str, hasGras: int)
-# plays(player_id: int, serverworld_id: int, session_begin: int, player_position: str, role: str)
-# populatedBy(m_entities_id: int, serverworld_id: int)
-# buildOf(absolute_position: str, serverworld_id: int)
+# plays(player_id: bigint, serverworld_id: bigint, session_begin: int, player_position: str, role: str)
+# populatedBy(m_entities_id: bigint, serverworld_id: bigint)
+# buildOf(absolute_position: str, serverworld_id: bigint)
 
 # Serverworld, Player, MEntities, Block
 tablesStrong: dict = {
     "Serverworld": """CREATE TABLE IF NOT EXISTS Serverworld (
-    serverworld_id INTEGER PRIMARY KEY,
+    serverworld_id bigint PRIMARY KEY,
     name TEXT NOT NULL,
     icon TEXT
     );""",
 
     "Player": """CREATE TABLE IF NOT EXISTS Player (
-    player_id INTEGER PRIMARY KEY,
+    player_id bigint PRIMARY KEY,
     username TEXT NOT NULL,
     skin TEXT NOT NULL
     );""",
 
     "MEntities": """CREATE TABLE IF NOT EXISTS MEntities (
-    m_entities_id INTEGER PRIMARY KEY,
+    m_entities_id bigint PRIMARY KEY,
     entity_postion TEXT NOT NULL,
     birthday INTEGER NOT NULL,
     entity_type INTEGER NOT NULL
@@ -66,8 +66,8 @@ tablesWeak: dict = {
 tableRelations: dict = {
     "plays": """CREATE TABLE IF NOT EXISTS plays (
 
-    player_id INTEGER NOT NULL,
-    serverworld_id INTEGER NOT NULL,
+    player_id bigint NOT NULL,
+    serverworld_id bigint NOT NULL,
     session_begin INTEGER NOT NULL,
     player_position TEXT NOT NULL,
     role TEXT NOT NULL,
@@ -85,8 +85,8 @@ tableRelations: dict = {
 
     "populatedBy": """CREATE TABLE IF NOT EXISTS populatedBy (
 
-    m_entities_id INTEGER NOT NULL,
-    serverworld_id INTEGER NOT NULL,
+    m_entities_id bigint NOT NULL,
+    serverworld_id bigint NOT NULL,
 
     PRIMARY KEY(m_entities_id, serverworld_id),
 
@@ -102,7 +102,7 @@ tableRelations: dict = {
     "buildOf": """CREATE TABLE IF NOT EXISTS buildOf (
 
     absolute_position TEXT NOT NULL,
-    serverworld_id INTEGER NOT NULL,
+    serverworld_id bigint NOT NULL,
 
     PRIMARY KEY(absolute_position, serverworld_id),
 

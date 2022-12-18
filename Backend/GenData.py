@@ -4,7 +4,7 @@ import uuid
 import time
 from typing import Union
 
-TRIM = 2**33-1
+TRIM = 2**65-1
 
 class HelperFuncs:
     # generate UIDs in hex format

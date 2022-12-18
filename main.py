@@ -1,6 +1,10 @@
+import sys
+sys.path.append(".\Backend")
+sys.path.append(".\GUI")
+
 import sqlite3
 import SQL
-import tmpData
+from TmpData import *
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
@@ -9,9 +13,9 @@ SQL.createAllTables(cursor) # create all tables
 SQL.fillAllTablesRand(cursor, 100) # fill random data into the tables
 # Start UI
 
-tmp = tmpData.TMP()
+tmp = TMP()
 tmp.setData(SQL.selectTable(cursor, "Wood"))
-tmp.printThis()
+#tmp.printThis()
 
 # select data from TMP
 
