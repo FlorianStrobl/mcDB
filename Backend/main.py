@@ -9,15 +9,47 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 10_000)  # fill random data into the tables
 # Start UI
 
+table = "Block"
 tmp = TMP()
 tmp.setData(
-    data=SQL.selectTable(cursor, "Wood"),
-    columnNames=SQL.selectTableColumns(cursor, "Wood"),
-    tableName="Wood",
+    data=SQL.selectTable(cursor, table),
+    columnNames=SQL.selectTableColumns(cursor, table),
+    tableName=table,
 )
+print("original data length:", tmp.length())
+print("original data 1?: ", tmp.getData()[0])
+print("original data 2?: ", tmp.getData()[tmp.length()-1])
+
+def Test(x):
+  x = list(x)
+  x[1] += 1
+  return x
+
+def Test2(x):
+  x = list(x)
+  return x[1] > 5
+
+def Test3(x, y):
+  x = list(x)
+  y = list(y)
+  return x[1] - y[1]
+
+print("doing ops")
+
+tmp.setData(tmp.mapData(Test))
+print("start sorting")
+tmp.setData(tmp.sortData(Test3))
+print("finished sorting!")
+tmp.setData(tmp.filterData(Test2))
+
+print("")
+
+print("still original data length?:", tmp.length())
+print("still original 1?: ", tmp.getData()[0])
+print("still original 2?: ", tmp.getData()[tmp.length()-1])
 
 """
 1. DROP all TABLES
