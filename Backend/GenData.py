@@ -15,9 +15,8 @@ class HelperFuncs:
             UIDs.append(uuid.uuid4().hex)
         return UIDs
 
-    def generateServernames(n: int = 1) -> list[str]:
-        possibleNames = names1.splitlines()
-
+    def generateServernames(n: int = 1, namePool: list[str] = names1) -> list[str]:
+        possibleNames = namePool.splitlines()
         names = []
         while len(names) < n:
             names.append(random.choice(possibleNames))
@@ -38,10 +37,15 @@ class HelperFuncs:
             icons.append("https://mc-skin/" + uuid.uuid4().hex)
         return icons
 
+    # uses current time and adds/subtracts 0s to 10000000s (about 115 days)
     def generateTimestamp(n: int = 1) -> list[int]:
         timestamps = []
         for i in range(n):
-            timestamps.append(int(time.time()) + int(random.random() * 10000000))
+            timestamps.append(
+                int(time.time())
+                + (int(random.random() * 10000000))
+                * ((-1) ** (int(random.random() > 0.5)))
+            )
         return timestamps
 
     # generate enum values between 0 and maxVal
@@ -73,15 +77,16 @@ class HelperFuncs:
         return positions
 
     # generate roles which can be "Admin", "Moderator", "Player"
-    def generateRoles(n: int = 1) -> list[str]:
-        possibleRoles = ["Admin", "Moderator", "Player"]
+    def generateRoles(
+        n: int = 1, possibleRoles: list[str] = ["Admin", "Moderator", "Player"]
+    ) -> list[str]:
         roles = []
         while len(roles) < n:
             roles.append(random.choice(possibleRoles))
         return roles
 
-    def generateUsernames(n: int = 1) -> list[str]:
-        possibleNames = names2.splitlines()
+    def generateUsernames(n: int = 1, namePool: list[str] = names2) -> list[str]:
+        possibleNames = namePool.splitlines()
 
         names = []
         while len(names) < n:
@@ -98,6 +103,7 @@ class HelperFuncs:
 
 
 class GenerateTableData:
+    # [serverworld_id, name, icon]
     def generateServerworlds(n: int = 1) -> list[(int, str, Optional[str])]:
         serverworlds = []
 
@@ -111,6 +117,7 @@ class GenerateTableData:
 
         return serverworlds
 
+    # [player_id, username, skin]
     def generatePlayers(n: int = 1) -> list[(int, str, str)]:
         players = []
 
@@ -124,6 +131,7 @@ class GenerateTableData:
 
         return players
 
+    # [m_entities_id, entity_position, birthday, entity_type]
     def generateMEntities(n: int = 1) -> list[(int, str, int, int)]:
         entities = []
 
@@ -145,6 +153,7 @@ class GenerateTableData:
 
         return entities
 
+    # [absolute_position, block_type]
     def generateBlocks(n: int = 1) -> list[(str, int)]:
         blocks = []
 
@@ -157,6 +166,7 @@ class GenerateTableData:
 
         return blocks
 
+    # [absolute_position, isOnFire]
     def generateWoods(n: int = 1) -> list[(str, int)]:
         woods = []
 
@@ -169,18 +179,20 @@ class GenerateTableData:
 
         return woods
 
+    # [absolute_position, hasGrass]
     def generateDirt(n: int = 1) -> list[(str, int)]:
         dirts = []
 
         absolute_positions = HelperFuncs.generateAbsolutePosition(n)
-        hasGras = HelperFuncs.generateBoolean(n)
+        hasGrass = HelperFuncs.generateBoolean(n)
 
         # add data to array
         for i in range(n):
-            dirts.append((absolute_positions[i], hasGras[i]))
+            dirts.append((absolute_positions[i], hasGrass[i]))
 
         return dirts
 
+    # [player_id, serverworld_id, session_begin, player_position, role]
     def generatePlays(n: int = 1) -> list[(int, int, int, str, str)]:
         plays = []
 
@@ -204,6 +216,7 @@ class GenerateTableData:
 
         return plays
 
+    # [m_entities_id, serverworld_id]
     def generatePopulatedBy(n: int = 1) -> list[(int, int)]:
         populatedBy = []
 
@@ -216,6 +229,7 @@ class GenerateTableData:
 
         return populatedBy
 
+    # [absolute_position, serverworld_id]
     def generateBuildOf(n: int = 1) -> list[(str, int)]:
         buildOfs = []
 

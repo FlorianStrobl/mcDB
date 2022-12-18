@@ -1,10 +1,10 @@
 # Serverworld(serverworld_id: bigint, name: str, icon: str | null)
 # Player(player_id: bigint, username: str, skin: str)
-# MEntities(m_entities_id: bigint, entity_postion: str, birthday: int, entity_type: int)
+# MEntities(m_entities_id: bigint, entity_position: str, birthday: int, entity_type: int)
 # Block(absolute_position: str, block_type: int)
 
 # Wood(absolute_position: str, isOnFire: int)
-# Dirt(absolute_position: str, hasGras: int)
+# Dirt(absolute_position: str, hasGrass: int)
 
 # plays(player_id: bigint, serverworld_id: bigint, session_begin: int, player_position: str, role: str)
 # populatedBy(m_entities_id: bigint, serverworld_id: bigint)
@@ -24,7 +24,7 @@ tablesStrong: dict[str, str] = {
     );""",
     "MEntities": """CREATE TABLE IF NOT EXISTS MEntities (
     m_entities_id bigint PRIMARY KEY,
-    entity_postion TEXT NOT NULL,
+    entity_position TEXT NOT NULL,
     birthday INTEGER NOT NULL,
     entity_type INTEGER NOT NULL
     );""",
@@ -50,7 +50,7 @@ tablesWeak: dict[str, str] = {
     "Dirt": """CREATE TABLE IF NOT EXISTS Dirt (
 
     absolute_position TEXT NOT NULL UNIQUE,
-    hasGras INTEGER DEFAULT 0,
+    hasGrass INTEGER DEFAULT 0,
 
     PRIMARY KEY(absolute_position),
 

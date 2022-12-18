@@ -1,15 +1,21 @@
 class Logger:
-    def log(*data) -> None:
+    # log a message to the console and the GUI
+    # first parameter must be a str, the rest can be further data of any printable type
+    def log(*data: tuple) -> None:
         other = list(data)[1::]
-        print(data[0], other)
+        print("Log: " + data[0], other)
         # TODO, add to GUI
 
-    def error(*data) -> None:
+    # log an error to the console and the GUI
+    # first parameter must be a str, the rest can be further data of any printable type
+    def error(*data: tuple) -> None:
         other = list(data)[1::]
         print("Error: " + data[0], other)
         # TODO, add to GUI
 
-    def warn(*data) -> None:
+    # log a warning to the console and the GUI
+    # first parameter must be a str, the rest can be further data of any printable type
+    def warn(*data: tuple) -> None:
         other = list(data)[1::]
-        print("Warning: ", data[0], other)
+        print("Warning: " + data[0], other)
         # TODO, add to GUI

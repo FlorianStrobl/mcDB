@@ -1,5 +1,5 @@
-from numpy import *
-from typing import Union, Optional
+from typing import Optional, Callable, Union
+from Logger import *
 
 
 class TMP:
@@ -7,9 +7,11 @@ class TMP:
     tableName: str = ""
     columnNames: list[str] = []
 
+    # return the length of data
     def length(self) -> int:
         return len(self.data)
 
+    # return the amount of columns of the data set
     def columnLen(self) -> int:
         return len(self.columnNames)
 
@@ -21,6 +23,8 @@ class TMP:
     ) -> None:
         if not data is None:
             self.data = data
+        else:
+            self.data = []
         if not tableName is None:
             self.tableName = tableName
         if not columnNames is None:
@@ -29,16 +33,16 @@ class TMP:
     def getData(self) -> list:
         return self.data
 
+    # get [tableName, columnNames]
     def getMetaData(self) -> list[str, list[str]]:
         return [self.tableName, self.columnNames]
 
     def deepCpyData(self):
-        tmp = []
-        for v in self.data:
-            tmp.append(v)
+        tmp = [v for v in self.data]
         return tmp
 
-    def filterData(self, _lambda) -> list:
+    # returns a deepCpy array of the data which got filtered with the lambda
+    def filterData(self, _lambda: Callable[[any], bool]) -> list:
         tmp = self.deepCpyData()
         arr = []
         for i in range(len(tmp)):
@@ -46,28 +50,30 @@ class TMP:
                 arr.append(tmp[i])
         return arr
 
-    def mapData(self, _lambda) -> list:
-        arr = self.deepCpyData()
-        for i in range(len(arr)):
-            arr[i] = _lambda(arr[i])
+    # returns a deepCpy array of the data edited for each element with the lambda
+    def mapData(self, _lambda: Callable[[any], any]) -> list:
+        arr = [_lambda(v) for v in self.deepCpyData()]
         return arr
 
-    def sortData(self, _lambda) -> list:
-        def quickSort(arr: list, start: Optional[int] = None, end: Optional[int] = None) -> None:
+    # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
+    def sortData(self, _lambda: Callable[[any, any], int]) -> list:
+        def quickSort(
+            arr: list, start: Optional[int] = None, end: Optional[int] = None
+        ) -> None:
             def partition(arr: list, _start: int, _end: int) -> int:
                 pivot = arr[_end]
-                i = _start-1
+                i = _start - 1
                 for j in range(_start, _end):
                     if _lambda(arr[j], pivot) < 0:
                         i += 1
-                        (arr[i], arr[j]) = (arr[j], arr[i]) # swap
-                (arr[i+1], arr[_end]) = (arr[_end], arr[i+1]) # swap
-                return i+1
+                        (arr[i], arr[j]) = (arr[j], arr[i])  # swap
+                (arr[i + 1], arr[_end]) = (arr[_end], arr[i + 1])  # swap
+                return i + 1
 
             if start is None:
                 start = 0
             if end is None:
-                end = len(arr)-1
+                end = len(arr) - 1
 
             if start < end:
                 pi = partition(arr, start, end)
@@ -82,8 +88,8 @@ class TMP:
 
         tmp = self.deepCpyData()
         quickSort(tmp)
-        #bubbleSort(tmp)
+        # bubbleSort(tmp)
         return tmp
 
     def printThis(self) -> None:
-        print(self.getData())
+        Logger.log(self.getData())
