@@ -3,7 +3,7 @@ from Logger import *
 
 
 class TMP:
-    data: list = []
+    data: list[any] = []
     tableName: str = ""
     columnNames: list[str] = []
 

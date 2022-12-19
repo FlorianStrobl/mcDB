@@ -15,13 +15,6 @@ class HelperFuncs:
             UIDs.append(uuid.uuid4().hex)
         return UIDs
 
-    def generateServernames(n: int = 1, namePool: list[str] = names1) -> list[str]:
-        possibleNames = namePool.splitlines()
-        names = []
-        while len(names) < n:
-            names.append(random.choice(possibleNames))
-        return names
-
     def generateIcons(n: int = 1) -> list[Optional[str]]:
         icons = []
         for i in range(n):
@@ -36,6 +29,12 @@ class HelperFuncs:
         for i in range(n):
             icons.append("https://mc-skin/" + uuid.uuid4().hex)
         return icons
+
+    def generateBoolean(n: int = 1) -> list[int]:
+        bools = []
+        for i in range(n):
+            bools.append(int(random.random() < 0.5))
+        return bools
 
     # uses current time and adds/subtracts 0s to 10000000s (about 115 days)
     def generateTimestamp(n: int = 1) -> list[int]:
@@ -55,12 +54,6 @@ class HelperFuncs:
             values.append(int(random.random() * maxVal))
         return values
 
-    def generateBoolean(n: int = 1) -> list[int]:
-        bools = []
-        for i in range(n):
-            bools.append(int(random.random() < 0.5))
-        return bools
-
     # generate positions with the format (int, int, int) from 0 to MAX_VAL
     def generateAbsolutePosition(n: int = 1, maxVal: int = 30_000_000) -> list[str]:
         positions = []
@@ -76,14 +69,12 @@ class HelperFuncs:
             )
         return positions
 
-    # generate roles which can be "Admin", "Moderator", "Player"
-    def generateRoles(
-        n: int = 1, possibleRoles: list[str] = ["Admin", "Moderator", "Player"]
-    ) -> list[str]:
-        roles = []
-        while len(roles) < n:
-            roles.append(random.choice(possibleRoles))
-        return roles
+    def generateServernames(n: int = 1, namePool: list[str] = names1) -> list[str]:
+        possibleNames = namePool.splitlines()
+        names = []
+        while len(names) < n:
+            names.append(random.choice(possibleNames))
+        return names
 
     def generateUsernames(n: int = 1, namePool: list[str] = names2) -> list[str]:
         possibleNames = namePool.splitlines()
@@ -92,6 +83,15 @@ class HelperFuncs:
         while len(names) < n:
             names.append(random.choice(possibleNames))
         return names
+
+    # generate roles which can be "Admin", "Moderator", "Player"
+    def generateRoles(
+        n: int = 1, possibleRoles: list[str] = ["Admin", "Moderator", "Player"]
+    ) -> list[str]:
+        roles = []
+        while len(roles) < n:
+            roles.append(random.choice(possibleRoles))
+        return roles
 
     def convertUIDStrToInt(uid: str) -> int:
         return int(uid, 16)
