@@ -49,15 +49,39 @@ def dropAllTables(cursor) -> None:
     cursor.connection.commit()
 
 
-# sqlite3: INSERT INTO, random values
+# fill all tables with random data
 def fillAllTablesRand(cursor, nr: int = 1) -> None:
     for table in getAllTableStr()[0]:
         # switch which generates the correct data,
         # INSERT INTO the table, and commits() it to the tables
+        tmpData = []
+        if table == "Serverworld":
+            tmpData = GTD.generateServerworlds(nr)
+        elif table == "Player":
+            tmpData = GTD.generatePlayers(nr)
+        elif table == "MEntities":
+            tmpData = GTD.generateMEntities(nr)
+        elif table == "Block":
+            tmpData = GTD.generateBlocks(nr)
+        elif table == "Wood":
+            tmpData = GTD.generateWoods(nr)
+        elif table == "Dirt":
+            tmpData = GTD.generateDirt(nr)
+        elif table == "plays":
+            tmpData = GTD.generatePlays(nr)
+        elif table == "populatedBy":
+            tmpData = GTD.generatePopulatedBy(nr)
+        elif table == "buildOf":
+            tmpData = GTD.generateBuildOf(nr)
+
+        # insert the generated data into the DB
+        insertIntoTable(cursor, table, tmpData)
+
+# SQLite3: INSERT INTO values for a certain table
+def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
         _data = None  # data for potential error message
         try:
             if table == "Serverworld":
-                tmpData = GTD.generateServerworlds(nr)
                 for data in tmpData:
                     _data = data
                     tmpPart = "null"
@@ -67,28 +91,24 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', {tmpPart})"
                     )
             elif table == "Player":
-                tmpData = GTD.generatePlayers(nr)
                 for data in tmpData:
                     _data = data
                     cursor.execute(
                         f"INSERT INTO Player (player_id, username, skin) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
                     )
             elif table == "MEntities":
-                tmpData = GTD.generateMEntities(nr)
                 for data in tmpData:
                     _data = data
                     cursor.execute(
                         f"INSERT INTO MEntities (m_entities_id, entity_position, birthday, entity_type) VALUES ({data[0]}, '{data[1]}', {data[2]}, {data[3]})"
                     )
             elif table == "Block":
-                tmpData = GTD.generateBlocks(nr)
                 for data in tmpData:
                     _data = data
                     cursor.execute(
                         f"INSERT INTO Block (absolute_position, block_type) VALUES ('{data[0]}', {data[1]})"
                     )
             elif table == "Wood":
-                tmpData = GTD.generateWoods(nr)
                 for data in tmpData:
                     _data = data
                     # TODO absolute_position has to exist in Block
@@ -96,7 +116,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Wood (absolute_position, isOnFire) VALUES ('{data[0]}', {data[1]})"
                     )
             elif table == "Dirt":
-                tmpData = GTD.generateDirt(nr)
                 for data in tmpData:
                     _data = data
                     # TODO absolute_position has to exist in Block
@@ -104,7 +123,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO Dirt (absolute_position, hasGrass) VALUES ('{data[0]}', {data[1]})"
                     )
             elif table == "plays":
-                tmpData = GTD.generatePlays(nr)
                 for data in tmpData:
                     _data = data
                     # TODO player_id and serverworld_id have to exist
@@ -112,7 +130,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES ({data[0]}, {data[1]}, {data[2]}, '{data[3]}', '{data[4]}')"
                     )
             elif table == "populatedBy":
-                tmpData = GTD.generatePopulatedBy(nr)
                 for data in tmpData:
                     _data = data
                     # TODO m_entities_id and serverworld_id have to exist
@@ -120,7 +137,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                         f"INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES ({data[0]}, {data[1]})"
                     )
             elif table == "buildOf":
-                tmpData = GTD.generateBuildOf(nr)
                 for data in tmpData:
                     _data = data
                     # TODO absolute_position and serverworld_id have to exist
@@ -130,7 +146,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
         except:
             Logger.error(f"while inserting data into {table} with the data:", _data)
         cursor.connection.commit()
-
 
 # sqlite3: SELECT
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")

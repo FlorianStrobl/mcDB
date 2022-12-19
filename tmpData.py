@@ -1,5 +1,9 @@
+import sys
+sys.path.append('./Backend')
+
 from typing import Optional, Callable, Union
 from Logger import *
+import SQL
 
 
 class TMP:
@@ -93,3 +97,16 @@ class TMP:
 
     def printThis(self) -> None:
         Logger.log(self.getData())
+
+# SQLite3: TMP -> Table
+def updateDataInDB(cursor, data: TMP) -> None:
+    if data.tableName is None:
+        return # no data to save
+
+    columns = data.columnNames
+
+    # SQLite3 update and insert
+    # get current data to check if it has to be updated or inserted new
+    #curData = SQL.selectTable(cursor, data.tableName)
+    #curDataColumns = SQL.selectTableColumns(cursor, data.tableName)
+    SQL.insertIntoTable(cursor, data.tableName, data.data)

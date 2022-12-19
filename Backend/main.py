@@ -9,18 +9,18 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 10)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 3)  # fill random data into the tables
 # Start UI
 
-table = "plays"
+table = "Dirt"
 tmp = TMP()
 tmp.setData(
     data=SQL.selectTable(cursor, table),
     columnNames=SQL.selectTableColumns(cursor, table),
     tableName=table,
 )
-tmp.setData(tmp.mapData(lambda x: x))
-print(tmp.getData()[0])
+tmp.setData(tmp.mapData(lambda x: [x[0][1::], x[1]]))
+updateDataInDB(cursor, tmp)
 
 """
 1. DROP all TABLES
