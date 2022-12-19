@@ -1,5 +1,6 @@
 import sys
-sys.path.append('./Backend')
+
+sys.path.append("./Backend")
 
 from typing import Optional, Callable, Union
 from Logger import *
@@ -98,15 +99,42 @@ class TMP:
     def printThis(self) -> None:
         Logger.log(self.getData())
 
+
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
-    if data.tableName is None:
-        return # no data to save
+    if data.tableName is None or data.length() == 0:
+        return  # no data to save
 
+    def samePrimaryKey(
+        newData: list[any],
+        newDataColumns: list[str],
+        realData: list[any],
+        tableName: str,
+    ):
+        return False
+
+    # the current colums
     columns = data.columnNames
+    # the usuall colums of the table
+    curTableColumns = SQL.selectTableColumns(cursor, data.tableName)
 
-    # SQLite3 update and insert
-    # get current data to check if it has to be updated or inserted new
-    #curData = SQL.selectTable(cursor, data.tableName)
-    #curDataColumns = SQL.selectTableColumns(cursor, data.tableName)
-    SQL.insertIntoTable(cursor, data.tableName, data.data)
+    # get current data to check for each value, if it has
+    # to be just updated (only the changes) or it is a new primary key => insert into
+    curTableData = SQL.selectTable(cursor, data.tableName)
+
+    return
+    # SQLite3 update or insert for each data
+    for curData in curTableData:
+        thisDataWasUpdated = False
+        for d in data.data:
+            if samePrimaryKey(d, columns, curData, data.tableName):
+                # update the CHANGES (aka if there are missing columns
+                # check the "columns" and
+
+                # TODO, not ACTUALLY update the data, but delete the current row
+                # (and save before removed columns) and save it completetly
+                # because of the ordering
+                thisDataWasUpdate = True
+        if thisDataWasUpdate == False:
+            # could error because of missing or added columns
+            SQL.insertIntoTable(cursor, data.tableName, data.data)

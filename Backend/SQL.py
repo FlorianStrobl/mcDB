@@ -39,7 +39,7 @@ def createAllTables(cursor) -> None:
     cursor.connection.commit()
 
 
-# sqlite3: DROP TABLE
+# sqlite3: DROP TABLE (all)
 def dropAllTables(cursor) -> None:
     for key in getAllTableStr()[0]:
         try:
@@ -48,6 +48,13 @@ def dropAllTables(cursor) -> None:
             Logger.error("while dropping table", key)
     cursor.connection.commit()
 
+# sqlite3: DROP TABLE (single)
+def dropTable(cursor, tableName: str) -> None:
+    try:
+        cursor.execute(f"DROP TABLE IF EXISTS {tableName};")
+    except:
+        Logger.error("while dropping table", tableName)
+    cursor.connection.commit()
 
 # fill all tables with random data
 def fillAllTablesRand(cursor, nr: int = 1) -> None:
@@ -146,6 +153,11 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
         except:
             Logger.error(f"while inserting data into {table} with the data:", _data)
         cursor.connection.commit()
+
+# SQLite3: UPDATE
+def updateDataInTable(cursor, table: str, newData: list[any]) -> None:
+    # TODO
+    return None
 
 # sqlite3: SELECT
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
