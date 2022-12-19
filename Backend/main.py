@@ -4,6 +4,7 @@ import SQL
 from TmpData import *
 from Logger import *
 
+# TODO, TMP.sort() needs to be a stable sort
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
