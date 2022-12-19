@@ -113,14 +113,18 @@ def updateDataInDB(cursor, data: TMP) -> None:
     ):
         return False
 
+    SQL.dropTable(cursor, data.tableName)
+    SQL.createAllTables(cursor)
+    SQL.insertIntoTable(cursor, data.tableName, data.data)
+
     # the current colums
-    columns = data.columnNames
+    #columns = data.columnNames
     # the usuall colums of the table
-    curTableColumns = SQL.selectTableColumns(cursor, data.tableName)
+    #curTableColumns = SQL.selectTableColumns(cursor, data.tableName)
 
     # get current data to check for each value, if it has
     # to be just updated (only the changes) or it is a new primary key => insert into
-    curTableData = SQL.selectTable(cursor, data.tableName)
+    #curTableData = SQL.selectTable(cursor, data.tableName)
 
     return
     # SQLite3 update or insert for each data
