@@ -1,10 +1,9 @@
 import sys
-
 sys.path.append("./Backend")
-
 from typing import Optional, Callable, Union
 from Logger import *
 import SQL
+from InputStrToMapFilterSort import *
 
 
 class TMP:
@@ -20,6 +19,7 @@ class TMP:
     def columnLen(self) -> int:
         return len(self.columnNames)
 
+    # None values will be replaced by the current saved value
     def setData(
         self,
         data: Optional[list],
@@ -35,29 +35,53 @@ class TMP:
         if not columnNames is None:
             self.columnNames = columnNames
 
-    def getData(self) -> list:
+    def getData(self) -> list[any]:
         return self.data
 
     # get [tableName, columnNames]
     def getMetaData(self) -> list[str, list[str]]:
         return [self.tableName, self.columnNames]
 
-    def deepCpyData(self):
+    def deepCpyData(self) -> list[any]:
         tmp = [v for v in self.data]
         return tmp
 
+    # return a deep cpy of all the current object
+    def deepCpy(self):
+        tmp = TMP()
+        tmp.data = self.deepCpyData()
+        tmp.columnNames = [v for v in self.columnNames]
+        tmp.tableName = "".join([v for v in self.tableName])
+        return tmp
+
     # returns a deepCpy array of the data which got filtered with the lambda
-    def filterData(self, _lambda: Callable[[any], bool]) -> list:
+    def filterData(self, userStr: str) -> list:
         tmp = self.deepCpyData()
         arr = []
         for i in range(len(tmp)):
-            if _lambda(tmp[i]):
+            ans = userStrToLambda(userStr, "filter", self.columnNames, tmp[i])
+            if ans is None:
+                Logger.error("couldn't apply a filter:", userStr, self.columnNames, tmp[i])
+                return None
+            if ans:
                 arr.append(tmp[i])
         return arr
 
     # returns a deepCpy array of the data edited for each element with the lambda
-    def mapData(self, _lambda: Callable[[any], any]) -> list:
-        arr = [_lambda(v) for v in self.deepCpyData()]
+    def mapData(self, userStr: str) -> list:
+        arr = []
+        for v in self.deepCpyData():
+            ans = userStrToLambda(userStr, "map", self.columnNames, v)
+            if ans is None:
+                Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
+                return None
+            i = self.columnNames.index(ans[0])
+            # TEST: i = -1
+            if i == -1:
+                Logger.error("map coudln't find the column:", ans[0], self.columnNames)
+                return None
+            v[i] = ans[1]
+            arr.append(v)
         return arr
 
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
@@ -97,12 +121,12 @@ class TMP:
         return tmp
 
     def printThis(self) -> None:
-        Logger.log(self.getData())
+        Logger.log("print tmp", self.getData())
 
 
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
-    if data.tableName is None or data.length() == 0:
+    if data.tableName is None:
         return  # no data to save
 
     def samePrimaryKey(

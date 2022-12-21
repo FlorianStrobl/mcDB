@@ -38,15 +38,6 @@ def createAllTables(cursor) -> None:
             Logger.error("while trying to create table", tableStr)
     cursor.connection.commit()
 
-# def createTable(cursor, tableName: str) -> None:
-#     # from all the tables
-#     for tableStr in getAllTableStr():
-#         try:
-#             if tableName in tableStr:
-#                 cursor.execute(tableStr)
-#         except:
-#             Logger.error("while trying to create table", tableStr)
-#     cursor.connection.commit()
 
 # sqlite3: DROP TABLE (all)
 def dropAllTables(cursor) -> None:

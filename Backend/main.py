@@ -3,14 +3,19 @@ import sqlite3
 import SQL
 from TmpData import *
 from Logger import *
+import random
+from InputStrToMapFilterSort import *
+
+#print(userStrToLambda("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
 
 # TODO, TMP.sort() needs to be a stable sort
+# TODO, try .sort() on two datas (or on one data)
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 367)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 5)  # fill random data into the tables
 # Start UI
 
 table = "Dirt"
@@ -20,7 +25,12 @@ tmp.setData(
     columnNames=SQL.selectTableColumns(cursor, table),
     tableName=table,
 )
-#tmp.setData(tmp.mapData(lambda x: [x[0], 13]))
+#tmp.printThis()
+tmp.setData(tmp.mapData("hasGrass <- 857"))
+tmp.setData(tmp.filterData("hasGrass == 857"))
+tmp.setData(tmp.sortData(lambda x, y: x[1] - y[1]))
+#tmp.printThis()
+
 updateDataInDB(cursor, tmp)
 
 """
