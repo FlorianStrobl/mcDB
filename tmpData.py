@@ -4,7 +4,7 @@ from typing import Optional, Callable, Union
 from Logger import *
 import SQL
 from InputStrToMapFilterSort import *
-
+import random
 
 class TMP:
     data: list[any] = []
@@ -59,7 +59,7 @@ class TMP:
         tmp = self.deepCpyData()
         arr = []
         for i in range(len(tmp)):
-            ans = userStrToLambda(userStr, "filter", self.columnNames, tmp[i])
+            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i])
             if ans is None:
                 Logger.error("couldn't apply a filter:", userStr, self.columnNames, tmp[i])
                 return None
@@ -67,11 +67,22 @@ class TMP:
                 arr.append(tmp[i])
         return arr
 
+    # map, filter or sort depending on the string
+    def editData(self, userStr: str, mode: str = "auto") -> Union[list, None]:
+        mode = getMode(userStr, mode)
+        if mode == "map":
+            return self.mapData(userStr)
+        elif mode == "filter":
+            return self.filterData(userStr)
+        elif mode == "sort":
+            return self.sortData(userStr)
+        return None
+
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> list:
         arr = []
         for v in self.deepCpyData():
-            ans = userStrToLambda(userStr, "map", self.columnNames, v)
+            ans = executeUserStr(userStr, "map", self.columnNames, v)
             if ans is None:
                 Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
                 return None
@@ -85,7 +96,7 @@ class TMP:
         return arr
 
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
-    def sortData(self, _lambda: Callable[[any, any], int]) -> list:
+    def sortData(self, userStr: str) -> list:
         def quickSort(
             arr: list, start: Optional[int] = None, end: Optional[int] = None
         ) -> None:
@@ -93,7 +104,11 @@ class TMP:
                 pivot = arr[_end]
                 i = _start - 1
                 for j in range(_start, _end):
-                    if _lambda(arr[j], pivot) < 0:
+                    ans = executeUserStr(userStr, "sort", self.columnNames, [arr[j], pivot])
+                    if ans is None:
+                        Logger.error("sorting failed with values:", ans, userStr, self.columnNames, [arr[j], pivot])
+                        return None
+                    if ans < 0:
                         i += 1
                         (arr[i], arr[j]) = (arr[j], arr[i])  # swap
                 (arr[i + 1], arr[_end]) = (arr[_end], arr[i + 1])  # swap
@@ -109,11 +124,11 @@ class TMP:
                 quickSort(arr, start, pi - 1)
                 quickSort(arr, pi + 1, end)
 
-        def bubbleSort(arr: list) -> None:
-            for i in range(len(arr)):
-                for y in range(i, len(arr)):
-                    if _lambda(arr[i], arr[y]) > 0:
-                        (arr[i], arr[y]) = (arr[y], arr[i])
+        # def bubbleSort(arr: list) -> None:
+        #     for i in range(len(arr)):
+        #         for y in range(i, len(arr)):
+        #             if _lambda(arr[i], arr[y]) > 0:
+        #                 (arr[i], arr[y]) = (arr[y], arr[i])
 
         tmp = self.deepCpyData()
         quickSort(tmp)

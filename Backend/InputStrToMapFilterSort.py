@@ -1,22 +1,33 @@
 import re
 from Logger import *
 from typing import Union
+import random
+import numpy
+import math
+
+def getMode(string: str, mode: str = "auto"):
+    if mode == "auto":
+      # try getting the current mode
+      if re.search("^( *)?[A-Za-z_][A-Za-z0-9_]* *<-.+ *", string) is not None:
+        # match identifier <= ANY
+        mode = "map"
+      elif re.search("^.*[a-zA-Z_][a-zA-Z0-9_]*(1|2)(.|\n)*$", string):
+        # match ANY test1|2 ANY
+        # TODO, could be "test1" inside the str
+        mode = "sort"
+      else:
+        mode = "filter"
+    return mode
 
 # mode: ["auto", "filter", "map", "sort"], TODO add func return type
-def userStrToLambda(string: str, mode: str = "auto", columns: list[str] = [], data: list[any] = []) -> Union[None, int, bool, any]:
-  if mode == "auto":
-    # try getting the current mode
-    if re.search("^( *)?[A-Za-z_][A-Za-z0-9_]* *<-.+ *", string) is not None:
-      # match identifier <= ANY
-      mode = "map"
-    elif re.search("^.*[a-zA-Z_][a-zA-Z0-9_]*(1|2)(.|\n)*$", string):
-      # match ANY test1|2 ANY
-      # TODO, could be "test1" inside the str
-      mode = "sort"
-    else:
-      mode = "filter"
+def executeUserStr(string: str, mode: str = "auto", columns: list[str] = [], data: list[any] = []) -> Union[None, int, bool, any]:
+  mode = getMode(string, mode)
 
-
+  vals = {
+    "random": random,
+    "math": math,
+    "numpy": numpy
+  }
   if mode == "map":
     # create a lambda with the signature: Callable[[any], bool]
     code = re.split("<-", string, 1) # split on first occurence
@@ -41,32 +52,32 @@ def userStrToLambda(string: str, mode: str = "auto", columns: list[str] = [], da
     # replace all column names, with its current data value
     # TODO, what about id4 (id is a column, but it replaces it to (val)4
     for index,column in enumerate(columns):
-      code = code.replace(column, f"({str(data[index])})")
-
+      vals[column] = data[index]
 
     try:
-      return [toUpdateColumn, fixType(eval(code))]
+      return [toUpdateColumn, fixType(eval(code, vals))]
     except:
       Logger.error("couldn't evaluate the following code:", code)
       return None
   elif mode == "filter":
     code = string
     for index,column in enumerate(columns):
-      code = code.replace(column, f"({str(data[index])})")
+      vals[column] = data[index]
 
     try:
-      return bool(eval(code))
+      return bool(eval(code, vals))
     except:
       Logger.error("couldn't evaluate the filter code:", code)
       return None
   elif mode == "sort":
     code = string
     for index,column in enumerate(columns):
-      code = code.replace(str(column) + "1", f"({str(data[0][index])})")
-      code = code.replace(str(column) + "2", f"({str(data[1][index])})")
+      vals[str(column) + "1"] = data[0][index]
+      vals[str(column) + "2"] = data[1][index]
 
     try:
-      return int(eval(code))
+      val = int(eval(code, vals))
+      return val
     except:
       Logger.error("couldn't evaluate the sort code:", code)
       return None
