@@ -45,6 +45,9 @@ def executeUserStr(string: str, mode: str = "auto", columns: list[str] = [], dat
       Logger.error("none existent column in map expression:", toUpdateColumn)
       return None
     fixType = type(data[_i])
+    if fixType is type(None):
+      fixType = lambda x: x # icon hardcoded to identity
+      # because of None and Str
 
 
     code = code[1] # get the pure code

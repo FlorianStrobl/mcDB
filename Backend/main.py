@@ -19,7 +19,7 @@ SQL.createAllTables(cursor)  # create all tables
 SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
 # Start UI
 
-table = "Dirt"
+table = "Serverworld"
 tmp = TMP()
 tmp.setData(
     data=SQL.selectTable(cursor, table),
@@ -27,7 +27,7 @@ tmp.setData(
     tableName=table,
 )
 
-tmp.setData(tmp.editData("""hasGrass <- random.random() * 5 && True if hasGrass < 3 else False && hasGrass1 - hasGrass2"""))
+tmp.setData(tmp.editData("""icon <- 'test' if icon is None else icon"""))
 
 updateDataInDB(cursor, tmp)
 
