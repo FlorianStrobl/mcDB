@@ -27,7 +27,7 @@ tmp.setData(
     tableName=table,
 )
 
-tmp.setData(tmp.editData("""hasGrass <- random.random() * 400 && hasGrass < 250 && hasGrass2 - hasGrass1"""))
+tmp.setData(tmp.editData("""hasGrass <- random.random() * 5 && True if hasGrass < 3 else False && hasGrass1 - hasGrass2"""))
 
 updateDataInDB(cursor, tmp)
 
