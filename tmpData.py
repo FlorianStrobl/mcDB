@@ -69,14 +69,20 @@ class TMP:
 
     # map, filter or sort depending on the string
     def editData(self, userStr: str, mode: str = "auto") -> Union[list, None]:
-        mode = getMode(userStr, mode)
-        if mode == "map":
-            return self.mapData(userStr)
-        elif mode == "filter":
-            return self.filterData(userStr)
-        elif mode == "sort":
-            return self.sortData(userStr)
-        return None
+        curVals = self.deepCpy()
+        cmds = userStr.split("&&") # get all the different cmds
+        for cmd in cmds:
+            cmd = cmd.strip()
+            mode = getMode(cmd)
+            if mode == "map":
+                curVals.data = TMP.mapData(curVals, cmd)
+            elif mode == "filter":
+                curVals.data = TMP.filterData(curVals, cmd)
+            elif mode == "sort":
+                curVals.data = TMP.sortData(curVals, cmd)
+
+        return curVals.data
+
 
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> list:

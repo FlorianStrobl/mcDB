@@ -27,9 +27,7 @@ tmp.setData(
     tableName=table,
 )
 
-tmp.setData(tmp.mapData("hasGrass <- random.random() * 100"))
-tmp.setData(tmp.filterData("hasGrass < 50"))
-tmp.setData(tmp.sortData("hasGrass1 - hasGrass2"))
+tmp.setData(tmp.editData("""hasGrass <- random.random() * 400 && hasGrass < 250 && hasGrass2 - hasGrass1"""))
 
 updateDataInDB(cursor, tmp)
 
