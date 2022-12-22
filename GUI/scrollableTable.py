@@ -57,6 +57,10 @@ class ScrollFrame(customtkinter.CTkFrame):
             self.canvas.unbind_all("<Button-5>")
         else:
             self.canvas.unbind_all("<MouseWheel>")
+    def getPos(self):
+        self.update()
+        return self["width"]
+
 
 
 class scrollableTable(customtkinter.CTkFrame):
@@ -69,6 +73,8 @@ class scrollableTable(customtkinter.CTkFrame):
         self.app = app
 
     def fill(self,tableData):
+        tableData.append((1,2))
+        tableData.insert(0,(("","")))
         widthCurrentFrame = self.widthFrame-20
         numberColumns = len(tableData[0])
         numberRows = len(tableData)
@@ -78,6 +84,13 @@ class scrollableTable(customtkinter.CTkFrame):
                 myEntry.grid(row=row, column=col)
                 myEntry.insert(0, tableData[row][col])
 
+    def setTableHeader(self,arr,startX,y):
+        self.scrollFrame.update()
+        print(self.scrollFrame.getPos())
+        for i in range(len(arr)):
+            subWidth = (self.widthFrame-20)/len(arr)
+            customtkinter.CTkLabel(master=self.app, text=arr[i],font=("Helvetica",15,"bold"),fg_color="#2b2b2b",anchor="w").place(x = startX,y = y,width = subWidth)
+            startX += subWidth
 
     def printMsg(self, msg):
         print(msg)

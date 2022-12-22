@@ -1,16 +1,14 @@
 # Schnittestelle von GUI
 """
 Funktionen:
-setTables(tables[])
+setTables(columnsNames, tables[])
 ...
 
 """
 
-
 def onTableButtonClick(tableName):
     print(tableName)
 
-# Wird mehrmals aufgerufen
-# changes: [x (from 0),y (from 0),newText]
+# changes: [[row,column,newText]]
 def onTableSave(tableName, changes):
     print(tableName, changes)
