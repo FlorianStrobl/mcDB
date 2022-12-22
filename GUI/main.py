@@ -3,14 +3,15 @@ import customtkinter
 from scrollableTable import scrollableTable
 from interface import *
 import random
+import time
 
 customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")
 
 app = customtkinter.CTk()  # create CTk window like you do with the Tk window
-app.geometry("800x450")
+app.geometry("800x500")
 
-frame = customtkinter.CTkFrame(master=app, width=200, height=420, corner_radius=10)
+frame = customtkinter.CTkFrame(master=app, width=200, height=390, corner_radius=10)
 frame.place(x=20, y=10)
 
 label = customtkinter.CTkLabel(
@@ -47,8 +48,14 @@ def spawnTableButtons():
 spawnTableButtons()
 
 
-table = scrollableTable(app,x=250,y=75,width=500,height=300)
-table.fill([[random.randint(0,1000),"t"] for i in range(20)])
+table = scrollableTable(app,tableData=[["Welt","tsdsddds"],[[random.randint(0,1000),"t"] for i in range(100)]],pos=(250,100,500,300))
+table.setTableHeader(["bebe","bebe"])
+table.fill([[random.randint(0,1000),"t"] for i in range(10)])
+table.appendEmptyRowOnTop()
 
-table.setTableHeader(["Welt","tsdsddds"],255,45,250,10,adding=19)
+button = customtkinter.CTkButton(master=app,text="Add Row",command=table.appendEmptyRowOnTop)
+button.place(x = 250, y = 420, width=75, height=50)
+
+
+
 app.mainloop()
