@@ -35,7 +35,7 @@ tablesNames = {
 xStart = 60
 def placeTableButton(title, event):
     global xStart
-    customtkinter.CTkButton(master=app, text=title, command=event).place(x=40, y=xStart)
+    customtkinter.CTkButton(master=app, text=title, command=event, fg_color="#343638").place(x=45, y=xStart)
 
     xStart += 35
 
@@ -47,11 +47,8 @@ def spawnTableButtons():
 spawnTableButtons()
 
 
-table = scrollableTable(app,500)
-table.place(x=250,y=75, width=500, height=300)
+table = scrollableTable(app,x=250,y=75,width=500,height=300)
 table.fill([[random.randint(0,1000),"t"] for i in range(20)])
-print("spawned")
 
-table.setTableHeader(["Welt","t"],250,45)
-
+table.setTableHeader(["Welt","tsdsddds"],255,45,250,10,adding=19)
 app.mainloop()

@@ -64,33 +64,62 @@ class ScrollFrame(customtkinter.CTkFrame):
 
 
 class scrollableTable(customtkinter.CTkFrame):
-    def __init__(self, app,widthFrame):
+    def __init__(self, app,x,y,width,height):
         customtkinter.CTkFrame.__init__(self, app)
         self.scrollFrame = ScrollFrame(self)
-        self.widthFrame = widthFrame
+
         self.scrollFrame.pack(side="top", fill="both", expand=True)
         self.currentEntrys = []
         self.app = app
+        self.colors = ["#343638","#2d2f31"]
+        self.actionColumnWidth = 25
+
+        self.x = x
+        self.y = y
+        self.widthFrame = width
+        self.heightFrame = height
+
+        #h:300; w:500 200 75
+        self.place(x = self.x,y = self.y, width = self.widthFrame,height = self.heightFrame)
 
     def fill(self,tableData):
-        tableData.append((1,2))
-        tableData.insert(0,(("","")))
+        #tableData.append((1,2))
+        #tableData.insert(0,(("","")))
         widthCurrentFrame = self.widthFrame-20
         numberColumns = len(tableData[0])
-        numberRows = len(tableData)
-        for row in range(numberRows):
-            for col in range(numberColumns):
-                myEntry = customtkinter.CTkEntry(self.scrollFrame.viewPort,corner_radius=0,width=widthCurrentFrame/numberColumns)
-                myEntry.grid(row=row, column=col)
-                myEntry.insert(0, tableData[row][col])
 
-    def setTableHeader(self,arr,startX,y):
+        numberRows = len(tableData)
+        colorIndex = 0
+        for row in range(numberRows):
+            for col in range(numberColumns+1):
+                if(col < numberColumns):
+                    myEntry = customtkinter.CTkEntry(self.scrollFrame.viewPort,corner_radius=0,width=(widthCurrentFrame - self.actionColumnWidth)/numberColumns,fg_color=self.colors[colorIndex % 2])
+                    myEntry.grid(row=row, column=col)
+                    try:
+                        myEntry.insert(0, tableData[row][col])
+                    except:
+                        myEntry.insert(0, "Data not found")
+                else:
+                    myEntry = customtkinter.CTkButton(self.scrollFrame.viewPort,text="🗑",  corner_radius=0,width=self.actionColumnWidth,fg_color=self.colors[colorIndex % 2])
+                    myEntry.grid(row=row, column=col)
+
+            colorIndex += 1
+
+    def setTableHeader(self,arr,startX,y,fillstart=None,fillstartLength = None,adding = 0):
+        acL = self.actionColumnWidth
+        if(fillstart != None and fillstartLength != None):
+            customtkinter.CTkLabel(master=self.app, text="",font=("Helvetica",15,"bold"),fg_color="#2b2b2b",anchor="w").place(x = fillstart,y = y,width = fillstartLength)
+
+
+
         self.scrollFrame.update()
         print(self.scrollFrame.getPos())
         for i in range(len(arr)):
-            subWidth = (self.widthFrame-20)/len(arr)
+            subWidth = (self.widthFrame-20 -acL)/len(arr)
             customtkinter.CTkLabel(master=self.app, text=arr[i],font=("Helvetica",15,"bold"),fg_color="#2b2b2b",anchor="w").place(x = startX,y = y,width = subWidth)
             startX += subWidth
-
+        customtkinter.CTkLabel(master=self.app, text="",fg_color="#2b2b2b",anchor="w").place(x = startX,y = y,width = acL)
+        startX+=acL-3
+        customtkinter.CTkLabel(master=self.app, text="",fg_color="#2b2b2b",anchor="w").place(x = startX,y = y,width = adding)
     def printMsg(self, msg):
         print(msg)
