@@ -50,7 +50,7 @@ spawnTableButtons()
 
 table = scrollableTable(app,tableData=[["Welt","tsdsddds"],[[random.randint(0,1000),"t"] for i in range(100)]],pos=(250,100,500,300))
 table.setTableHeader(["bebe","bebe"])
-table.fill([[random.randint(0,1000),"t"] for i in range(10)])
+table.fill([[random.randint(0,1000),"t"] for i in range(100)])
 table.appendEmptyRowOnTop()
 
 button = customtkinter.CTkButton(master=app,text="Add Row",command=table.appendEmptyRowOnTop)
