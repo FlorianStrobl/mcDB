@@ -6,7 +6,7 @@ from Logger import *
 import random
 from InputStrToMapFilterSort import *
 
-#print(executeUserStr("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
+# print(executeUserStr("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
 
 # TODO, TMP.sort() needs to be a stable sort
 # TODO, try .sort() on two datas (or on one data)
@@ -27,7 +27,7 @@ tmp.setData(
     tableName=table,
 )
 
-tmp.setData(tmp.editData("""icon <- 'test' if icon is None else icon"""))
+#tmp.setData(tmp.editData("""icon <- 'test' if icon is None else icon"""))
 
 updateDataInDB(cursor, tmp)
 
