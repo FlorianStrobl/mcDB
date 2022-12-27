@@ -67,6 +67,8 @@ class scrollableTable(customtkinter.CTkFrame):
         self.colors = ["#343638","#2d2f31"]
         self.actionColumnWidth = 25
 
+        self.numberCreatedRows = 0
+
         self.x = pos[0]
         self.y = pos[1]
         self.widthFrame = pos[2]
@@ -77,11 +79,28 @@ class scrollableTable(customtkinter.CTkFrame):
         # inkl. Mülleimer
         self.tableDataBodyWidgets = []
         self.tableDataHeaderWidgets = []
-
+        self.colorIndex = 0
         self.place(x = self.x,y = self.y, width = self.widthFrame,height = self.heightFrame)
         self.setTableHeader(self.tableData[0])
         self.fill(self.tableData[1])
 
+
+        # Verlauf damit wenn bei änderungen der Tabelle die Rows trotzdem immer wiedergefunden werden können
+        # BEISPIEL:
+        # [["add"],["delete",3]]
+        # Zeichnet den Verlauf von actions auf -> SUPER Wichtig für events
+        self.steps = []
+
+    def calculateStepsFromStart(self,row):
+        # Berechnet wie die Rows ID's sein sollen relativ zu den vom Anfang also "row" hier im parameter(für den delete Event)
+        newRow = row
+        for step in self.steps:
+            if(step[0] == "add"):
+                newRow += 1
+            elif(step[0] == "delete"):
+                if(newRow > step[1]):
+                    newRow -= 1
+        return newRow
     def updateTable(self):
         self.place(x = self.x,y = self.y, width = self.widthFrame,height = self.heightFrame)
         self.setTableHeader(self.tableData[0])
@@ -98,23 +117,69 @@ class scrollableTable(customtkinter.CTkFrame):
         for element in self.tableDataHeaderWidgets:
             element.destroy()
         self.tableDataHeaderWidgets = []
-    def fill(self,tableBody,clearBefore = True):
-        if(clearBefore): self.clearTableDataBodyWidgets()
+    #aka draw function - geht nur wenn gleiche Anzahl an Columns
+    #Vorallem für bessere performance da
+    def textFill(self,tableBody):
+        # "-1" wegen den Mülleimer object
+        if(self.tableDataBodyWidgets == []):
+            return "none"
+
+        if(len(self.tableDataBodyWidgets[0])-1 != len(tableBody[0])):
+            return "none"
+
+        # -1 because there is always a müllemer
+        rowsLengthOld = len(self.tableDataBodyWidgets)
+        rowsLength = len(tableBody)
+
+        #AUSGLEICHEN DER ROWS AUF DER TABELLE:
+        rowsDifference = (rowsLengthOld - rowsLength) * -1
+       # print(rowsDifference)
+        if(rowsDifference > 0):
+            for i in range(rowsDifference):
+                self.appendEmptyRowOnTop()
+        elif(rowsDifference < 0):
+            #-1 weil es da IMMER negativ ist
+            for i in range(rowsDifference * -1):
+                self.onRemove(0)
+
+        self.tableData[1] = tableBody
+
+        # Einsetzen aller Texte von TABLEBODY in die Tabelle
+        #print(len(self.tableDataBodyWidgets))
+
+        for widgetsRowCounter in range(len(self.tableDataBodyWidgets)):
+            widgetsRow = self.tableDataBodyWidgets[widgetsRowCounter]
+            # -1 Because we want to ignore the Mülleimer
+            for widgetCounter in range(len(widgetsRow)-1):
+                inputField = widgetsRow[widgetCounter]
+                inputField.delete(0,customtkinter.END)
+                #print(widgetsRowCounter, widgetCounter)
+                inputField.insert(0,tableBody[widgetsRowCounter][widgetCounter])
+        return "succes"
+
+    def fill(self,tableBody):
+        self.steps = []
+        # Wenn die gleichen Anzahl and columns vorhanden ist wie bei der vorherigen Tabelle,
+        # ist es nicht nötig, die Tabelle komplett neu zu erstellen.
+        # --> Mann kann so die fehlenden/zu vielen rows hinzufügen/entfernen und so die Tabelle schneller generieren
+        if(self.textFill(tableBody) == "succes"):
+            return
+
+        self.clearTableDataBodyWidgets()
         #tableData.append((1,2))
         #tableData.insert(0,(("","")))
         widthCurrentFrame = self.widthFrame-20
         numberColumns = len(tableBody[0])
 
         numberRows = len(tableBody)
-        colorIndex = 0
         for row in range(numberRows):
             rowWidgets = []
             if(tableBody[row] == None):
-                    print("is none")
+                    #print("is none")
                     continue
             for col in range(numberColumns+1):
                 if(col < numberColumns):
-                    myEntry = customtkinter.CTkEntry(self.scrollFrame.viewPort,corner_radius=0,width=(widthCurrentFrame - self.actionColumnWidth)/numberColumns,fg_color=self.colors[colorIndex % 2])
+                    myEntry = customtkinter.CTkEntry(self.scrollFrame.viewPort,corner_radius=0,width=(widthCurrentFrame - self.actionColumnWidth)/numberColumns,fg_color=self.colors[self.colorIndex % 2])
                     myEntry.grid(row=row, column=col)
 
                     rowWidgets.append(myEntry)
@@ -123,10 +188,10 @@ class scrollableTable(customtkinter.CTkFrame):
                     except:
                         myEntry.insert(0, "Data not found")
                 else:
-                    deleteButton = customtkinter.CTkButton(self.scrollFrame.viewPort,text="🗑",command=lambda row=row: self.onRemove(row),  corner_radius=0,width=self.actionColumnWidth,fg_color=self.colors[colorIndex % 2])
+                    deleteButton = customtkinter.CTkButton(self.scrollFrame.viewPort,text="🗑",command=lambda row=row: self.onRemove(self.calculateStepsFromStart(row)),  corner_radius=0,width=self.actionColumnWidth,fg_color=self.colors[self.colorIndex % 2])
                     deleteButton.grid(row=row, column=col)
                     rowWidgets.append(deleteButton)
-            colorIndex += 1
+            self.colorIndex += 1
             self.tableDataBodyWidgets.append(rowWidgets)
 
             self.tableData[1] = tableBody
@@ -152,29 +217,59 @@ class scrollableTable(customtkinter.CTkFrame):
             self.tableDataHeaderWidgets.append(myLabel1)
             startX += subWidth
 
-        myLabel2 = customtkinter.CTkLabel(master=self.app, text="",fg_color="#2b2b2b",anchor="w")
-        myLabel2.place(x = startX,y = y,width = acL)
+        #myLabel2 = customtkinter.CTkLabel(master=self.app, text="d",fg_color="#2b2b2b",anchor="w")
+
+        button2 = customtkinter.CTkButton(master=self.app,text="+",command=self.appendEmptyRowOnTop,  corner_radius=0,fg_color="#343638")
+        button2.place(x = startX-5, y = y, width=acL,)
+
+        #myLabel2.place(x = startX,y = y,width = acL)
         startX+=acL-3
-        self.tableDataHeaderWidgets.append(myLabel2)
+        self.tableDataHeaderWidgets.append(button2)
+
+
 
         myLabel3 = customtkinter.CTkLabel(master=self.app, text="",fg_color="#2b2b2b",anchor="w")
         myLabel3.place(x = startX,y = y,width = adding)
         self.tableDataHeaderWidgets.append(myLabel3)
 
         self.tableData[0] = arr
-
-
     def onRemove(self,rowNumber):
-        print(rowNumber)
+        self.steps.append(["delete", rowNumber])
+        self.tableData[1].pop(rowNumber)
         for row in self.tableDataBodyWidgets[rowNumber]:
             row.destroy()
-        self.tableData[1].pop(rowNumber)
-        self.updateTableBody()
-
-
+        self.tableDataBodyWidgets.pop(rowNumber)
     def appendEmptyRowOnTop(self):
-        self.tableData[1].insert(0,["" for i in self.tableData[0]])
-        self.updateTableBody()
+        def moveAllRowsHorizontalyDownOne():
+            for y in range(len(self.tableDataBodyWidgets)):
+                widgetRow = self.tableDataBodyWidgets[y]
+                for widget in widgetRow:
+                    widget.grid(row = y + 1)
+        moveAllRowsHorizontalyDownOne()
+
+        self.numberCreatedRows +=1
+        self.steps.append(["add"])
+        numberColumns = len(self.tableData[0])
+        widthCurrentFrame = self.widthFrame-20
+        rowWidget = []
+        gridRow = 0
+        for col in range(numberColumns+1):
+                if(col < numberColumns):
+                    myEntry = customtkinter.CTkEntry(self.scrollFrame.viewPort,corner_radius=0,width=(widthCurrentFrame - self.actionColumnWidth)/numberColumns,fg_color=self.colors[self.colorIndex % 2])
+                    myEntry.grid(row=gridRow, column=col)
+
+                    rowWidget.append(myEntry)
+
+                    myEntry.insert(0, "")
+                else:
+                    deleteButton = customtkinter.CTkButton(self.scrollFrame.viewPort,text="🗑",command=lambda row=gridRow, createdRows=self.numberCreatedRows: self.onRemove(self.calculateStepsFromStart(row-createdRows)),corner_radius=0,width=self.actionColumnWidth,fg_color=self.colors[self.colorIndex % 2])
+                    deleteButton.grid(row=gridRow, column=col)
+                    rowWidget.append(deleteButton)
+        self.colorIndex += 1
+        self.tableDataBodyWidgets.insert(0, rowWidget)
+        self.tableData[1].insert(0, ["" for i in range(numberColumns)])
+       #self.tableData[1].insert(0,["" for i in self.tableData[0]])
+       #self.updateTableBody()
     def saveAllToTableData(self):
         # TODO YET
         return -1
