@@ -17,7 +17,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
 SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
-# Start UI
+
 
 table = "Serverworld"
 tmp = TMP()
@@ -30,6 +30,8 @@ tmp.setData(
 #tmp.setData(tmp.editData("""icon <- 'test' if icon is None else icon"""))
 
 updateDataInDB(cursor, tmp)
+
+# Start UI
 
 """
 1. DROP all TABLES
