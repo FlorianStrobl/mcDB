@@ -9,8 +9,9 @@ from InputStrToMapFilterSort import *
 # print(executeUserStr("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
 
 # TODO, TMP.sort() needs to be a stable sort
-# TODO, try .sort() on two datas (or on one data)
-# TODO hasGrass <- hasGrass + 1 && hasGrass > 500 && hasGrass1 - hasGrass2
+# TODO, (val1, val2) <- (354, 95834)
+# TODO return only 50 elements in tmp for getPage(nr, nrOfElemPerPage)
+# TODO foreign keys are correct
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
