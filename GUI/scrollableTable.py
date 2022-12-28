@@ -340,7 +340,6 @@ class scrollableTable(customtkinter.CTkFrame):
         self.colorIndex += 1
         self.tableDataBodyWidgets.insert(0, rowWidget)
         self.tableData[1].insert(0, ["" for i in range(numberColumns)])
-
     # self.tableData[1].insert(0,["" for i in self.tableData[0]])
     # self.updateTableBody()
     def saveAllToTableData(self):
