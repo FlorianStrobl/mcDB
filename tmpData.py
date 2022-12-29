@@ -68,18 +68,20 @@ class TMP:
         return arr
 
     # map, filter or sort depending on the string
-    def editData(self, userStr: str, mode: str = "auto") -> Union[list, None]:
+    def editData(self, userStr: str, mode: Optional[str] = None) -> Optional[list]:
         curVals = self.deepCpy()
         cmds = userStr.split("&&") # get all the different cmds
         for cmd in cmds:
             cmd = cmd.strip()
-            mode = getMode(cmd)
+            if mode is None or mode == "auto":
+                mode = getMode(cmd)
             if mode == "map":
                 curVals.data = TMP.mapData(curVals, cmd)
             elif mode == "filter":
                 curVals.data = TMP.filterData(curVals, cmd)
             elif mode == "sort":
                 curVals.data = TMP.sortData(curVals, cmd)
+            mode = None
 
         return curVals.data
 

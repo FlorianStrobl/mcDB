@@ -158,12 +158,6 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
     cursor.connection.commit()
 
 
-# sqlite3: UPDATE
-def updateDataInTable(cursor, table: str, newData: list[any]) -> None:
-    # TODO
-    return None
-
-
 # sqlite3: SELECT
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
 def selectTable(

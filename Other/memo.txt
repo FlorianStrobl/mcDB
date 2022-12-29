@@ -1,17 +1,17 @@
 merke: code screenshot VSCode addon (CodeSnap)
 https://www.yworks.com/yed-live/
 
-# Serverworld(serverworld_id: bigint, name: str, icon: str | null)
-# Player(player_id: bigint, username: str, skin: str)
-# MEntities(m_entities_id: bigint, entity_postion: str, birthday: int, entity_type: int)
-# Block(absolute_position: str, block_type: int)
+# Serverworld(_serverworld_id_: bigint, name: str, icon: Optional[str])
+# Player(_player_id_: bigint, username: str, skin: str)
+# MEntities(_m_entities_id_: bigint, entity_position: str, birthday: int, entity_type: int)
+# Block(_absolute_position_: str, block_type: int)
 
-# Wood(absolute_position: str, isOnFire: int)
-# Dirt(absolute_position: str, hasGras: int)
+# Wood(^_absolute_position_: str, isOnFire: int)
+# Dirt(^_absolute_position_: str, hasGrass: int)
 
-# plays(player_id: bigint, serverworld_id: bigint, session_begin: int, player_position: str, role: str)
-# populatedBy(m_entities_id: bigint, serverworld_id: bigint)
-# buildOf(absolute_position: str, serverworld_id: bigint)
+# plays(^_player_id_: bigint, ^_serverworld_id_: bigint, session_begin: int, player_position: str, role: str)
+# populatedBy(^_m_entities_id_: bigint, ^_serverworld_id_: bigint)
+# buildOf(^_absolute_position_: str, ^_serverworld_id_: bigint)
 
 OLD DESCRIPTION:
 

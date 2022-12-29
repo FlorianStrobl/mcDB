@@ -712,7 +712,7 @@
 			<data key="d4">
 				<x:List>
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
-						<y:Label.Text><![CDATA[build of]]></y:Label.Text>
+						<y:Label.Text>buildOf</y:Label.Text>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="WHITE"/>
 						</y:Label.Style>
@@ -1558,7 +1558,7 @@
 			<data key="d4">
 				<x:List>
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
-						<y:Label.Text>hasGras</y:Label.Text>
+						<y:Label.Text>hasGrass</y:Label.Text>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="WHITE"/>
 						</y:Label.Style>
