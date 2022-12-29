@@ -68,7 +68,7 @@ class TMP:
         return arr
 
     # map, filter or sort depending on the string
-    def editData(self, userStr: str, mode: Optional[str] = None) -> Optional[list]:
+    def editData(self, userStr: str, mode: Optional[Literal["auto", "filter", "map", "sort"]] = None) -> Optional[list]:
         curVals = self.deepCpy()
         cmds = userStr.split("&&") # get all the different cmds
         for cmd in cmds:
@@ -161,7 +161,7 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return False
 
     SQL.dropTable(cursor, data.tableName)
-    SQL.createAllTables(cursor)
+    SQL.createAllTables(cursor) # if not exists fixes all possible bugs
     SQL.insertIntoTable(cursor, data.tableName, data.data)
 
     # the current colums
