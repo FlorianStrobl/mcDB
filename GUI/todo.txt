@@ -4,8 +4,9 @@ TODO LIST
 ✓     2. Remove recreation of table on ADD row to make it faster (only adding row object)I
 ✓     3. Improve FILL Function: When new Table has same columnslength that before: Only modify Text and delete Events
 ✓     4. Draw Function: Function that modify all Text of existing tableBody
-⨯     4. Program Save and Error log implemented
-⨯     5. Connect all to sql part -> Finish to program interface
+✓     4. Program Save and Error log implemented
+⨯     5. Multiple pages dingsta
+⨯     6. Connect all to sql part -> Finish to program interface
 
 
 für delete events add ["setToMain"]

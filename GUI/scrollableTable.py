@@ -101,6 +101,9 @@ class scrollableTable(customtkinter.CTkFrame):
         # Zeichnet den Verlauf von actions auf -> SUPER Wichtig für events
         self.steps = []
 
+        #Event Listener: 0:Delete  1: Add
+        self.eventListenerFunctions = [[],[]]
+
     def calculateStepsFromStart(self, row):
         # Berechnet wie die Rows ID's sein sollen relativ zu den vom Anfang also "row" hier im parameter(für den delete Event)
         newRow = row
@@ -136,6 +139,14 @@ class scrollableTable(customtkinter.CTkFrame):
 
     # aka draw function - geht nur wenn gleiche Anzahl an Columns
     # Vorallem für bessere performance da
+
+    # Für leicheteren Acces auf events in der Table function
+    def addEventListener(self,action, function):
+        if(action == "onDeleteRow"):
+            self.eventListenerFunctions[0].append(function)
+        elif(action == "onAddRow"):
+            self.eventListenerFunctions[1].append(function)
+
     def textFill(self, tableBody):
         # "-1" wegen den Mülleimer object
         if self.tableDataBodyWidgets == []:
@@ -153,11 +164,12 @@ class scrollableTable(customtkinter.CTkFrame):
         # print(rowsDifference)
         if rowsDifference > 0:
             for i in range(rowsDifference):
-                self.appendEmptyRowOnTop()
+
+                self.appendEmptyRowOnTop(fromAutoScript=True)
         elif rowsDifference < 0:
             # -1 weil es da IMMER negativ ist
             for i in range(rowsDifference * -1):
-                self.onRemove(0)
+                self.onRemove(0, fromAutoScript=True)
 
         self.tableData[1] = tableBody
 
@@ -175,13 +187,16 @@ class scrollableTable(customtkinter.CTkFrame):
         return "succes"
 
     def fill(self, tableBody):
-        self.steps = []
+        self.tableBody = []
         # Wenn die gleichen Anzahl and columns vorhanden ist wie bei der vorherigen Tabelle,
         # ist es nicht nötig, die Tabelle komplett neu zu erstellen.
         # --> Mann kann so die fehlenden/zu vielen rows hinzufügen/entfernen und so die Tabelle schneller generieren
-        if self.textFill(tableBody) == "succes":
-            return
 
+        if self.textFill(tableBody ) == "succes":
+                print("suces")
+                return
+
+        self.steps = []
         self.clearTableDataBodyWidgets()
         # tableData.append((1,2))
         # tableData.insert(0,(("","")))
@@ -223,6 +238,7 @@ class scrollableTable(customtkinter.CTkFrame):
                     )
                     deleteButton.grid(row=row, column=col)
                     rowWidgets.append(deleteButton)
+
             self.colorIndex += 1
             self.tableDataBodyWidgets.append(rowWidgets)
 
@@ -289,14 +305,35 @@ class scrollableTable(customtkinter.CTkFrame):
 
         self.tableData[0] = arr
 
-    def onRemove(self, rowNumber):
+    # Sender erwähnt,default fase, ob diese Funktion direkt vom user aufgerufen wird (über button klick) oder ob die funktion von einer for schleife oder sowas aufgerufen wurde
+    def onRemove(self, rowNumber, fromAutoScript=False):
+
         self.steps.append(["delete", rowNumber])
+
+        #print(rowNumber)
         self.tableData[1].pop(rowNumber)
+
         for row in self.tableDataBodyWidgets[rowNumber]:
             row.destroy()
+
         self.tableDataBodyWidgets.pop(rowNumber)
 
-    def appendEmptyRowOnTop(self):
+        if(not fromAutoScript):
+            print(rowNumber)
+            for deleteEvent in self.eventListenerFunctions[0]:
+                deleteEvent(rowNumber)
+
+    def getTablesInputs(self):
+        result = []
+        for widgetRow in self.tableDataBodyWidgets:
+            subresult = []
+            for widget in range(len(widgetRow)-1):
+                subresult.append(widgetRow[widget].get())
+            result.append(subresult)
+        return result
+
+    def appendEmptyRowOnTop(self, fromAutoScript=True):
+        numberColumns = len(self.tableData[0])
         def moveAllRowsHorizontalyDownOne():
             for y in range(len(self.tableDataBodyWidgets)):
                 widgetRow = self.tableDataBodyWidgets[y]
@@ -307,7 +344,7 @@ class scrollableTable(customtkinter.CTkFrame):
 
         self.numberCreatedRows += 1
         self.steps.append(["add"])
-        numberColumns = len(self.tableData[0])
+
         widthCurrentFrame = self.widthFrame - 20
         rowWidget = []
         gridRow = 0
@@ -340,8 +377,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.colorIndex += 1
         self.tableDataBodyWidgets.insert(0, rowWidget)
         self.tableData[1].insert(0, ["" for i in range(numberColumns)])
-    # self.tableData[1].insert(0,["" for i in self.tableData[0]])
-    # self.updateTableBody()
-    def saveAllToTableData(self):
-        # TODO YET
-        return -1
+
+        if(not fromAutoScript):
+            for addEventRow in self.eventListenerFunctions[1]:
+                addEventRow()

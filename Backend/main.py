@@ -1,10 +1,12 @@
 import addImport
 import sqlite3
 import SQL
-from TmpData import *
+from tmpData import *
 from Logger import *
 import random
 from InputStrToMapFilterSort import *
+
+from GUI.main import *
 
 # print(executeUserStr("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
 
@@ -31,7 +33,7 @@ tmp.setData(
 
 updateDataInDB(cursor, tmp)
 
-# Start UI
+loadGUI()
 
 """
 1. DROP all TABLES
