@@ -332,7 +332,7 @@ class scrollableTable(customtkinter.CTkFrame):
             result.append(subresult)
         return result
 
-    def appendEmptyRowOnTop(self, fromAutoScript=True):
+    def appendEmptyRowOnTop(self, fromAutoScript=False):
         numberColumns = len(self.tableData[0])
         def moveAllRowsHorizontalyDownOne():
             for y in range(len(self.tableDataBodyWidgets)):
