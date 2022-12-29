@@ -6,7 +6,7 @@ from Logger import *
 import random
 from InputStrToMapFilterSort import *
 
-from GUI.main import *
+from GUI.main import loadGUI
 
 # print(executeUserStr("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
 
