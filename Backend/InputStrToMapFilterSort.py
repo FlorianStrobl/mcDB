@@ -1,12 +1,12 @@
 import re
 from Logger import *
-from typing import Union
+from typing import Union, Literal
 import random
 import numpy
 import math
 
 
-def getMode(string: str, mode: str = "auto"):
+def getMode(string: str, mode: Literal["auto", "filter", "map", "sort"] = "auto") -> str:
     if mode == "auto":
         # try getting the current mode
         if re.search("^( *)?[A-Za-z_][A-Za-z0-9_]* *<-.+ *", string) is not None:
@@ -23,7 +23,7 @@ def getMode(string: str, mode: str = "auto"):
 
 # mode: ["auto", "filter", "map", "sort"], TODO add func return type
 def executeUserStr(
-    string: str, mode: str = "auto", columns: list[str] = [], data: list[any] = []
+    string: str, mode: Literal["auto", "filter", "map", "sort"] = "auto", columns: list[str] = [], data: list[any] = []
 ) -> Union[None, int, bool, any]:
     mode = getMode(string, mode)
 

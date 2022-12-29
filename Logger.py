@@ -1,4 +1,4 @@
-from GUI.main import *
+from GUI.main import setLogLabel
 class Logger:
 
     # log a message to the console and the GUI

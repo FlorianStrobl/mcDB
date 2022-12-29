@@ -1,7 +1,7 @@
 import addImport
 import sqlite3
 import SQL
-from tmpData import *
+from TmpData import *
 from Logger import *
 import random
 from InputStrToMapFilterSort import *
@@ -19,7 +19,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 5)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 1)  # fill random data into the tables
 
 table = "Serverworld"
 tmp = TMP()
@@ -35,7 +35,7 @@ print(tmp.getData()[:3])
 
 updateDataInDB(cursor, tmp)
 
-loadGUI()
+# loadGUI()
 
 """
 1. DROP all TABLES
