@@ -43,7 +43,6 @@ class PageSystem():
 
         pageStart = self.currentPage * 50
 
-
         #Get the distance between pageStart and pageEnd
         pageEndDistance = 0
         if(pageStart + 49 < len(self.givenArray)):
@@ -69,7 +68,7 @@ class PageSystem():
         # Fill the Array:
 
 
-
+        # LE MIEU C DE PAS FAIRE DE FILL
         # 1. Une row au pif est deleted
         # 2. On remanage la given Array en deletant 50 elements de la page et en in insertant 49
         # 3. On obtient la nouvelle selection
@@ -78,8 +77,7 @@ class PageSystem():
         # PAS FILL - IL FAUT AJOUTER UNE ROW EN BA SI IL EN EXISTE DES PROCHAINES
         self.table.textFill(self.givenArray[pageStart:pageEnd])
 
-        self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(math.floor(len(self.givenArray)/50)))
-
+        self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(self.convertToPages2dArray(self.givenArray))))
 
        # self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(dArray)))
 
