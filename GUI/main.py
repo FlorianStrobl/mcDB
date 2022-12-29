@@ -18,8 +18,6 @@ def setLogLabel(logText, color):
     logsLabel.configure(text=logText, text_color=color)
 
 def loadGUI():
-
-
     global logsLabel
     global table
     global navigatorIndicator
@@ -198,7 +196,8 @@ def loadGUI():
     )
 
     pageSystem.onUIReady()
+    onGuiReady2(table, pageSystem)
 
     app.mainloop()
 
-loadGUI()
+#loadGUI()

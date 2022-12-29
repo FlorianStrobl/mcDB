@@ -183,10 +183,19 @@ class scrollableTable(customtkinter.CTkFrame):
                 inputField = widgetsRow[widgetCounter]
                 inputField.delete(0, customtkinter.END)
                 # print(widgetsRowCounter, widgetCounter)
-                inputField.insert(0, tableBody[widgetsRowCounter][widgetCounter])
+                inputField.insert(0, tableBody[widgetsRowCounter][widgetCounter] if tableBody[widgetsRowCounter][widgetCounter] != None else "null")
         return "succes"
 
+    def updateEvents(self):
+        self.steps = []
+        for i in range(len(self.tableDataBodyWidgets)):
+            row = self.tableDataBodyWidgets[i]
+            deleteButton = row[len(self.tableDataBodyWidgets[0]) - 1]
+            deleteButton.configure(command=lambda i=i: self.onRemove(i))
+
     def fill(self, tableBody):
+        self.updateEvents()
+
         self.tableBody = []
         # Wenn die gleichen Anzahl and columns vorhanden ist wie bei der vorherigen Tabelle,
         # ist es nicht nötig, die Tabelle komplett neu zu erstellen.
@@ -222,7 +231,7 @@ class scrollableTable(customtkinter.CTkFrame):
 
                     rowWidgets.append(myEntry)
                     try:
-                        myEntry.insert(0, tableBody[row][col])
+                        myEntry.insert(0, tableBody[row][col] if tableBody[row][col]  != None else "null")
                     except:
                         myEntry.insert(0, "Data not found")
                 else:
@@ -230,7 +239,7 @@ class scrollableTable(customtkinter.CTkFrame):
                         self.scrollFrame.viewPort,
                         text="🗑",
                         command=lambda row=row: self.onRemove(
-                            self.calculateStepsFromStart(row)
+                           row
                         ),
                         corner_radius=0,
                         width=self.actionColumnWidth,
@@ -308,16 +317,19 @@ class scrollableTable(customtkinter.CTkFrame):
     # Sender erwähnt,default fase, ob diese Funktion direkt vom user aufgerufen wird (über button klick) oder ob die funktion von einer for schleife oder sowas aufgerufen wurde
     def onRemove(self, rowNumber, fromAutoScript=False):
 
-        self.steps.append(["delete", rowNumber])
+        #self.steps.append(["delete", rowNumber])
 
         #print(rowNumber)
+
         self.tableData[1].pop(rowNumber)
 
         for row in self.tableDataBodyWidgets[rowNumber]:
             row.destroy()
 
         self.tableDataBodyWidgets.pop(rowNumber)
-
+        self.updateEvents()
+        print(rowNumber)
+            #pass
         if(not fromAutoScript):
             print(rowNumber)
             for deleteEvent in self.eventListenerFunctions[0]:
@@ -366,7 +378,7 @@ class scrollableTable(customtkinter.CTkFrame):
                     self.scrollFrame.viewPort,
                     text="🗑",
                     command=lambda row=gridRow, createdRows=self.numberCreatedRows: self.onRemove(
-                        self.calculateStepsFromStart(row - createdRows)
+                        -1
                     ),
                     corner_radius=0,
                     width=self.actionColumnWidth,
@@ -377,7 +389,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.colorIndex += 1
         self.tableDataBodyWidgets.insert(0, rowWidget)
         self.tableData[1].insert(0, ["" for i in range(numberColumns)])
-
+        self.updateEvents()
         if(not fromAutoScript):
             for addEventRow in self.eventListenerFunctions[1]:
                 addEventRow()

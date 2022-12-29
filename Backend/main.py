@@ -8,6 +8,8 @@ from InputStrToMapFilterSort import *
 
 from GUI.main import *
 
+
+
 # print(executeUserStr("playerId2 - playerId1", "auto", ["test", "playerId"], [[0, 54], [0, 55]]))
 
 # TODO, TMP.sort() needs to be a stable sort
@@ -34,6 +36,8 @@ tmp.setData(tmp.editData("""0""", "sort"))
 print(tmp.getData()[:3])
 
 updateDataInDB(cursor, tmp)
+
+SQL.fillAllTablesRand(cursor, 200)
 
 loadGUI()
 
