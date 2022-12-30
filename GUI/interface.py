@@ -56,4 +56,7 @@ def onTableSave(table):
 
 
 def onInputfieldChange(text, mode):
-    print("New Change:" + text + " on " + mode)
+    newData = tmp.editData(text,mode)
+    tmp.setData(newData)
+    print(tmp.getData())
+    #pageSystem.changeTableBody(tmp.getData())
