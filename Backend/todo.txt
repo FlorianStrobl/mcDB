@@ -1,0 +1,5 @@
+Fix: (column1, column2) <- (value1, value2)
+Fix none existing id's for relations
+Slice n,m
+data, index, length global vars for all strings besides for select ...columns
+column1, column2
