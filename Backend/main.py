@@ -7,7 +7,6 @@ from TmpData import *
 from InputStrToMapFilterSort import *
 from GUI.main import loadGUI
 
-# TODO, (val1, val2) <- (354, 95834)
 # TODO foreign keys are correct
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
@@ -28,7 +27,7 @@ tmp.setData(
 
 tmp.setData(
     tmp.editData(
-       """((session_begin1 - session_begin2) if role1 == role2 else (-1 if role1 == "Player" else (1 if role2 == "Player" else (-1 if role1 == "Moderator" else 1))))""", "auto"
+       """((session_begin1 - session_begin2) if role1 == role2 else (-1 if role1 == "Player" else (1 if role2 == "Player" else (-1 if role1 == "Moderator" else 1)))) && role.lower() == "player" """, "auto"
     )
 )
 
