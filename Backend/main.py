@@ -13,7 +13,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 20)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 155)  # fill random data into the tables
 
 table = "plays"
 tmp = TMP()

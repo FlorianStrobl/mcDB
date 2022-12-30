@@ -37,7 +37,7 @@ def onTableButtonClick(tableName):
     columnNames = list(map(lambda x: x[0], cursor.description))
 
     # print(columnNames)
-    print(tmp.getData())
+    #print(tmp.getData())
     pageSystem.changeTableBody(tmp.getData())
     table.setTableHeader(columnNames)
 
@@ -52,7 +52,7 @@ def onTableSave(table):
 
     tmp.setData(pageSystem.getInput())
     updateDataInDB(cursor, tmp)
-    print(table.getTablesInputs())
+    #print(table.getTablesInputs())
 
 
 def onInputfieldChange(text, mode):
