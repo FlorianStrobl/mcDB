@@ -27,7 +27,9 @@ tmp.setData(
 
 tmp.setData(
     tmp.editData(
-       """((session_begin1 - session_begin2) if role1 == role2 else (-1 if role1 == "Player" else (1 if role2 == "Player" else (-1 if role1 == "Moderator" else 1)))) && role.lower() == "player" """, "auto"
+       """(session_begin1 - session_begin2) if (role1 == role2) else (1 if (role2 == "Player" or role1 != "Player" and role1 != "Moderator") else -1)
+
+       && role.lower() == "player" """, "auto"
     )
 )
 
