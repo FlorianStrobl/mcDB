@@ -14,7 +14,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 5)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 100)  # fill random data into the tables
 
 table = "plays"
 tmp = TMP()
@@ -28,7 +28,7 @@ tmp.setData(
 
 tmp.setData(
     tmp.editData(
-       """(session_begin, role) <- (5, 'admins')""", "auto"
+       """((session_begin1 - session_begin2) if role1 == role2 else (-1 if role1 == "Player" else (1 if role2 == "Player" else (-1 if role1 == "Moderator" else 1))))""", "auto"
     )
 )
 

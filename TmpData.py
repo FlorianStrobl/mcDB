@@ -96,7 +96,7 @@ class TMP:
         return curVals.data
 
     # returns a deepCpy array of the data edited for each element with the lambda
-    def mapData(self, userStr: str) -> list:
+    def mapData(self, userStr: str) -> Optional[list]:
         arr = []
         for v in self.deepCpyData():
             ans = executeUserStr(userStr, "map", self.columnNames, v)
@@ -107,7 +107,6 @@ class TMP:
 
             # check if there are multiple columns
             if ans[0] == "multi":
-                print(ans[2])
                 indexes = []
                 for i,vv in enumerate(ans[1]):
                     try:
@@ -115,11 +114,12 @@ class TMP:
                     except:
                         Logger.error("map coudln't find the column:", ans[1][i], self.columnNames)
                         return None
-                    tmpNewDataIndex = 0
-                    for i in indexes:
-                        v[i] = ans[2][tmpNewDataIndex]
-                        tmpNewDataIndex += 1
-                    arr.append(v)
+
+                #tmpNewDataIndex = 0
+                for i,vv in enumerate(indexes):
+                    v[vv] = ans[2][i]
+                    #tmpNewDataIndex += 1
+                arr.append(v)
             else:
                 try:
                     i = self.columnNames.index(ans[0])
@@ -171,7 +171,7 @@ class TMP:
             )
 
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
-    def sortData(self, userStr: str) -> list:
+    def sortData(self, userStr: str) -> Optional[list]:
         # unstable quicksort
         def quickSort(
             arr: list, start: Optional[int] = None, end: Optional[int] = None
@@ -218,6 +218,34 @@ class TMP:
         # quickSort(tmp)
         # return tmp
         return self.__quickSort__(self.deepCpyData(), userStr)
+
+    # TODO
+    def selectColumns(self, userStr: str) -> list[list[str], list[any]]:
+        return []
+
+    # TODO
+    def sliceData(self, userStr: str) -> Optional[list]:
+        userStr = userStr.lower().strip()
+        if not userStr.startswith('slice'):
+            Logger.error("slice command didn't work because it doesnt start correctly:", userStr)
+            return None
+        userStr = userStr.replace("slice", "").strip()
+        nm = userStr.split(",")
+        if len(nm) == 0 or len(nm) > 2:
+            Logger.error("slice command didn't work because it didnt get 1 to 2 integers as values:", userStr)
+            return None
+        if len(nm) == 1:
+            try:
+                return self.deepCpyData()[int(nm[0]):]
+            except:
+                Logger.error("Couldnt parse string to integer:", nm[0])
+                return None
+        else:
+            try:
+                return self.deepCpyData()[int(nm[0]):int(nm[1])]
+            except:
+                Logger.error("Couldnt parse string to integer:", nm[0], nm[1])
+                return None
 
     def printThis(self) -> None:
         Logger.log("print tmp", self.getData())

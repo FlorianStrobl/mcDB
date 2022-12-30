@@ -6,7 +6,7 @@ from typing import Union, Literal
 import addImport
 from Logger import *
 
-
+# TODO, add column1,column2
 def getMode(
     string: str, mode: Literal["auto", "filter", "map", "sort"] = "auto"
 ) -> str:
@@ -39,6 +39,7 @@ def executeUserStr(
 ) -> Union[None, int, bool, any]:
     mode = getMode(string, mode)  # mode stays the same if it was already set
 
+    # TODO, add index, length and curDataCpy
     vals = {"random": random, "math": math, "numpy": numpy}
     if mode == "map":
         # create a lambda with the signature: Callable[[any], bool]
