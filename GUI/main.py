@@ -13,9 +13,9 @@ table = None
 navigatorIndicator = None
 
 
-
 def setLogLabel(logText, color):
     logsLabel.configure(text=logText, text_color=color)
+
 
 def loadGUI():
     global logsLabel
@@ -44,7 +44,6 @@ def loadGUI():
         "buildOf": lambda: onTableButtonClick("buildOf"),
     }
 
-
     def placeTableButton(title, event):
         global xStart
         customtkinter.CTkButton(
@@ -53,14 +52,11 @@ def loadGUI():
 
         xStart += 35
 
-
     def spawnTableButtons():
         for name in tablesNames.keys():
             placeTableButton(name, tablesNames[name])
 
-
     spawnTableButtons()
-
 
     table = scrollableTable(
         app,
@@ -68,19 +64,19 @@ def loadGUI():
             ["Welt", "tsdsddds"],
             [[random.randint(0, 50), "t"] for i in range(100)],
         ],
-        pos=(235, 145, 515, 300)
+        pos=(235, 145, 515, 300),
     )
-    table.setTableHeader([random.randint(0, 1000), "t", "j", "j","x"])
+    table.setTableHeader([random.randint(0, 1000), "t", "j", "j", "x"])
 
-    #table.fill([[random.randint(0, 1000), "t", "j", "j", "j"] for i in range(50)])
+    # table.fill([[random.randint(0, 1000), "t", "j", "j", "j"] for i in range(50)])
 
-    #table.pagesFillInit([[i, "t", "j", "j", "j"] for i in range(160)])
-    #table.showPage(0)
+    # table.pagesFillInit([[i, "t", "j", "j", "j"] for i in range(160)])
+    # table.showPage(0)
 
-    #print(
+    # print(
     #    "textfill was "
     #    + table.textFill([[random.randint(0, 100), "x", "x", "x", "x"] for i in range(20)])
-    #)
+    # )
     # table.appendEmptyRowOnTop()
 
     # print(table.tableData)
@@ -113,13 +109,14 @@ def loadGUI():
     )
     searchEntry.place(x=50, y=30, width=400, height=35)
 
-
     previewButton = customtkinter.CTkButton(
         master=searchFrame, text="⟳", fg_color="#343638"
     )
     previewButton.place(x=10, y=30, width=30, height=33)
 
-    okButton = customtkinter.CTkButton(master=searchFrame, text="Ok", fg_color="#343638")
+    okButton = customtkinter.CTkButton(
+        master=searchFrame, text="Ok", fg_color="#343638"
+    )
     okButton.place(x=460, y=30, width=30, height=33)
 
     SaveButton = customtkinter.CTkButton(
@@ -128,7 +125,7 @@ def loadGUI():
         fg_color="#343638",
         bg_color="#282424",
         command=lambda: onTableSave(table),
-        corner_radius=7
+        corner_radius=7,
     )
     SaveButton.place(x=680, y=457, width=70, height=33)
 
@@ -140,64 +137,66 @@ def loadGUI():
     )
     logsLabel.place(x=25, y=460)
 
-    navigatorFrame = customtkinter.CTkFrame(master=app, corner_radius=7, fg_color="#343638",)
+    navigatorFrame = customtkinter.CTkFrame(
+        master=app,
+        corner_radius=7,
+        fg_color="#343638",
+    )
     navigatorFrame.place(x=530, y=458, width=135, height=30)
 
     navigatorIndicator = customtkinter.CTkLabel(
-        master=navigatorFrame, bg_color="#343638",text="17/23",corner_radius=7
+        master=navigatorFrame, bg_color="#343638", text="17/23", corner_radius=7
     )
-    navigatorIndicator.place(x=45, y=0,width=50,height=30 )
+    navigatorIndicator.place(x=45, y=0, width=50, height=30)
 
-    pageSystem= PageSystem(table,navigatorIndicator,[[i,"j","h","j","J"] for i in range(347)])
+    pageSystem = PageSystem(
+        table, navigatorIndicator, [[i, "j", "h", "j", "J"] for i in range(347)]
+    )
 
     navigatorNavLeft = customtkinter.CTkButton(
         master=navigatorFrame,
         text="<",
         fg_color="#343638",
         command=lambda: pageSystem.onNavigateButtonClick(2)
-       # command=onTableSave
+        # command=onTableSave
     )
-    navigatorNavLeft.place(x=25, y=2,width=20,height=25 )
+    navigatorNavLeft.place(x=25, y=2, width=20, height=25)
     navigatorNavLeftEnd = customtkinter.CTkButton(
         master=navigatorFrame,
         text="<<",
         fg_color="#343638",
-        #bg_color="gray",
+        # bg_color="gray",
         font=("Helvetica", 11),
         command=lambda: pageSystem.onNavigateButtonClick(1)
-       # command=onTableSave
+        # command=onTableSave
     )
-    navigatorNavLeftEnd.place(x=5, y=2,width=23,height=25 )
-
+    navigatorNavLeftEnd.place(x=5, y=2, width=23, height=25)
 
     navigatorNavRight = customtkinter.CTkButton(
         master=navigatorFrame,
         text=">",
         fg_color="#343638",
         command=lambda: pageSystem.onNavigateButtonClick(3)
-       # command=onTableSave
+        # command=onTableSave
     )
-    navigatorNavRight.place(x=90, y=2,width=20,height=25 )
+    navigatorNavRight.place(x=90, y=2, width=20, height=25)
     navigatorNavRightEnd = customtkinter.CTkButton(
         master=navigatorFrame,
         text=">>",
         fg_color="#343638",
-        #bg_color="gray",
+        # bg_color="gray",
         font=("Helvetica", 11),
         command=lambda: pageSystem.onNavigateButtonClick(4)
-       # command=onTableSave
+        # command=onTableSave
     )
-    navigatorNavRightEnd.place(x=110, y=2,width=23,height=25 )
-
-
+    navigatorNavRightEnd.place(x=110, y=2, width=23, height=25)
 
     setLogLabel(
-        "Warning: Hola que pasa das ist der log (noch nicht mit logger verbunden)", "orange"
+        "Warning: Hola que pasa das ist der log (noch nicht mit logger verbunden)",
+        "orange",
     )
 
     pageSystem.onUIReady()
     onGuiReady2(table, pageSystem)
 
     app.mainloop()
-
-#loadGUI()
