@@ -30,7 +30,7 @@ tmp.setData(tmp.editData("""(session_begin) <- random.randint(5, 12)"""))
 updateDataInDB(cursor, tmp)
 
 #from GUI.main import loadGUI
-#loadGUI()
+loadGUI()
 
 """
 1. DROP all TABLES
