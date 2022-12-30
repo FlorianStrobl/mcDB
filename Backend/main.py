@@ -28,7 +28,7 @@ tmp.setData(
 
 tmp.setData(
     tmp.editData(
-       """True""", "filter"
+       """(session_begin, role) <- (5, 'admins')""", "auto"
     )
 )
 

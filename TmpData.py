@@ -104,13 +104,30 @@ class TMP:
             if ans is None:
                 Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
                 return None
-            i = self.columnNames.index(ans[0])
-            # TEST: i = -1
-            if i == -1:
-                Logger.error("map coudln't find the column:", ans[0], self.columnNames)
-                return None
-            v[i] = ans[1]
-            arr.append(v)
+
+            # check if there are multiple columns
+            if ans[0] == "multi":
+                print(ans[2])
+                indexes = []
+                for i,vv in enumerate(ans[1]):
+                    try:
+                        indexes.append(self.columnNames.index(ans[1][i]))
+                    except:
+                        Logger.error("map coudln't find the column:", ans[1][i], self.columnNames)
+                        return None
+                    tmpNewDataIndex = 0
+                    for i in indexes:
+                        v[i] = ans[2][tmpNewDataIndex]
+                        tmpNewDataIndex += 1
+                    arr.append(v)
+            else:
+                try:
+                    i = self.columnNames.index(ans[0])
+                except:
+                    Logger.error("map coudln't find the column:", ans[0], self.columnNames)
+                    return None
+                v[i] = ans[1]
+                arr.append(v)
         return arr
 
     def __quickSort__(self, arr: list, userStr: str) -> Optional[list]:

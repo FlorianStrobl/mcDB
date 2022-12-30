@@ -2,6 +2,8 @@ import tkinter
 import customtkinter
 import random
 import time
+import addImport
+from Logger import *
 from scrollableTable import scrollableTable
 from interface import *
 from pagesSystem import *
