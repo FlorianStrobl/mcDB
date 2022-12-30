@@ -2,8 +2,9 @@ import sqlite3
 import random
 import addImport
 import SQL
-from TmpData import *
+from tmpData import *
 from InputStrToMapFilterSort import *
+from GUI.main import *
 
 # TODO, (val1, val2) <- (354, 95834)
 # TODO foreign keys are correct
@@ -28,7 +29,7 @@ tmp.setData(tmp.editData("""( session_begin  ) <- 3456""", "auto"))
 updateDataInDB(cursor, tmp)
 
 #from GUI.main import loadGUI
-# loadGUI()
+loadGUI()
 
 """
 1. DROP all TABLES
