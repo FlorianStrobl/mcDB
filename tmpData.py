@@ -71,9 +71,10 @@ class TMP:
     def editData(self, userStr: str, mode: Optional[Literal["auto", "filter", "map", "sort"]] = None) -> Optional[list]:
         curVals = self.deepCpy()
         cmds = userStr.split("&&") # get all the different cmds
+        originalMode = mode
         for cmd in cmds:
             cmd = cmd.strip()
-            if mode is None or mode == "auto":
+            if originalMode is None or originalMode == "auto": # a chain of xy should always be xy
                 mode = getMode(cmd)
             if mode == "map":
                 curVals.data = TMP.mapData(curVals, cmd)
@@ -81,7 +82,6 @@ class TMP:
                 curVals.data = TMP.filterData(curVals, cmd)
             elif mode == "sort":
                 curVals.data = TMP.sortData(curVals, cmd)
-            mode = None
 
         return curVals.data
 
@@ -91,6 +91,7 @@ class TMP:
         arr = []
         for v in self.deepCpyData():
             ans = executeUserStr(userStr, "map", self.columnNames, v)
+            # TODO, ans could be multiple different columns!!
             if ans is None:
                 Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
                 return None
@@ -103,8 +104,37 @@ class TMP:
             arr.append(v)
         return arr
 
+    def __quickSort__(self, arr: list, userStr: str) -> Optional[list]:
+        # https://www.geeksforgeeks.org/stable-quicksort/
+        if len(arr) <= 1:
+            # Base case
+            return arr
+        else:
+            mid = len(arr)//2
+            pivot = arr[mid]
+
+            smaller,greater = [],[]
+
+            for index, value in enumerate(arr):
+                if index != mid:
+                    ans = executeUserStr(userStr, "sort", self.columnNames, [value, pivot])
+                    if ans is None:
+                        Logger.error("sorting failed with values:", ans, userStr, self.columnNames, [value, pivot])
+                        return None
+                    if ans < 0:
+                        smaller.append(value)
+                    elif ans > 0:
+                        greater.append(value)
+                    else: # consider position to decide the list
+                        if index < mid:
+                            smaller.append(value)
+                        else:
+                            greater.append(value)
+            return self.__quickSort__(smaller, userStr) + [pivot] + self.__quickSort__(greater, userStr)
+
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
     def sortData(self, userStr: str) -> list:
+        # unstable quicksort
         def quickSort(
             arr: list, start: Optional[int] = None, end: Optional[int] = None
         ) -> None:
@@ -138,10 +168,10 @@ class TMP:
         #             if _lambda(arr[i], arr[y]) > 0:
         #                 (arr[i], arr[y]) = (arr[y], arr[i])
 
-        tmp = self.deepCpyData()
-        quickSort(tmp)
-        # bubbleSort(tmp)
-        return tmp
+        #tmp = self.deepCpyData()
+        #quickSort(tmp)
+        #return tmp
+        return self.__quickSort__(self.deepCpyData(), userStr)
 
     def printThis(self) -> None:
         Logger.log("print tmp", self.getData())
