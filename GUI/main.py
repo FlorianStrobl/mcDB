@@ -1,10 +1,10 @@
 import tkinter
 import customtkinter
+import random
+import time
 from scrollableTable import scrollableTable
 from interface import *
 from pagesSystem import *
-import random
-import time
 
 
 xStart = 127

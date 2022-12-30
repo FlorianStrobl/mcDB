@@ -28,7 +28,7 @@ tmp.setData(
 
 tmp.setData(
     tmp.editData(
-       """Fe""", "filter"
+       """True""", "filter"
     )
 )
 
@@ -37,7 +37,7 @@ tmp.setData(
 updateDataInDB(cursor, tmp)
 
 
-#loadGUI()
+loadGUI()
 
 """
 1. DROP all TABLES

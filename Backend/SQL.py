@@ -1,6 +1,7 @@
+import addImport
+from Logger import *
 import DDL
 from GenData import GenerateTableData as GTD
-from Logger import *
 
 
 # get [keys, values] from an dictionary

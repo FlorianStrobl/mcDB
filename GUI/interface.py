@@ -1,6 +1,5 @@
-import addImport
 import sqlite3
-import sys
+import addImport
 from TmpData import *
 import SQL
 

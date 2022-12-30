@@ -3,8 +3,8 @@ import random
 import numpy
 import math
 from typing import Union, Literal
+import addImport
 from Logger import *
-
 
 def getMode(
     string: str, mode: Literal["auto", "filter", "map", "sort"] = "auto"
