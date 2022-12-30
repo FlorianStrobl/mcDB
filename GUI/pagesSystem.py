@@ -13,7 +13,6 @@ class PageSystem():
         #can always be modified
         self.givenArray = copy.copy(tableBody)
 
-
     @staticmethod
     def convert2dArrayBack(arr_2d):
         arr = []
@@ -30,7 +29,6 @@ class PageSystem():
             arr_2d.append(sublist)
             counter += pagesRowsLength
         return arr_2d
-
 
     def onAdd(self):
         # ZIEL: alles in "givenArray" reintun in der richtiges stelle
@@ -49,13 +47,12 @@ class PageSystem():
             pageEndDistance = 50
         else:
             print("be")
-            pageEndDistance = len(self.givenArray) - pageStart
-
+            pageEndDistance = (len(self.givenArray) - pageStart)+1
         pageEnd = pageStart + pageEndDistance
 
         #print(pageStart)
         #print("p" ,pageEnd)
-
+        print("pageend",pageEndDistance,"pagestart",pageStart)
         #print(len( self.givenArray))
         # Remove all 50 (or the rest) elements from the main Array at specific page
         del self.givenArray[pageStart: pageEnd]
@@ -84,6 +81,7 @@ class PageSystem():
     def onDelete(self, possibleParamater = None):
 
 
+
         print("bebe")
         # ZIEL: alles in "givenArray" reintun in der richtiges stelle
         def insert_position(position, list1, list2):
@@ -91,7 +89,7 @@ class PageSystem():
 
 
         print("running on deleteORAd")
-        abschnitt = self.table.tableData[1]
+        abschnitt = self.table.getTablesInputs()
 
         pageStart = self.currentPage * 50
 
@@ -102,7 +100,7 @@ class PageSystem():
             pageEndDistance = 50
         else:
             print("be")
-            pageEndDistance = len(self.givenArray) - pageStart
+            pageEndDistance = (len(self.givenArray) - pageStart) + 1
 
         pageEnd = pageStart + pageEndDistance
 
@@ -128,17 +126,32 @@ class PageSystem():
         # 4. On ajoute tout en bas la nouvelle row du dernier element de la selection du givenArray
              # --> que si c possible bien sur
         # PAS FILL - IL FAUT AJOUTER UNE ROW EN BA SI IL EN EXISTE DES PROCHAINES
+        if(len(self.givenArray[pageStart:pageEnd]) == 0):
+            self.table.fill(self.givenArray[pageStart-50:])
+            self.currentPage -=1
+            self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(self.convertToPages2dArray(self.givenArray))))
+            return
         self.table.fill(self.givenArray[pageStart:pageEnd])
 
         self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(self.convertToPages2dArray(self.givenArray))))
 
-
+    def changeTableBody(self,tableBody):
+        self.currentPage = 0
+        self.tableBody = tableBody
+        self.givenArray = copy.copy(tableBody)
+        dArray = self.convertToPages2dArray(self.givenArray)
+        self.table.fill(dArray[self.currentPage])
+        self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(dArray)))
     def onUIReady(self):
         dArray = self.convertToPages2dArray(self.givenArray)
         self.table.fill(dArray[self.currentPage])
         self.table.addEventListener("onAddRow",self.onAdd )
         self.table.addEventListener("onDeleteRow", self.onDelete)
         self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(dArray)))
+
+    def getInput(self):
+        self.onDelete()
+        return self.givenArray
 
     def onNavigateButtonClick(self,n):
         #Saving current page
