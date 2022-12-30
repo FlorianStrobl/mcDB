@@ -1,10 +1,12 @@
+import random
+from typing import Optional, Callable, Union
 import sys
 sys.path.append("./Backend")
-from typing import Optional, Callable, Union
-from Logger import *
+
 import SQL
+from Logger import *
 from InputStrToMapFilterSort import *
-import random
+
 
 class TMP:
     data: list[any] = []
@@ -61,20 +63,28 @@ class TMP:
         for i in range(len(tmp)):
             ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i])
             if ans is None:
-                Logger.error("couldn't apply a filter:", userStr, self.columnNames, tmp[i])
+                Logger.error(
+                    "couldn't apply a filter:", userStr, self.columnNames, tmp[i]
+                )
                 return None
             if ans:
                 arr.append(tmp[i])
         return arr
 
     # map, filter or sort depending on the string
-    def editData(self, userStr: str, mode: Optional[Literal["auto", "filter", "map", "sort"]] = None) -> Optional[list]:
+    def editData(
+        self,
+        userStr: str,
+        mode: Optional[Literal["auto", "filter", "map", "sort"]] = None,
+    ) -> Optional[list]:
         curVals = self.deepCpy()
-        cmds = userStr.split("&&") # get all the different cmds
+        cmds = userStr.split("&&")  # get all the different cmds
         originalMode = mode
         for cmd in cmds:
             cmd = cmd.strip()
-            if originalMode is None or originalMode == "auto": # a chain of xy should always be xy
+            if (
+                originalMode is None or originalMode == "auto"
+            ):  # a chain of xy should always be xy
                 mode = getMode(cmd)
             if mode == "map":
                 curVals.data = TMP.mapData(curVals, cmd)
@@ -84,7 +94,6 @@ class TMP:
                 curVals.data = TMP.sortData(curVals, cmd)
 
         return curVals.data
-
 
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> list:
@@ -110,27 +119,39 @@ class TMP:
             # Base case
             return arr
         else:
-            mid = len(arr)//2
+            mid = len(arr) // 2
             pivot = arr[mid]
 
-            smaller,greater = [],[]
+            smaller, greater = [], []
 
             for index, value in enumerate(arr):
                 if index != mid:
-                    ans = executeUserStr(userStr, "sort", self.columnNames, [value, pivot])
+                    ans = executeUserStr(
+                        userStr, "sort", self.columnNames, [value, pivot]
+                    )
                     if ans is None:
-                        Logger.error("sorting failed with values:", ans, userStr, self.columnNames, [value, pivot])
+                        Logger.error(
+                            "sorting failed with values:",
+                            ans,
+                            userStr,
+                            self.columnNames,
+                            [value, pivot],
+                        )
                         return None
                     if ans < 0:
                         smaller.append(value)
                     elif ans > 0:
                         greater.append(value)
-                    else: # consider position to decide the list
+                    else:  # consider position to decide the list
                         if index < mid:
                             smaller.append(value)
                         else:
                             greater.append(value)
-            return self.__quickSort__(smaller, userStr) + [pivot] + self.__quickSort__(greater, userStr)
+            return (
+                self.__quickSort__(smaller, userStr)
+                + [pivot]
+                + self.__quickSort__(greater, userStr)
+            )
 
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
     def sortData(self, userStr: str) -> list:
@@ -142,9 +163,17 @@ class TMP:
                 pivot = arr[_end]
                 i = _start - 1
                 for j in range(_start, _end):
-                    ans = executeUserStr(userStr, "sort", self.columnNames, [arr[j], pivot])
+                    ans = executeUserStr(
+                        userStr, "sort", self.columnNames, [arr[j], pivot]
+                    )
                     if ans is None:
-                        Logger.error("sorting failed with values:", ans, userStr, self.columnNames, [arr[j], pivot])
+                        Logger.error(
+                            "sorting failed with values:",
+                            ans,
+                            userStr,
+                            self.columnNames,
+                            [arr[j], pivot],
+                        )
                         return None
                     if ans < 0:
                         i += 1
@@ -168,9 +197,9 @@ class TMP:
         #             if _lambda(arr[i], arr[y]) > 0:
         #                 (arr[i], arr[y]) = (arr[y], arr[i])
 
-        #tmp = self.deepCpyData()
-        #quickSort(tmp)
-        #return tmp
+        # tmp = self.deepCpyData()
+        # quickSort(tmp)
+        # return tmp
         return self.__quickSort__(self.deepCpyData(), userStr)
 
     def printThis(self) -> None:
@@ -191,31 +220,7 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return False
 
     SQL.dropTable(cursor, data.tableName)
-    SQL.createAllTables(cursor) # if not exists fixes all possible bugs
+    SQL.createAllTables(cursor)  # if not exists in SQLite exists
     SQL.insertIntoTable(cursor, data.tableName, data.data)
 
-    # the current colums
-    #columns = data.columnNames
-    # the usuall colums of the table
-    #curTableColumns = SQL.selectTableColumns(cursor, data.tableName)
-
-    # get current data to check for each value, if it has
-    # to be just updated (only the changes) or it is a new primary key => insert into
-    #curTableData = SQL.selectTable(cursor, data.tableName)
-
     return
-    # SQLite3 update or insert for each data
-    for curData in curTableData:
-        thisDataWasUpdated = False
-        for d in data.data:
-            if samePrimaryKey(d, columns, curData, data.tableName):
-                # update the CHANGES (aka if there are missing columns
-                # check the "columns" and
-
-                # TODO, not ACTUALLY update the data, but delete the current row
-                # (and save before removed columns) and save it completetly
-                # because of the ordering
-                thisDataWasUpdate = True
-        if thisDataWasUpdate == False:
-            # could error because of missing or added columns
-            SQL.insertIntoTable(cursor, data.tableName, data.data)

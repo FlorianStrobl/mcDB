@@ -1,7 +1,7 @@
 import addImport
 import sqlite3
 import sys
-from tmpData import *
+from TmpData import *
 import SQL
 
 

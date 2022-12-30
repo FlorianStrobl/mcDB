@@ -1,5 +1,5 @@
-from GenData import GenerateTableData as GTD
 import DDL
+from GenData import GenerateTableData as GTD
 from Logger import *
 
 
@@ -90,18 +90,18 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 # sqlite3: INSERT INTO values for a certain table
 def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
     tmpData = list(tmpData)
-    #print("called this func with:", tmpData[0])
+    # print("called this func with:", tmpData[0])
     _data = None  # data for potential error message
     # TODO, fix "str'still str'mhm"
-    for i,v in enumerate(tmpData):
+    for i, v in enumerate(tmpData):
         if type(tmpData[i]) == type((1, "some tuple")):
-            tmpData[i] = list(tmpData[i]) # fix tuples
-        for ii,vv in enumerate(v):
+            tmpData[i] = list(tmpData[i])  # fix tuples
+        for ii, vv in enumerate(v):
             MAX_INT = 9223372036854775807
-            if type(vv) == type(""): # if its a string
+            if type(vv) == type(""):  # if its a string
                 # fix ' and " in strings
-                tmpData[i][ii] = tmpData[i][ii].replace("'", '`', MAX_INT)
-                tmpData[i][ii] = tmpData[i][ii].replace("\"", "`", MAX_INT)
+                tmpData[i][ii] = tmpData[i][ii].replace("'", "`", MAX_INT)
+                tmpData[i][ii] = tmpData[i][ii].replace('"', "`", MAX_INT)
 
     try:
         if table == "Serverworld":

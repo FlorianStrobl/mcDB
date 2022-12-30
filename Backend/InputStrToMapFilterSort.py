@@ -2,8 +2,8 @@ import re
 import random
 import numpy
 import math
-from Logger import *
 from typing import Union, Literal
+from Logger import *
 
 
 def getMode(
@@ -49,12 +49,12 @@ def executeUserStr(
         code[0] = code[0].strip()
         # TODO or toUpadateColumns
         if code[0][0] != "(" or len(code[0].split(",")) == 1:
-            toUpdateColumn = code[0] # get the current column to do
+            toUpdateColumn = code[0]  # get the current column to do
             code = code[1].strip()  # get the pure code
             if toUpdateColumn[0] == "(":
                 # (columnName) <- value, remove the "()"
                 toUpdateColumn = toUpdateColumn[1:-1].strip()
-                if toUpdateColumn[-1] == ",": # remove possible trailing ","
+                if toUpdateColumn[-1] == ",":  # remove possible trailing ","
                     toUpdateColumn = toUpdateColumn[:-1].strip()
 
             # get the index and then type of the to update column
@@ -66,7 +66,7 @@ def executeUserStr(
                 Logger.error("none existent column in map expression:", toUpdateColumn)
                 return None
 
-            fixType = type(data[columnIndex]) # get the type of the column
+            fixType = type(data[columnIndex])  # get the type of the column
             if fixType is type(None):
                 fixType = lambda x: x  # icon hardcoded to identity
                 # because of icon: None | Str
@@ -83,13 +83,19 @@ def executeUserStr(
             try:
                 res = fixType(res)
             except:
-                Logger.error("the following map code evaluated to the wrong type:", code, res, type(res), type(data[columnIndex]))
+                Logger.error(
+                    "the following map code evaluated to the wrong type:",
+                    code,
+                    res,
+                    type(res),
+                    type(data[columnIndex]),
+                )
                 return None
             return [toUpdateColumn, res]
         else:
             toUpdateColumns = code[0][1:-1]  # remove leading "(" and trailing ")"
             toUpdateColumns = [v.strip() for v in toUpdateColumns.split(",")]
-            code = code[1] # get the pure code
+            code = code[1]  # get the pure code
 
             # get the indexes of the columns
             indexes = []
@@ -97,10 +103,12 @@ def executeUserStr(
                 try:
                     indexes.append(columns.index(toUpdateColumn))
                 except:
-                    Logger.error("none existent column in map expression:", toUpdateColumns)
+                    Logger.error(
+                        "none existent column in map expression:", toUpdateColumns
+                    )
                     return None
 
-            fixTypes = [] # get the type of the columns respectively to their index
+            fixTypes = []  # get the type of the columns respectively to their index
             for i in indexes:
                 fixTypes.append(type(data[i]))
 
