@@ -1,0 +1,27 @@
+merke: code screenshot VSCode addon (CodeSnap)
+https://www.yworks.com/yed-live/
+
+# Serverworld(_serverworld_id_: bigint, name: str, icon: Optional[str])
+# Player(_player_id_: bigint, username: str, skin: str)
+# MEntities(_m_entities_id_: bigint, entity_position: str, birthday: int, entity_type: int)
+# Block(_absolute_position_: str, block_type: int)
+
+# Wood(^_absolute_position_: str, isOnFire: int)
+# Dirt(^_absolute_position_: str, hasGrass: int)
+
+# plays(^_player_id_: bigint, ^_serverworld_id_: bigint, session_begin: int, player_position: str, role: str)
+# populatedBy(^_m_entities_id_: bigint, ^_serverworld_id_: bigint)
+# buildOf(^_absolute_position_: str, ^_serverworld_id_: bigint)
+
+OLD DESCRIPTION:
+
+Ein Minecraftserver besitzt eine Welt, in der viele verschiedene Spieler miteinander spielen können. Sie verändern die Blöcke in der Welt und interagieren mit den vielen Tieren im Spiel. Jeder Spieler kann sich genau aussuchen auf welchen Server, und damit verbunden in welcher Welt er spielen möchte.
+
+
+(Entity, Relation, Attribut)
+"Serverworlds" haben eine ID ("server id"), um sich mit ihnen verbinden zu können und einen Namen ("name") und Logo ("icon"), damit auch wir Menschen sie unterscheiden können.
+In diesen "Serverworlds" spielen ("plays") verschiedene Spieler ("Player"). Darüber hinaus sind diese bevölkert ("populated by") durch verschiedene Entities ("m_Entities"), also Dinge wie Tiere, und ist ("has") voller "Chunks", die selbst wiederum aus Blöcken ("Blocks") bestehen ("build of"). Diese "Chunks" speichern immer deren absolute Position ("chunk position"), um später zu wissen, wo sie sich in der Welt ("Serverworld") befinden.
+Jeder "Player" hat einen Namen ("username"), ein Avatar ("skin"), sowie eine eindeutige ID ("player id").
+Das Spielen ("plays") in einer "Serverworld" muss die aktuelle absolute Position ("player position") des Spielers ("Player") speichern, wobei noch der Rang ("role") und die Uhrzeit des Spielbeginnes ("session begin") erfasst werden.
+Die Enitites ("m_Entities") der Welten haben jeweils eine eindeutige ID ("entity id"), ein Typ ("entity type"), wie beispielsweise "Kuh", eine absolute Position ("entity position") und zuletzt dessen Erstellungszeitpunkt ("birthday") gespeichert.
+Die Blöcke ("Blocks") in den "Chunks" haben ihre relative Position ("relative position") gespeichert und darüber hinaus noch aus was sie bestehen ("block type"). Blöcke ("Blocks") können aus Holz ("Wood") bestehen, welche brennen können ("isOnFire") oder sie sind aus Erde ("Dirt"), welche wiederum Gras auf ihrer Oberfläche wachsen lassen können ("hasGras").
