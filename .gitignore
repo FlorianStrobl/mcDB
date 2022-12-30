@@ -1,3 +1,4 @@
 __pycache__/*.pyc
 Backend/__pycache__/*.pyc
 GUI/__pycache__/*.pyc
+minecraftDatabase.db

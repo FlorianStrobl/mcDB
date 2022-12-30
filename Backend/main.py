@@ -1,13 +1,11 @@
 import sqlite3
 import random
 import addImport
+from Logger import *
 import SQL
 from TmpData import *
 from InputStrToMapFilterSort import *
 from GUI.main import loadGUI
-from Logger import *
-
-Logger.log("test")
 
 # TODO, (val1, val2) <- (354, 95834)
 # TODO foreign keys are correct
@@ -16,7 +14,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 155)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 5)  # fill random data into the tables
 
 table = "plays"
 tmp = TMP()
@@ -27,17 +25,19 @@ tmp.setData(
 )
 
 # tmp.setData(tmp.editData("""int((absolute_position1).split(", ")[0][1:]) - int((absolute_position2).split(", ")[0][1:]) && block_type1 - block_type2""", "sort"))
+
 tmp.setData(
     tmp.editData(
        """Fe""", "filter"
     )
 )
+
 # tmp.setData(tmp.editData("""(session_begin) <- random.randint(5, 12)"""))
 
 updateDataInDB(cursor, tmp)
 
 
-loadGUI()
+#loadGUI()
 
 """
 1. DROP all TABLES

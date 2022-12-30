@@ -1,13 +1,12 @@
 import random
 from typing import Optional, Callable, Union
+from Logger import *
 import sys
 
 sys.path.append("./Backend")
 
 import SQL
-from Logger import *
 from InputStrToMapFilterSort import *
-
 
 class TMP:
     data: list[any] = []
