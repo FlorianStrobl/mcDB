@@ -2,7 +2,7 @@ import sqlite3
 import random
 import addImport
 import SQL
-from tmpData import *
+from TmpData import *
 from InputStrToMapFilterSort import *
 from GUI.main import *
 
@@ -29,13 +29,8 @@ tmp.setData(tmp.editData("""(session_begin) <- random.randint(5, 12)"""))
 
 updateDataInDB(cursor, tmp)
 
-<<<<<<< HEAD
 #from GUI.main import loadGUI
-loadGUI()
-=======
-# from GUI.main import loadGUI
-# loadGUI()
->>>>>>> f4d05736a769159d10ef4d479fe81f2b0b708509
+#loadGUI()
 
 """
 1. DROP all TABLES
