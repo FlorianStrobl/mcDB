@@ -49,7 +49,7 @@ def executeUserStr(
     mode = getMode(string, mode)  # mode stays the same if it was already set
 
     # TODO, add index, length and curDataCpy
-    vals = {"random": random, "math": math, "numpy": numpy, "data":workingOnDataOpt[:], "length":len(workingOnDataOpt)}
+    vals = {"random": random, "math": math, "numpy": numpy, "data":(workingOnDataOpt or [])[:], "length":len(workingOnDataOpt or [])}
     if mode == "map":
         # create a lambda with the signature: Callable[[any], bool]
         code = re.split("<-", string, 1)  # split on first occurence

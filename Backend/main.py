@@ -45,7 +45,7 @@ print(tmp.columnNames, tmp.data)
 updateDataInDB(cursor, tmp)
 
 
-#loadGUI()
+loadGUI()
 
 """
 1. DROP all TABLES
