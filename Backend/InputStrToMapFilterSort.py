@@ -5,6 +5,7 @@ import math
 from typing import Union, Literal
 import addImport
 from Logger import *
+from TmpData import *
 
 # TODO, add column1,column2
 def getMode(
@@ -42,11 +43,13 @@ def executeUserStr(
     mode: Literal["auto", "filter", "map", "sort"] = "auto",
     columns: list[str] = [],
     data: list[any] = [],
+    workingOnDataOpt: Optional[any] = None, # TODO, what about slice aso??
+    workingOnIdx: Optional[int] = None
 ) -> Union[None, int, bool, any]:
     mode = getMode(string, mode)  # mode stays the same if it was already set
 
     # TODO, add index, length and curDataCpy
-    vals = {"random": random, "math": math, "numpy": numpy}
+    vals = {"random": random, "math": math, "numpy": numpy, "data":workingOnDataOpt[:], "length":len(workingOnDataOpt)}
     if mode == "map":
         # create a lambda with the signature: Callable[[any], bool]
         code = re.split("<-", string, 1)  # split on first occurence

@@ -3,3 +3,5 @@ Fix none existing id's for relations
 data, index, length
 => global vars for all strings besides for column1, column2
 => index1,index2 for sort
+
+WHAT ABOUT IS-A?? Add INSERT INTO (block_type) (0/1) and foreign keys??
