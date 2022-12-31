@@ -236,13 +236,13 @@ class TMP:
             return None
         if len(nm) == 1:
             try:
-                return self.deepCpyData()[int(nm[0]):]
+                return self.deepCpyData()[int(eval(nm[0].strip(), {"length": len(self.data)})):]
             except:
                 Logger.error("Couldnt parse string to integer:", nm[0])
                 return None
         else:
             try:
-                return self.deepCpyData()[int(nm[0]):int(nm[1])]
+                return self.deepCpyData()[int(eval(nm[0].strip(), {"length": len(self.data)})):int(eval(nm[1].strip(), {"length": len(self.data)}))]
             except:
                 Logger.error("Couldnt parse string to integer:", nm[0], nm[1])
                 return None
