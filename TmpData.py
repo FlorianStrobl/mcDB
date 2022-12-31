@@ -1,3 +1,4 @@
+from __future__ import annotations
 import random
 from typing import Optional, Callable, Union
 from Logger import *
@@ -21,6 +22,12 @@ class TMP:
     # return the amount of columns of the data set
     def columnLen(self) -> int:
         return len(self.columnNames)
+
+    def replaceTmp(self, newTmp: TMP) -> TMP:
+        self.data = newTmp.deepCpyData()
+        self.columnNames = [n for n in newTmp.columnNames]
+        self.tableName = newTmp.tableName
+        return self
 
     # None values will be replaced by the current saved value
     def setData(
@@ -78,7 +85,7 @@ class TMP:
         mode: Optional[
             Literal["auto", "filter", "map", "sort", "slice", "columns"]
         ] = None,
-    ) -> Optional[list]:
+    ) -> Optional[TMP]:
         curVals = self.deepCpy()
         cmds = userStr.split("&&")  # get all the different cmds
         originalMode = mode
@@ -112,12 +119,12 @@ class TMP:
                 v = TMP.selectColumns(curVals, cmd)
                 if v is None:
                     Logger.error(
-                        "couldn't execute the select with the command:", cmd
+                        "couldn't execute the select column with the command:", cmd
                     )  # error message because it isnt handled before
                     return None
                 curVals.columnNames = v[0]  # change also the column names
                 curVals.data = v[1]
-        return curVals.data
+        return curVals
 
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> Optional[list]:
@@ -270,7 +277,7 @@ class TMP:
             try:
                 _ = self.columnNames.index(cn)
             except:
-                Logger.error(f"the column {cn} does not exist in:", self.columnNames)
+                Logger.error(f"select columns failed because the column {cn} does not exist in:", self.columnNames)
                 return None
 
         # get indexes to keep
@@ -304,7 +311,7 @@ class TMP:
                     int(eval(nm[0].strip(), {"length": len(self.data)})) :
                 ]
             except:
-                Logger.error("Couldnt parse string to integer:", nm[0])
+                Logger.error("slice command couldn't parse code to integer:", userStr, nm[0])
                 return None
         else:
             try:
@@ -314,7 +321,7 @@ class TMP:
                     )
                 ]
             except:
-                Logger.error("Couldnt parse string to integer:", nm[0], nm[1])
+                Logger.error("slice command couldn't parse code to integer:", nm[0], nm[1])
                 return None
 
     def printThis(self) -> None:
@@ -324,8 +331,33 @@ class TMP:
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
     if data.tableName is None:
-        return  # no data to save
+        return  # no table for data to save
 
+    if data.columnNames is None:
+        Logger.error(f"No column names provided to save table {data.tableName} to database")
+        return
+
+    if data.data is None:
+        Logger.error(f"No data provided to save table {data.tableName} to database")
+        return
+
+    # check if column names are like the original ones
+    originalColumns = SQL.selectTableColumns(cursor, data.tableName)
+
+    errStr = "Couldn't save data to database because the columns are not the ones expected:"
+
+    # check if they have the same length
+    if len(data.columnNames) != len(originalColumns):
+        Logger.error(errStr, data.columnNames, originalColumns)
+        return
+
+    # check if they have the same values
+    for i in range(len(data.columnNames)):
+        if data.columnNames[i] != originalColumns[i]:
+            Logger.error(errStr, data.columnNames, originalColumns)
+            return
+
+    # backup in case the saving of new data fails => invalid new data
     backupOldData = SQL.selectTable(cursor, data.tableName)
 
     SQL.dropTable(cursor, data.tableName)  # delete all existing datas
