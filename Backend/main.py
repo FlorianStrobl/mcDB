@@ -13,7 +13,7 @@ cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 5)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 10)  # fill random data into the tables
 
 table = "plays"
 tmp = TMP()
@@ -25,24 +25,30 @@ tmp.setData(
 
 # tmp.setData(tmp.editData("""int((absolute_position1).split(", ")[0][1:]) - int((absolute_position2).split(", ")[0][1:]) && block_type1 - block_type2""", "sort"))
 
-tmp.setData(
-    tmp.editData(
-       """(session_begin1 - session_begin2) if (role1 == role2) else (1 if (role2 == "Player" or role1 != "Player" and role1 != "Moderator") else -1)
+#
+v = tmp.editData(
+    """(session_begin1 - session_begin2) if (role1 == role2) else (1 if (role2 == "Player" or role1 != "Player" and role1 != "Moderator") else -1)
 
-       && role.lower() != "player"
 
-       && (session_begin, role) <- (session_begin//2, role + "'s")
+    && (session_begin, role) <- (session_begin//2, role + "'s")
 
-       && slice -1,3""", "auto"
-    )
+    && slice 1,3
+
+    && role.lower() != "rand"
+
+    && session_begin, , role, player_id
+""", "auto"
 )
+#
+print("other print", v)
+#tmp.setData(v)
 
 # tmp.setData(tmp.editData("""(session_begin) <- random.randint(5, 12)"""))
 
 updateDataInDB(cursor, tmp)
 
 
-loadGUI()
+#loadGUI()
 
 """
 1. DROP all TABLES

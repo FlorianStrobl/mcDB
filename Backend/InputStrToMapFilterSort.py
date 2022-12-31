@@ -8,11 +8,12 @@ from Logger import *
 
 # TODO, add column1,column2
 def getMode(
-    string: str, mode: Literal["auto", "filter", "map", "sort", "slice"] = "auto"
+    string: str, mode: Literal["auto", "filter", "map", "sort", "slice", "columns"] = "auto"
 ) -> Literal["filter", "map", "sort", "slice"]:
     string = string.strip()
     if mode == "auto":
         # try getting the current mode
+        MAX_INT = 9007199254740991
         if (
             re.search("^( *)?[A-Za-z_][A-Za-z0-9_]* *<-.+ *", string) is not None
             or re.search("^( *)?\([A-Za-z_0-9, ]*\) *<-.+ *", string) is not None
@@ -26,6 +27,9 @@ def getMode(
             mode = "sort"
         elif string.strip().lower().startswith("slice"):
             mode = "slice"
+        elif re.search("^[a-zA-Z0-9_, ]+$",string.replace(" ", "", MAX_INT).replace("\t", "", MAX_INT).replace("\n", "", MAX_INT).lower().strip()) is not None:
+            mode = "columns"
+            # TODO, test
         else:
             # couldn't find anything else so it must be filter
             mode = "filter"

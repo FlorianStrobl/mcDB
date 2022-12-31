@@ -8,6 +8,7 @@ sys.path.append("./Backend")
 import SQL
 from InputStrToMapFilterSort import *
 
+
 class TMP:
     data: list[any] = []
     tableName: str = ""
@@ -45,8 +46,7 @@ class TMP:
         return [self.tableName, self.columnNames]
 
     def deepCpyData(self) -> list[any]:
-        tmp = [v for v in self.data]
-        return tmp
+        return [v for v in self.data]
 
     # return a deep cpy of all the current object
     def deepCpy(self):
@@ -57,7 +57,7 @@ class TMP:
         return tmp
 
     # returns a deepCpy array of the data which got filtered with the lambda
-    def filterData(self, userStr: str) -> list:
+    def filterData(self, userStr: str) -> Optional[list]:
         tmp = self.deepCpyData()
         arr = []
         for i in range(len(tmp)):
@@ -75,7 +75,9 @@ class TMP:
     def editData(
         self,
         userStr: str,
-        mode: Optional[Literal["auto", "filter", "map", "sort", "slice"]] = None,
+        mode: Optional[
+            Literal["auto", "filter", "map", "sort", "slice", "columns"]
+        ] = None,
     ) -> Optional[list]:
         curVals = self.deepCpy()
         cmds = userStr.split("&&")  # get all the different cmds
@@ -87,15 +89,34 @@ class TMP:
             ):  # a chain of xy should always be xy
                 mode = getMode(cmd)
             if mode == "map":
-                curVals.data = TMP.mapData(curVals, cmd)
+                v = TMP.mapData(curVals, cmd)
+                if v is None:
+                    return None
+                curVals.data = v
             elif mode == "filter":
-                curVals.data = TMP.filterData(curVals, cmd)
+                v = TMP.filterData(curVals, cmd)
+                if v is None:
+                    return None
+                curVals.data = v
             elif mode == "sort":
-                curVals.data = TMP.sortData(curVals, cmd)
+                v = TMP.sortData(curVals, cmd)
+                if v is None:
+                    return None
+                curVals.data = v
             elif mode == "slice":
-                curVals.data = TMP.sliceData(curVals, cmd)
-
-
+                v = TMP.sliceData(curVals, cmd)
+                if v is None:
+                    return None
+                curVals.data = v
+            elif mode == "columns":
+                v = TMP.selectColumns(curVals, cmd)
+                if v is None:
+                    Logger.error(
+                        "couldn't execute the select with the command:", cmd
+                    )  # error message because it isnt handled before
+                    return None
+                curVals.columnNames = v[0]  # change also the column names
+                curVals.data = v[1]
         return curVals.data
 
     # returns a deepCpy array of the data edited for each element with the lambda
@@ -111,23 +132,27 @@ class TMP:
             # check if there are multiple columns
             if ans[0] == "multi":
                 indexes = []
-                for i,vv in enumerate(ans[1]):
+                for i, vv in enumerate(ans[1]):
                     try:
                         indexes.append(self.columnNames.index(ans[1][i]))
                     except:
-                        Logger.error("map coudln't find the column:", ans[1][i], self.columnNames)
+                        Logger.error(
+                            "map coudln't find the column:", ans[1][i], self.columnNames
+                        )
                         return None
 
-                #tmpNewDataIndex = 0
-                for i,vv in enumerate(indexes):
+                # tmpNewDataIndex = 0
+                for i, vv in enumerate(indexes):
                     v[vv] = ans[2][i]
-                    #tmpNewDataIndex += 1
+                    # tmpNewDataIndex += 1
                 arr.append(v)
             else:
                 try:
                     i = self.columnNames.index(ans[0])
                 except:
-                    Logger.error("map coudln't find the column:", ans[0], self.columnNames)
+                    Logger.error(
+                        "map coudln't find the column:", ans[0], self.columnNames
+                    )
                     return None
                 v[i] = ans[1]
                 arr.append(v)
@@ -222,29 +247,72 @@ class TMP:
         # return tmp
         return self.__quickSort__(self.deepCpyData(), userStr)
 
-    # TODO
-    def selectColumns(self, userStr: str) -> list[list[str], list[any]]:
-        return []
+    # returns the columns of the current data in the order provided by the userStr. e.g.: "columnName2,columnName1"
+    def selectColumns(self, userStr: str) -> Optional[list[list[str], list[any]]]:
+        def _2DArrayGetColumn(idx: int, arr: list[list]) -> list:
+            return [v[idx] for v in arr]
+
+        oldData = self.deepCpyData()
+
+        MAX_INT = 9007199254740991
+        toSaveColumns = [
+            x
+            for x in userStr.strip() # format str for simpler use
+            .replace(" ", "", MAX_INT)
+            .replace("\t", "", MAX_INT)
+            .replace("\n", "", MAX_INT)
+            .split(",")
+            if x != ""
+        ]
+
+        # check if some column doesnt exist
+        for cn in toSaveColumns:
+            try:
+                _ = self.columnNames.index(cn)
+            except:
+                Logger.error(f"the column {cn} does not exist in:", self.columnNames)
+                return None
+
+        # get indexes to keep
+        newColumnIndexes = []
+        for c in toSaveColumns:
+            newColumnIndexes.append(self.columnNames.index(c))
+
+        # save them in order into the newDataInOrder var
+        newDataInOrder = [_2DArrayGetColumn(c, oldData) for c in newColumnIndexes]
+
+        return [toSaveColumns, newDataInOrder]
 
     def sliceData(self, userStr: str) -> Optional[list]:
         userStr = userStr.lower().strip()
-        if not userStr.startswith('slice'):
-            Logger.error("slice command didn't work because it doesnt start correctly:", userStr)
+        if not userStr.startswith("slice"):
+            Logger.error(
+                "slice command didn't work because it doesnt start correctly:", userStr
+            )
             return None
         userStr = userStr.replace("slice", "").strip()
         nm = userStr.split(",")
         if len(nm) == 0 or len(nm) > 2:
-            Logger.error("slice command didn't work because it didnt get 1 to 2 integers as values:", userStr)
+            Logger.error(
+                "slice command didn't work because it didnt get 1 to 2 integers as values:",
+                userStr,
+            )
             return None
         if len(nm) == 1:
             try:
-                return self.deepCpyData()[int(eval(nm[0].strip(), {"length": len(self.data)})):]
+                return self.deepCpyData()[
+                    int(eval(nm[0].strip(), {"length": len(self.data)})) :
+                ]
             except:
                 Logger.error("Couldnt parse string to integer:", nm[0])
                 return None
         else:
             try:
-                return self.deepCpyData()[int(eval(nm[0].strip(), {"length": len(self.data)})):int(eval(nm[1].strip(), {"length": len(self.data)}))]
+                return self.deepCpyData()[
+                    int(eval(nm[0].strip(), {"length": len(self.data)})) : int(
+                        eval(nm[1].strip(), {"length": len(self.data)})
+                    )
+                ]
             except:
                 Logger.error("Couldnt parse string to integer:", nm[0], nm[1])
                 return None
@@ -260,11 +328,11 @@ def updateDataInDB(cursor, data: TMP) -> None:
 
     backupOldData = SQL.selectTable(cursor, data.tableName)
 
-    SQL.dropTable(cursor, data.tableName) # delete all existing datas
+    SQL.dropTable(cursor, data.tableName)  # delete all existing datas
     SQL.createAllTables(cursor)  # if not exists in SQLite exists
 
     try:
-        SQL.insertIntoTable(cursor, data.tableName, data.data) # save all the new datas
+        SQL.insertIntoTable(cursor, data.tableName, data.data)  # save all the new datas
     except:
         # revert to the old, known good, values
         SQL.dropTable(cursor, data.tableName)
