@@ -29,11 +29,13 @@ tmp.setData(
     tmp.editData(
        """(session_begin1 - session_begin2) if (role1 == role2) else (1 if (role2 == "Player" or role1 != "Player" and role1 != "Moderator") else -1)
 
-       && role.lower() != "players" """, "auto"
+       && role.lower() != "players"
+
+       && session_begin <- session_begin//2
+
+       && slice 0,3""", "auto"
     )
 )
-
-print(tmp.editData("slice 0,-1"))
 
 # tmp.setData(tmp.editData("""(session_begin) <- random.randint(5, 12)"""))
 

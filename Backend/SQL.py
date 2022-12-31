@@ -91,9 +91,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 # sqlite3: INSERT INTO values for a certain table
 def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
     tmpData = list(tmpData)
-    # print("called this func with:", tmpData[0])
-    _data = None  # data for potential error message
-    # TODO, fix "str'still str'mhm"
+    _data = None  # data for potential error messag
     for i, v in enumerate(tmpData):
         if type(tmpData[i]) == type((1, "some tuple")):
             tmpData[i] = list(tmpData[i])  # fix tuples
@@ -169,6 +167,7 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
                 )
     except:
         Logger.error(f"while inserting data into {table} with the data:", _data)
+        raise Exception("bad data")
     cursor.connection.commit()
 
 

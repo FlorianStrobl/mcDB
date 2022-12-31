@@ -258,16 +258,16 @@ def updateDataInDB(cursor, data: TMP) -> None:
     if data.tableName is None:
         return  # no data to save
 
-    def samePrimaryKey(
-        newData: list[any],
-        newDataColumns: list[str],
-        realData: list[any],
-        tableName: str,
-    ):
-        return False
+    backupOldData = SQL.selectTable(cursor, data.tableName)
 
-    SQL.dropTable(cursor, data.tableName)
+    SQL.dropTable(cursor, data.tableName) # delete all existing datas
     SQL.createAllTables(cursor)  # if not exists in SQLite exists
-    SQL.insertIntoTable(cursor, data.tableName, data.data)
 
+    try:
+        SQL.insertIntoTable(cursor, data.tableName, data.data) # save all the new datas
+    except:
+        # revert to the old, known good, values
+        SQL.dropTable(cursor, data.tableName)
+        SQL.createAllTables(cursor)
+        SQL.insertIntoTable(cursor, data.tableName, backupOldData)
     return

@@ -1,5 +1,7 @@
-#from GUI.main import setLogLabel
+import sys
 
+sys.path.append("./GUI")
+#from main import setLogLabel
 
 class Logger:
 
