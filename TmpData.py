@@ -75,7 +75,7 @@ class TMP:
     def editData(
         self,
         userStr: str,
-        mode: Optional[Literal["auto", "filter", "map", "sort"]] = None,
+        mode: Optional[Literal["auto", "filter", "map", "sort", "slice"]] = None,
     ) -> Optional[list]:
         curVals = self.deepCpy()
         cmds = userStr.split("&&")  # get all the different cmds
@@ -92,6 +92,9 @@ class TMP:
                 curVals.data = TMP.filterData(curVals, cmd)
             elif mode == "sort":
                 curVals.data = TMP.sortData(curVals, cmd)
+            elif mode == "slice":
+                curVals.data = TMP.sliceData(curVals, cmd)
+
 
         return curVals.data
 
@@ -223,7 +226,6 @@ class TMP:
     def selectColumns(self, userStr: str) -> list[list[str], list[any]]:
         return []
 
-    # TODO
     def sliceData(self, userStr: str) -> Optional[list]:
         userStr = userStr.lower().strip()
         if not userStr.startswith('slice'):

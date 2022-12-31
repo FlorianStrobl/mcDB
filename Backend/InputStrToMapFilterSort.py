@@ -8,8 +8,8 @@ from Logger import *
 
 # TODO, add column1,column2
 def getMode(
-    string: str, mode: Literal["auto", "filter", "map", "sort"] = "auto"
-) -> str:
+    string: str, mode: Literal["auto", "filter", "map", "sort", "slice"] = "auto"
+) -> Literal["filter", "map", "sort", "slice"]:
     string = string.strip()
     if mode == "auto":
         # try getting the current mode
@@ -24,6 +24,8 @@ def getMode(
             # match ANY test1|2 ANY
             # TODO, could be "test1" inside the str
             mode = "sort"
+        elif string.strip().lower().startswith("slice"):
+            mode = "slice"
         else:
             # couldn't find anything else so it must be filter
             mode = "filter"

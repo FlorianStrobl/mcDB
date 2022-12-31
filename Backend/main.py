@@ -33,7 +33,7 @@ tmp.setData(
     )
 )
 
-print(tmp.sliceData("slice 0,1"))
+print(tmp.editData("slice 0,-1"))
 
 # tmp.setData(tmp.editData("""(session_begin) <- random.randint(5, 12)"""))
 
