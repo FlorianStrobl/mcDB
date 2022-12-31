@@ -34,8 +34,6 @@ v = tmp.editData(
     && slice 0,3
 
     && role.lower() != "rand"
-
-    && session_begin, role, player_id
 """, "auto"
 )
 

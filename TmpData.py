@@ -23,7 +23,9 @@ class TMP:
     def columnLen(self) -> int:
         return len(self.columnNames)
 
-    def replaceTmp(self, newTmp: TMP) -> TMP:
+    def replaceTmp(self, newTmp: Optional[TMP]) -> TMP:
+        if newTmp is None:
+            return self
         self.data = newTmp.deepCpyData()
         self.columnNames = [n for n in newTmp.columnNames]
         self.tableName = newTmp.tableName
