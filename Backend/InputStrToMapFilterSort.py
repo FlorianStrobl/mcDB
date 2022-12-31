@@ -32,7 +32,7 @@ def getMode(
     return mode
 
 
-# mode: ["auto", "filter", "map", "sort"], TODO add func return type
+# mode: ["auto", "filter", "map", "sort"]
 def executeUserStr(
     string: str,
     mode: Literal["auto", "filter", "map", "sort"] = "auto",
