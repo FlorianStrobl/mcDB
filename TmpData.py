@@ -336,6 +336,12 @@ class TMP:
 
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
+    def reorderArr(array, orderArray):
+        newArray = []
+        for i in orderArray:
+            newArray.append(array[i])
+        return newArray
+
     if data.tableName is None:
         return  # no table for data to save
 
@@ -367,6 +373,14 @@ def updateDataInDB(cursor, data: TMP) -> None:
     if data.columnNames != originalColumns:
         # TODO swap
         print("SWAP")
+        # get order
+        orderArr = []
+        for i in range(len(data.columnNames)):
+            orderArr.append(originalColumns.index(data.columnNames[i]))
+        # reorder the data
+        for i in range(len(data.data)):
+            data.data[i] = reorderArr(data.data[i], orderArr)
+        reorderArr(data.columnNames, orderArr)
 
     # backup in case the saving of new data fails => invalid new data
     backupOldData = SQL.selectTable(cursor, data.tableName)
