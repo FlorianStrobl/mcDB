@@ -304,7 +304,7 @@ class TMP:
             )
             return None
         userStr = userStr.replace("slice", "").strip()
-        nm = userStr.split(",")
+        nm = userStr.split(";")
         if len(nm) == 0 or len(nm) > 2:
             Logger.error(
                 "slice command didn't work because it didnt get 1 to 2 integers as values:",

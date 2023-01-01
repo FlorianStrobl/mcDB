@@ -31,7 +31,7 @@ v = tmp.editData(
 
     && (session_begin, role) <- (session_begin//2, role + "'s")
 
-    && slice 0,3
+    && slice 0; [1 for i,v in enumerate([1, 2])][0]
 
     && role.lower() != "rand"
 """, "auto"
