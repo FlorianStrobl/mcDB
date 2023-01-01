@@ -5,3 +5,7 @@ data, index, length
 => index1,index2 for sort
 
 WHAT ABOUT IS-A?? Add INSERT INTO (block_type) (0/1) and foreign keys??
+
+JOINs
+
+native user str SQL support
