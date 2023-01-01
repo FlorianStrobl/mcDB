@@ -55,4 +55,8 @@ def onTableSave(table):
 
 
 def onInputfieldChange(text, mode):
-    print("New Change:" + text + " on " + mode)
+    print(f"[{mode}] inputfield: {text}")
+    if mode != "sql":
+        vv = tmp.editData(text, mode)
+        if vv is not None:
+            print(vv.data)

@@ -92,7 +92,7 @@ def loadGUI():
     segemented_button_var = customtkinter.StringVar(value="auto")
     segemented_button = customtkinter.CTkSegmentedButton(
         master=app,
-        values=["auto", "sql", "filter", "map", "sort"],
+        values=["sql", "auto", "columns", "slice", "filter", "sort", "map"],
         variable=segemented_button_var,
     )
     segemented_button.place(x=350, y=10, width=300)
