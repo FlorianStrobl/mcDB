@@ -373,19 +373,15 @@ def updateDataInDB(cursor, data: TMP) -> None:
     # TODO, it could be that the vars are in swapped order
     if data.columnNames != originalColumns:
         # TODO swap, should it also swap it in the UI, or just in the database?
-        print("SWAP TODO (TmpData.py)")
-        print(originalColumns)
-        print("before ordering:",data.columnNames)
+        print("SWAP TODO (in: TmpData.py)")
         # get order
         orderArr = []
         for i in range(len(data.columnNames)):
             orderArr.append(originalColumns.index(data.columnNames[i]))
-        print(orderArr)
         # reorder the data
         for i in range(len(data.data)):
             data.data[i] = reorderArr(data.data[i], orderArr)
         data.columnNames = reorderArr(data.columnNames, orderArr)
-        print("after ordering:",data.columnNames)
 
     # backup in case the saving of new data fails => invalid new data
     backupOldData = SQL.selectTable(cursor, data.tableName)
