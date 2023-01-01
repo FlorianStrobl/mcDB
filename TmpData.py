@@ -25,6 +25,7 @@ class TMP:
 
     def replaceTmp(self, newTmp: Optional[TMP]) -> TMP:
         if newTmp is None:
+            Logger.error("Couldn't update temporary data. probably because a command failed before.")
             return self
         self.data = newTmp.deepCpyData()
         self.columnNames = [n for n in newTmp.columnNames]
@@ -125,7 +126,10 @@ class TMP:
                     )  # error message because it isnt handled before
                     return None
                 curVals.columnNames = v[0]  # change also the column names
-                curVals.data = v[1]
+                curVals.data = [[] for _ in v[1][0]]
+                for i in range(len(v[1])):
+                    for idx,val in enumerate(v[1][i]):
+                        curVals.data[idx].append(val) # add them in correct order
         return curVals
 
     # returns a deepCpy array of the data edited for each element with the lambda
@@ -353,11 +357,16 @@ def updateDataInDB(cursor, data: TMP) -> None:
         Logger.error(errStr, data.columnNames, originalColumns)
         return
 
-    # check if they have the same values
-    for i in range(len(data.columnNames)):
-        if data.columnNames[i] != originalColumns[i]:
+    # check if they have the same exact values
+    for c in originalColumns:
+        if not c in data.columnNames:
             Logger.error(errStr, data.columnNames, originalColumns)
             return
+
+    # TODO, it could be that the vars are in swapped order
+    if data.columnNames != originalColumns:
+        # TODO swap
+        print("SWAP")
 
     # backup in case the saving of new data fails => invalid new data
     backupOldData = SQL.selectTable(cursor, data.tableName)

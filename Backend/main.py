@@ -36,12 +36,10 @@ v = tmp.editData(
     && role.lower() != "rand"
 """, "auto"
 )
-
 tmp.replaceTmp(v)
-print(tmp.columnNames, tmp.data)
-
+v = tmp.editData("""session_begin <- 0 && player_id, serverworld_id, session_begin, player_position, role""")
+tmp.replaceTmp(v)
 updateDataInDB(cursor, tmp)
-
 
 loadGUI()
 

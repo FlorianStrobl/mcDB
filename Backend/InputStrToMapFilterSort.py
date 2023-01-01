@@ -10,7 +10,7 @@ from TmpData import *
 # TODO, add column1,column2
 def getMode(
     string: str, mode: Literal["auto", "filter", "map", "sort", "slice", "columns"] = "auto"
-) -> Literal["filter", "map", "sort", "slice"]:
+) -> Literal["map", "sort", "slice", "columns", "filter"]:
     string = string.strip()
     if mode == "auto":
         # try getting the current mode

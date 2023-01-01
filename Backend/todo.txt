@@ -9,3 +9,7 @@ WHAT ABOUT IS-A?? Add INSERT INTO (block_type) (0/1) and foreign keys??
 JOINs
 
 native user str SQL support
+
+fill/add new datas?? maybe with some rand() for introducing a random new data set with valid data
+
+saving tmp to .db even if columns are swapped
