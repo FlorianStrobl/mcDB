@@ -62,12 +62,13 @@ def loadGUI():
     table = scrollableTable(
         app,
         tableData=[
-            ["Welt", "tsdsddds"],
-            [[random.randint(0, 50), "t"] for i in range(100)],
+            [""],
+            []
         ],
         pos=(235, 145, 515, 300),
     )
-    table.setTableHeader([random.randint(0, 1000), "t", "j", "j", "x"])
+    #table.setTableHeader([random.randint(0, 1000), "t", "j", "j", "x"])
+    #table.setTableHeader("x")
 
     # table.fill([[random.randint(0, 1000), "t", "j", "j", "j"] for i in range(50)])
 
@@ -151,8 +152,9 @@ def loadGUI():
     navigatorIndicator.place(x=45, y=0, width=50, height=30)
 
     pageSystem = PageSystem(
-        table, navigatorIndicator, [[i, "j", "h", "j", "J"] for i in range(347)]
+        table, navigatorIndicator, [[i] for i in range(0)]
     )
+    table.setTableHeader([""])
 
     navigatorNavLeft = customtkinter.CTkButton(
         master=navigatorFrame,

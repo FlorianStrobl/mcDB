@@ -202,6 +202,8 @@ class scrollableTable(customtkinter.CTkFrame):
         self.updateEvents()
 
         self.tableBody = []
+
+        if(len(tableBody) == 0): return
         # Wenn die gleichen Anzahl and columns vorhanden ist wie bei der vorherigen Tabelle,
         # ist es nicht nötig, die Tabelle komplett neu zu erstellen.
         # --> Mann kann so die fehlenden/zu vielen rows hinzufügen/entfernen und so die Tabelle schneller generieren

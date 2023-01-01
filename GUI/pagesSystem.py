@@ -152,7 +152,9 @@ class PageSystem:
 
     def onUIReady(self):
         dArray = self.convertToPages2dArray(self.givenArray)
-        self.table.fill(dArray[self.currentPage])
+        if(len(dArray) != 0):
+            self.table.fill(dArray[self.currentPage])
+
         self.table.addEventListener("onAddRow", self.onAdd)
         self.table.addEventListener("onDeleteRow", self.onDelete)
         self.navigatorIndicator.configure(
