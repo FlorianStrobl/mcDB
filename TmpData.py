@@ -25,7 +25,9 @@ class TMP:
 
     def replaceTmp(self, newTmp: Optional[TMP]) -> TMP:
         if newTmp is None:
-            Logger.error("Couldn't update temporary data. probably because a command failed before.")
+            Logger.error(
+                "Couldn't update temporary data. probably because a command failed before."
+            )
             return self
         self.data = newTmp.deepCpyData()
         self.columnNames = [n for n in newTmp.columnNames]
@@ -71,7 +73,7 @@ class TMP:
         tmp = self.deepCpyData()
         arr = []
         for i in range(len(tmp)):
-            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i])
+            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i)
             if ans is None:
                 Logger.error(
                     "couldn't apply a filter:", userStr, self.columnNames, tmp[i]
@@ -128,15 +130,15 @@ class TMP:
                 curVals.columnNames = v[0]  # change also the column names
                 curVals.data = [[] for _ in v[1][0]]
                 for i in range(len(v[1])):
-                    for idx,val in enumerate(v[1][i]):
-                        curVals.data[idx].append(val) # add them in correct order
+                    for idx, val in enumerate(v[1][i]):
+                        curVals.data[idx].append(val)  # add them in correct order
         return curVals
 
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> Optional[list]:
         arr = []
-        for v in self.deepCpyData():
-            ans = executeUserStr(userStr, "map", self.columnNames, v)
+        for i, v in enumerate(self.deepCpyData()):
+            ans = executeUserStr(userStr, "map", self.columnNames, v, i)
             # TODO, ans could be multiple different columns!!
             if ans is None:
                 Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
@@ -185,7 +187,7 @@ class TMP:
             for index, value in enumerate(arr):
                 if index != mid:
                     ans = executeUserStr(
-                        userStr, "sort", self.columnNames, [value, pivot]
+                        userStr, "sort", self.columnNames, [value, pivot], mid, index
                     )
                     if ans is None:
                         Logger.error(
@@ -213,42 +215,6 @@ class TMP:
 
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
     def sortData(self, userStr: str) -> Optional[list]:
-        # unstable quicksort
-        def quickSort(
-            arr: list, start: Optional[int] = None, end: Optional[int] = None
-        ) -> None:
-            def partition(arr: list, _start: int, _end: int) -> int:
-                pivot = arr[_end]
-                i = _start - 1
-                for j in range(_start, _end):
-                    ans = executeUserStr(
-                        userStr, "sort", self.columnNames, [arr[j], pivot]
-                    )
-                    if ans is None:
-                        Logger.error(
-                            "sorting failed with values:",
-                            ans,
-                            userStr,
-                            self.columnNames,
-                            [arr[j], pivot],
-                        )
-                        return None
-                    if ans < 0:
-                        i += 1
-                        (arr[i], arr[j]) = (arr[j], arr[i])  # swap
-                (arr[i + 1], arr[_end]) = (arr[_end], arr[i + 1])  # swap
-                return i + 1
-
-            if start is None:
-                start = 0
-            if end is None:
-                end = len(arr) - 1
-
-            if start < end:
-                pi = partition(arr, start, end)
-                quickSort(arr, start, pi - 1)
-                quickSort(arr, pi + 1, end)
-
         # def bubbleSort(arr: list) -> None:
         #     for i in range(len(arr)):
         #         for y in range(i, len(arr)):
@@ -258,6 +224,7 @@ class TMP:
         # tmp = self.deepCpyData()
         # quickSort(tmp)
         # return tmp
+
         return self.__quickSort__(self.deepCpyData(), userStr)
 
     # returns the columns of the current data in the order provided by the userStr. e.g.: "columnName2,columnName1"
@@ -270,7 +237,7 @@ class TMP:
         MAX_INT = 9007199254740991
         toSaveColumns = [
             x
-            for x in userStr.strip() # format str for simpler use
+            for x in userStr.strip()  # format str for simpler use
             .replace(" ", "", MAX_INT)
             .replace("\t", "", MAX_INT)
             .replace("\n", "", MAX_INT)
@@ -283,7 +250,10 @@ class TMP:
             try:
                 _ = self.columnNames.index(cn)
             except:
-                Logger.error(f"select columns failed because the column {cn} does not exist in:", self.columnNames)
+                Logger.error(
+                    f"select columns failed because the column {cn} does not exist in:",
+                    self.columnNames,
+                )
                 return None
 
         # get indexes to keep
@@ -297,38 +267,7 @@ class TMP:
         return [toSaveColumns, newDataInOrder]
 
     def sliceData(self, userStr: str) -> Optional[list]:
-        userStr = userStr.lower().strip()
-        if not userStr.startswith("slice"):
-            Logger.error(
-                "slice command didn't work because it doesnt start correctly:", userStr
-            )
-            return None
-        userStr = userStr.replace("slice", "").strip()
-        nm = userStr.split(";")
-        if len(nm) == 0 or len(nm) > 2:
-            Logger.error(
-                "slice command didn't work because it didnt get 1 to 2 integers as values:",
-                userStr,
-            )
-            return None
-        if len(nm) == 1:
-            try:
-                return self.deepCpyData()[
-                    int(eval(nm[0].strip(), {"length": len(self.data)})) :
-                ]
-            except:
-                Logger.error("slice command couldn't parse code to integer:", userStr, nm[0])
-                return None
-        else:
-            try:
-                return self.deepCpyData()[
-                    int(eval(nm[0].strip(), {"length": len(self.data)})) : int(
-                        eval(nm[1].strip(), {"length": len(self.data)})
-                    )
-                ]
-            except:
-                Logger.error("slice command couldn't parse code to integer:", nm[0], nm[1])
-                return None
+        return executeUserStr(userStr, "slice", self.columnNames, self.data, 0)
 
     def printThis(self) -> None:
         Logger.log("print tmp", self.getData())
@@ -347,7 +286,9 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return  # no table for data to save
 
     if data.columnNames is None:
-        Logger.error(f"No column names provided to save table {data.tableName} to database")
+        Logger.error(
+            f"No column names provided to save table {data.tableName} to database"
+        )
         return
 
     if data.data is None:
@@ -357,7 +298,9 @@ def updateDataInDB(cursor, data: TMP) -> None:
     # check if column names are like the original ones
     originalColumns = SQL.selectTableColumns(cursor, data.tableName)
 
-    errStr = "Couldn't save data to database because the columns are not the ones expected:"
+    errStr = (
+        "Couldn't save data to database because the columns are not the ones expected:"
+    )
 
     # check if they have the same length
     if len(data.columnNames) != len(originalColumns):

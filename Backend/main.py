@@ -31,7 +31,7 @@ v = tmp.editData(
 
     && (session_begin, role) <- (session_begin//2, role + "'s")
 
-    && slice 0; [1 for i,v in enumerate([1, 2])][0]
+    && slice 0; (len([None for i,v in enumerate(data)])+length+index)//4
 
     && role.lower() != "rand"
 """, "auto"
@@ -39,7 +39,7 @@ v = tmp.editData(
 tmp.replaceTmp(v)
 v = tmp.editData("""session_begin <- 0 && session_begin, player_id, serverworld_id, role, player_position""") # TODO, if i swap, should i swap the order of the columns in the UI too?
 tmp.replaceTmp(v)
-#print(tmp.columnNames, tmp.data)
+
 updateDataInDB(cursor, tmp)
 
 loadGUI()

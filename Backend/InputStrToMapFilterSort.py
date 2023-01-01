@@ -9,7 +9,8 @@ from TmpData import *
 
 # TODO, add column1,column2
 def getMode(
-    string: str, mode: Literal["auto", "filter", "map", "sort", "slice", "columns"] = "auto"
+    string: str,
+    mode: Literal["auto", "filter", "map", "sort", "slice", "columns"] = "auto",
 ) -> Literal["map", "sort", "slice", "columns", "filter"]:
     string = string.strip()
     if mode == "auto":
@@ -28,7 +29,17 @@ def getMode(
             mode = "sort"
         elif string.strip().lower().startswith("slice"):
             mode = "slice"
-        elif re.search("^[a-zA-Z0-9_, ]+$",string.replace(" ", "", MAX_INT).replace("\t", "", MAX_INT).replace("\n", "", MAX_INT).lower().strip()) is not None:
+        elif (
+            re.search(
+                "^[a-zA-Z0-9_, ]+$",
+                string.replace(" ", "", MAX_INT)
+                .replace("\t", "", MAX_INT)
+                .replace("\n", "", MAX_INT)
+                .lower()
+                .strip(),
+            )
+            is not None
+        ):
             mode = "columns"
             # TODO, test
         else:
@@ -37,19 +48,30 @@ def getMode(
     return mode
 
 
-# mode: ["auto", "filter", "map", "sort"]
+# mode: ["auto", "filter", "map", "sort", "slice"]
 def executeUserStr(
     string: str,
-    mode: Literal["auto", "filter", "map", "sort"] = "auto",
+    mode: Literal["auto", "filter", "map", "sort", "slice"] = "auto",
     columns: list[str] = [],
     data: list[any] = [],
-    workingOnDataOpt: Optional[any] = None, # TODO, what about slice aso??
-    workingOnIdx: Optional[int] = None
+    workingOnIdx1: Optional[int] = None,
+    workingOnIdx2: Optional[int] = None,
 ) -> Union[None, int, bool, any]:
     mode = getMode(string, mode)  # mode stays the same if it was already set
 
     # TODO, add index, length and curDataCpy
-    vals = {"random": random, "math": math, "numpy": numpy, "data":(workingOnDataOpt or [])[:], "length":len(workingOnDataOpt or [])}
+    vals = {
+        "random": random,
+        "math": math,
+        "numpy": numpy,
+        "data": (data or [])[:],
+        "length": len(data or []),
+    }
+    if workingOnIdx2 is None:
+        vals["index"] = workingOnIdx1
+    else:
+        vals["index1"] = workingOnIdx1
+        vals["index2"] = workingOnIdx2
     if mode == "map":
         # create a lambda with the signature: Callable[[any], bool]
         code = re.split("<-", string, 1)  # split on first occurence
@@ -60,7 +82,9 @@ def executeUserStr(
         code[0] = code[0].strip()
         # TODO, what if (val,,,) <- 4
         mustStartWithIdentifier = code[0][0] != "("
-        isWrappedIdentifier = [v.strip() for v in code[0][1:-1].split(",") if v.strip() != ""]
+        isWrappedIdentifier = [
+            v.strip() for v in code[0][1:-1].split(",") if v.strip() != ""
+        ]
         isWrappedIdentifier = len(isWrappedIdentifier) == 1
         # if exactly one
         if mustStartWithIdentifier or isWrappedIdentifier:
@@ -186,5 +210,38 @@ def executeUserStr(
         except:
             Logger.error("couldn't evaluate the sort code:", code)
             return None
+    elif mode == "slice":
+        string = string.strip()
+        if not string.lower().startswith("slice"):
+            Logger.error(
+                "slice command didn't work because it doesnt start correctly:", string
+            )
+            return None
+        string = string[len("slice"):].strip() # remove the "slice"
+        nm = string.split(";")
+        if len(nm) == 0 or len(nm) > 2:
+            Logger.error(
+                "slice command didn't work because it didnt get 1 to 2 integers as values:",
+                string,
+            )
+            return None
+        if len(nm) == 1:
+            try:
+                return data[int(eval(nm[0].strip(), vals)) :]
+            except:
+                Logger.error(
+                    "slice command couldn't parse code to integer:", userStr, nm[0]
+                )
+                return None
+        else:
+            try:
+                return data[
+                    int(eval(nm[0].strip(), vals)) : int(eval(nm[1].strip(), vals))
+                ]
+            except:
+                Logger.error(
+                    "slice command couldn't parse code to integer:", nm[0], nm[1]
+                )
+                return None
 
-    return None
+    return None  # nothing matched
