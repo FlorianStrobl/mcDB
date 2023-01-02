@@ -17,8 +17,8 @@ def getMode(
         # try getting the current mode
         MAX_INT = 9007199254740991
         if (
-            re.search("^( *)?[A-Za-z_][A-Za-z0-9_]* *<-.+ *", string) is not None
-            or re.search("^( *)?\([A-Za-z_0-9, ]*\) *<-.+ *", string) is not None
+            re.search("^( *)?[A-Za-z_][A-Za-z0-9_]* *<-.*", string) is not None
+            or re.search("^( *)?\([A-Za-z_0-9, ]*\) *<-.*", string) is not None
         ):
             # match identifier <- ANY
             # or match (any symbol out of [A-Za-z_0-9, ]) <- Any

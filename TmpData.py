@@ -23,16 +23,15 @@ class TMP:
     def columnLen(self) -> int:
         return len(self.columnNames)
 
-    def replaceTmp(self, newTmp: Optional[TMP]) -> TMP:
+    def replaceTmp(self, newTmp: Optional[TMP]) -> None:
         if newTmp is None:
             Logger.error(
                 "Couldn't update temporary data. probably because a command failed before."
             )
-            return self
+            return
         self.data = newTmp.deepCpyData()
-        self.columnNames = [n for n in newTmp.columnNames]
+        self.columnNames = newTmp.columnNames[:]
         self.tableName = newTmp.tableName
-        return self
 
     # None values will be replaced by the current saved value
     def setData(
@@ -55,35 +54,23 @@ class TMP:
 
     # get [tableName, columnNames]
     def getMetaData(self) -> list[str, list[str]]:
-        return [self.tableName, self.columnNames]
+        return [self.tableName, self.columnNames[:]]
 
     def deepCpyData(self) -> list[any]:
-        return [v for v in self.data]
+        d = []
+        for v in self.data:
+            d.append(v[:])
+        return d
 
     # return a deep cpy of all the current object
     def deepCpy(self):
-        tmp = TMP()
-        tmp.data = self.deepCpyData()
-        tmp.columnNames = [v for v in self.columnNames]
-        tmp.tableName = "".join([v for v in self.tableName])
-        return tmp
+        t = TMP()
+        t.data = self.deepCpyData()
+        t.columnNames = self.columnNames[:]
+        t.tableName = "".join([v for v in self.tableName])
+        return t
 
-    # returns a deepCpy array of the data which got filtered with the lambda
-    def filterData(self, userStr: str) -> Optional[list]:
-        tmp = self.deepCpyData()
-        arr = []
-        for i in range(len(tmp)):
-            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i)
-            if ans is None:
-                Logger.error(
-                    "couldn't apply a filter:", userStr, self.columnNames, tmp[i]
-                )
-                return None
-            if ans:
-                arr.append(tmp[i])
-        return arr
-
-    # map, filter or sort depending on the string
+    # map, filter, sort, slice or columns depending on the string
     def editData(
         self,
         userStr: str,
@@ -92,6 +79,7 @@ class TMP:
         ] = None,
     ) -> Optional[TMP]:
         curVals = self.deepCpy()
+        # TODO what about "&&"
         cmds = userStr.split("&&")  # get all the different cmds
         originalMode = mode
         for cmd in cmds:
@@ -118,7 +106,7 @@ class TMP:
             elif mode == "slice":
                 v = TMP.sliceData(curVals, cmd)
                 if v is None:
-                    # error message because it is handled before
+                    # no error message because it is handled before
                     return None
                 curVals.data = v
             elif mode == "columns":
@@ -134,6 +122,21 @@ class TMP:
                     for idx, val in enumerate(v[1][i]):
                         curVals.data[idx].append(val)  # add them in correct order
         return curVals
+
+    # returns a deepCpy array of the data which got filtered with the lambda
+    def filterData(self, userStr: str) -> Optional[list]:
+        tmp = self.deepCpyData()
+        arr = []
+        for i in range(len(tmp)):
+            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i)
+            if ans is None:
+                Logger.error(
+                    "couldn't apply a filter:", userStr, self.columnNames, tmp[i]
+                )
+                return None
+            if ans:
+                arr.append(tmp[i])
+        return arr
 
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> Optional[list]:
@@ -157,10 +160,8 @@ class TMP:
                         )
                         return None
 
-                # tmpNewDataIndex = 0
                 for i, vv in enumerate(indexes):
                     v[vv] = ans[2][i]
-                    # tmpNewDataIndex += 1
                 arr.append(v)
             else:
                 try:
@@ -268,7 +269,7 @@ class TMP:
         return [toSaveColumns, newDataInOrder]
 
     def sliceData(self, userStr: str) -> Optional[list]:
-        return executeUserStr(userStr, "slice", self.columnNames, self.data, 0)
+        return executeUserStr(userStr, "slice", self.columnNames, self.deepCpyData(), 0)
 
     def printThis(self) -> None:
         Logger.log("print tmp", self.getData())

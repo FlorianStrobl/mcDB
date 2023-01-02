@@ -54,7 +54,8 @@ def onTableSave(table):
     # TODO, really? because if there is a preview
     # which was NOT confirmed by the "Ok" button
     # you may not want to save it/apply the changes
-    tmp.setData(pageSystem.getInput())
+    tmp.setData(pageSystem.getInput()) # <--
+
     updateDataInDB(cursor, tmp)
     #print(table.getTablesInputs())
 
@@ -62,6 +63,7 @@ def onTableSave(table):
 def onInputfieldChange(text, mode):
     if text.strip() == "":
         preview = None
+
     if mode != "sql" and text.strip() != "":
         vv = tmp.editData(text, mode)
         if vv is None:
@@ -70,12 +72,13 @@ def onInputfieldChange(text, mode):
             preview = TMP()
             preview.replaceTmp(vv)
 
-            # TODO change the column names if it was a
-            # "select columns" command
-
+    # TODO change the column names if it was a
+    # "select columns" command
     if preview is not None:
-        pageSystem.changeTableBody(preview.getData())
+        # TODO show in UI somewhere "UNSAVED preview mode, click the 'Ok' Button to apply changes"
+        pageSystem.changeTableBody(preview.deepCpyData())
     else:
-        pageSystem.changeTableBody(tmp.getData())
+        # TODO remove the "preview mode" text
+        pageSystem.changeTableBody(tmp.deepCpyData())
 
     print(f"[{mode}] inputfield: \"{text}\"; got a preview: {preview is not None}")
