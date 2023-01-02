@@ -9,6 +9,13 @@ from GenDataJoinSafe import *
 
 TRIM = 2**50 - 1  # max 64 bit integers
 
+def searchForFirstDoublePair(arr1, arr2):
+    arr = list(zip(arr1, arr2))
+    for i in range(len(arr)):
+        for j in range(len(arr)):
+          if i != j and arr[i] == arr[j]:
+            return j
+    return -1
 
 class HelperFuncs:
     # generate UIDs in hex format
@@ -218,6 +225,14 @@ class GenerateTableData:
             Logger.error("Couldn't generate plays because there are no servers in the database.")
             return None
         serverworld_ids = sids
+
+        # fix double pairs for unique constraint
+        tries = 0 # only try it up to 50% of the ids
+        while searchForFirstDoublePair(player_ids, serverworld_ids) != -1 and tries < n * 0.5:
+            idx = searchForFirstDoublePair(player_ids, serverworld_ids)
+            # replace the serverworld_id at idx with a new one
+            serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+
         session_begins = HelperFuncs.generateTimestamp(n)
         player_positions = HelperFuncs.generateAbsolutePosition(n)
         roles = HelperFuncs.generateRoles(n)
@@ -251,6 +266,13 @@ class GenerateTableData:
             return None
         serverworld_ids = swids
 
+        # fix double pairs for unique constraint
+        tries = 0 # only try it up to 50% of the ids
+        while searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1 and tries < n * 0.5:
+            idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids)
+            # replace the serverworld_id at idx with a new one
+            serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+
         # add data to array
         for i in range(n):
             populatedBy.append((m_entities_ids[i] & TRIM, serverworld_ids[i] & TRIM))
@@ -271,6 +293,13 @@ class GenerateTableData:
             Logger.error("Couldn't generate buildOf because there are no servers in the database.")
             return None
         serverworld_ids = swids
+
+        # fix double pairs for unique constraint
+        tries = 0 # only try it up to 50% of the ids
+        while searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1 and tries < n * 0.5:
+            idx = searchForFirstDoublePair(absolute_positions, serverworld_ids)
+            # replace the serverworld_id at idx with a new one
+            serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
 
         # add data to array
         for i in range(n):

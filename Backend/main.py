@@ -7,7 +7,7 @@ from TmpData import *
 from InputStrToMapFilterSort import *
 from GUI.main import loadGUI
 
-# TODO foreign keys are correct
+# TODO foreign keys are correct: for generating data, check if some are double (not unique) and switch does then
 
 cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
