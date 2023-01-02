@@ -15,6 +15,8 @@ SQL.dropAllTables(cursor)  # delete current db
 SQL.createAllTables(cursor)  # create all tables
 SQL.fillAllTablesRand(cursor, 10)  # fill random data into the tables
 
+loadGUI()
+
 table = "plays"
 tmp = TMP()
 tmp.setData(
@@ -25,26 +27,22 @@ tmp.setData(
 
 # tmp.setData(tmp.editData("""int((absolute_position1).split(", ")[0][1:]) - int((absolute_position2).split(", ")[0][1:]) && block_type1 - block_type2""", "sort"))
 
-v = tmp.editData(
-    """
-    (session_begin1 - session_begin2) if (role1 == role2) else (1 if (role2 == "Player" or role1 != "Player" and role1 != "Moderator") else -1)
+# v = tmp.editData(
+#     """
+#     (session_begin1 - session_begin2) if (role1 == role2) else (1 if (role2 == "Player" or role1 != "Player" and role1 != "Moderator") else -1)
 
-    && (session_begin, role) <- (session_begin//2, role + "'s")
+#     && (session_begin, role) <- (session_begin//2, role + "'s")
 
-    && slice 0; (len([None for i,v in enumerate(data)])+length+index)//4
+#     && slice 0; (len([None for i,v in enumerate(data)])+length+index)//4
 
-    && role.lower() != "rand"
+#     && role.lower() != "rand"
+# """, "auto"
+# )
+#tmp.replaceTmp(v)
+#v = tmp.editData("""session_begin <- 0 && session_begin, player_id, serverworld_id, role, player_position""") # TODO, if i swap, should i swap the order of the columns in the UI too?
+#tmp.replaceTmp(v)
 
-    && slice 0;1
-""", "auto"
-)
-tmp.replaceTmp(v)
-v = tmp.editData("""session_begin <- 0 && session_begin, player_id, serverworld_id, role, player_position""") # TODO, if i swap, should i swap the order of the columns in the UI too?
-tmp.replaceTmp(v)
-
-updateDataInDB(cursor, tmp)
-
-loadGUI()
+#updateDataInDB(cursor, tmp)
 
 """
 1. DROP all TABLES

@@ -4,9 +4,9 @@ WHAT ABOUT IS-A?? Add INSERT INTO (block_type) (0/1) and foreign keys??
 
 JOINs
 
-native user str SQL support
+UNIQUE CONSTRAINT FOR PRIMARY KEYS OF THE RELATION TABLES
 
-fill/add new datas?? maybe with some rand() for introducing a random new data set with valid data
+native user str SQL support
 
 saving tmp to .db even if columns are swapped
 => now, should we swap the columns in INSERT INTO (column1, column2) ... AND then in the UI aswell because of the order saved in TMP

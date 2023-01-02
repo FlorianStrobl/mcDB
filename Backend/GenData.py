@@ -3,9 +3,11 @@ import uuid
 import time
 from typing import Union, Optional
 import addImport
+from Logger import *
 from Names import *
+from GenDataJoinSafe import *
 
-TRIM = 2**63 - 1  # max 64 bit integers
+TRIM = 2**50 - 1  # max 64 bit integers
 
 
 class HelperFuncs:
@@ -168,10 +170,14 @@ class GenerateTableData:
         return blocks
 
     # [absolute_position, isOnFire]
-    def generateWoods(n: int = 1) -> list[(str, int)]:
+    def generateWoods(n: int = 1, cursor = None) -> Optional[list[(str, int)]]:
         woods = []
 
-        absolute_positions = HelperFuncs.generateAbsolutePosition(n)
+        abspos = getRealFirstAbsolute_positions(cursor)
+        if abspos is None:
+            Logger.error("Couldn't generate wood because there are no blocks in the database.")
+            return None
+        absolute_positions = abspos
         isOnFire = HelperFuncs.generateBoolean(n)
 
         # add data to array
@@ -181,10 +187,14 @@ class GenerateTableData:
         return woods
 
     # [absolute_position, hasGrass]
-    def generateDirt(n: int = 1) -> list[(str, int)]:
+    def generateDirt(n: int = 1, cursor = None) -> Optional[list[(str, int)]]:
         dirts = []
 
-        absolute_positions = HelperFuncs.generateAbsolutePosition(n)
+        abspos = getRealFirstAbsolute_positions(cursor)
+        if abspos is None:
+            Logger.error("Couldn't generate dirt because there are no blocks in the database.")
+            return None
+        absolute_positions = abspos
         hasGrass = HelperFuncs.generateBoolean(n)
 
         # add data to array
@@ -194,11 +204,20 @@ class GenerateTableData:
         return dirts
 
     # [player_id, serverworld_id, session_begin, player_position, role]
-    def generatePlays(n: int = 1) -> list[(int, int, int, str, str)]:
+    # TODO, this returns Optional, fix the type for the callers (same for the other funcs)
+    def generatePlays(n: int = 1, cursor = None) -> Optional[list[(int, int, int, str, str)]]:
         plays = []
 
-        player_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
-        serverworld_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
+        pids = getRealPlayerIds(cursor, n)
+        if pids is None:
+            Logger.error("Couldn't generate plays because there are no players in the database.")
+            return None
+        player_ids = pids
+        sids = getRealServerworldIds(cursor, n)
+        if sids is None:
+            Logger.error("Couldn't generate plays because there are no servers in the database.")
+            return None
+        serverworld_ids = sids
         session_begins = HelperFuncs.generateTimestamp(n)
         player_positions = HelperFuncs.generateAbsolutePosition(n)
         roles = HelperFuncs.generateRoles(n)
@@ -218,11 +237,19 @@ class GenerateTableData:
         return plays
 
     # [m_entities_id, serverworld_id]
-    def generatePopulatedBy(n: int = 1) -> list[(int, int)]:
+    def generatePopulatedBy(n: int = 1, cursor = None) -> Optional[list[(int, int)]]:
         populatedBy = []
 
-        m_entities_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
-        serverworld_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
+        meids = getRealMEntityIds(cursor, n)
+        if meids is None:
+            Logger.error("Couldn't generate populatedBy because there are no entities in the database.")
+            return None
+        m_entities_ids = meids
+        swids = getRealServerworldIds(cursor, n)
+        if swids is None:
+            Logger.error("Couldn't generate populatedBy because there are no servers in the database.")
+            return None
+        serverworld_ids = swids
 
         # add data to array
         for i in range(n):
@@ -231,11 +258,19 @@ class GenerateTableData:
         return populatedBy
 
     # [absolute_position, serverworld_id]
-    def generateBuildOf(n: int = 1) -> list[(str, int)]:
+    def generateBuildOf(n: int = 1, cursor = None) -> Optional[list[(str, int)]]:
         buildOfs = []
 
-        absolute_positions = HelperFuncs.generateAbsolutePosition(n)
-        serverworld_ids = HelperFuncs.convertUIDsStrToInts(HelperFuncs.generateUID(n))
+        abspos = getRealAbsolute_positions(cursor, n)
+        if abspos is None:
+            Logger.error("Couldn't generate buildOf because there are no blocks in the database.")
+            return None
+        absolute_positions = abspos
+        swids = getRealServerworldIds(cursor, n)
+        if swids is None:
+            Logger.error("Couldn't generate buildOf because there are no servers in the database.")
+            return None
+        serverworld_ids = swids
 
         # add data to array
         for i in range(n):

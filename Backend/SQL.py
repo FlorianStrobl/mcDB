@@ -74,15 +74,15 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
         elif table == "Block":
             tmpData = GTD.generateBlocks(nr)
         elif table == "Wood":
-            tmpData = GTD.generateWoods(nr)
+            tmpData = GTD.generateWoods(nr, cursor)
         elif table == "Dirt":
-            tmpData = GTD.generateDirt(nr)
+            tmpData = GTD.generateDirt(nr, cursor)
         elif table == "plays":
-            tmpData = GTD.generatePlays(nr)
+            tmpData = GTD.generatePlays(nr, cursor)
         elif table == "populatedBy":
-            tmpData = GTD.generatePopulatedBy(nr)
+            tmpData = GTD.generatePopulatedBy(nr, cursor)
         elif table == "buildOf":
-            tmpData = GTD.generateBuildOf(nr)
+            tmpData = GTD.generateBuildOf(nr, cursor)
 
         # insert the generated data into the DB
         insertIntoTable(cursor, table, tmpData)
@@ -147,7 +147,6 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
         elif table == "plays":
             for data in tmpData:
                 _data = data
-                # TODO player_id and serverworld_id have to exist
                 cursor.execute(
                     f"INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES ({data[0]}, {data[1]}, {data[2]}, '{data[3]}', '{data[4]}')"
                 )
@@ -167,7 +166,8 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
                 )
     except:
         Logger.error(f"while inserting data into {table} with the data:", _data)
-        raise Exception("bad data")
+        #raise Exception("bad data")
+        return None
     cursor.connection.commit()
 
 
