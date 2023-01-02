@@ -34,6 +34,8 @@ v = tmp.editData(
     && slice 0; (len([None for i,v in enumerate(data)])+length+index)//4
 
     && role.lower() != "rand"
+
+    && slice 0;1
 """, "auto"
 )
 tmp.replaceTmp(v)

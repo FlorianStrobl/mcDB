@@ -230,7 +230,7 @@ def executeUserStr(
                 return data[int(eval(nm[0].strip(), vals)) :]
             except:
                 Logger.error(
-                    "slice command couldn't parse code to integer:", userStr, nm[0]
+                    "slice command couldn't parse code to integer:", string, nm[0]
                 )
                 return None
         else:

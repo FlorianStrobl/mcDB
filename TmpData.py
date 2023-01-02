@@ -118,6 +118,7 @@ class TMP:
             elif mode == "slice":
                 v = TMP.sliceData(curVals, cmd)
                 if v is None:
+                    # error message because it is handled before
                     return None
                 curVals.data = v
             elif mode == "columns":
