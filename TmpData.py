@@ -243,7 +243,7 @@ class TMP:
     # returns the columns of the current data in the order provided by the userStr. e.g.: "columnName2,columnName1"
     def selectColumns(self, userStr: str) -> Optional[list[list[str], list[any]]]:
         def _2DArrayGetColumn(idx: int, arr: list[list]) -> list:
-            return [v[idx] for v in arr]
+            return [list(v)[idx] for v in arr]
 
         oldData = self.deepCpyData()
         if oldData is None:
@@ -260,21 +260,20 @@ class TMP:
             if x != ""
         ]
 
-        # check if some column doesnt exist
-        for cn in toSaveColumns:
+        # get indexes to keep
+        newColumnIndexes = []
+        for c in toSaveColumns:
             try:
-                _ = self.columnNames.index(cn)
+                newColumnIndexes.append(self.columnNames.index(c))
             except:
+                # check if some column doesnt exist
                 Logger.error(
-                    f"select columns failed because the column {cn} does not exist in:",
+                    f"select columns failed because the column {c} does not exist in:",
                     self.columnNames,
                 )
                 return None
 
-        # get indexes to keep
-        newColumnIndexes = []
-        for c in toSaveColumns:
-            newColumnIndexes.append(self.columnNames.index(c))
+        # TODO 2d arrays may not have the idxs required for the function call below
 
         # save them in order into the newDataInOrder var
         newDataInOrder = [_2DArrayGetColumn(c, oldData) for c in newColumnIndexes]
@@ -330,8 +329,6 @@ def updateDataInDB(cursor, data: TMP) -> None:
 
     # check if the data is in the same order as the columns
     if data.columnNames != originalColumns:
-        # TODO swap, should it also swap it in the UI, or just in the database?
-        print("SWAP TODO (in: TmpData.py)")
         # get order
         orderArr = []
         for i in range(len(data.columnNames)):

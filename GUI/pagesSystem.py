@@ -36,7 +36,7 @@ class PageSystem:
         def insert_position(position, list1, list2):
             return list1[:position] + list2 + list1[position:]
 
-        print("running on deleteORAd")
+        ##print("running on deleteORAd")
         abschnitt = self.table.getTablesInputs()
 
         pageStart = self.currentPage * 50
@@ -46,13 +46,13 @@ class PageSystem:
         if pageStart + 49 < len(self.givenArray):
             pageEndDistance = 50
         else:
-            print("be")
+            ##print("be")
             pageEndDistance = (len(self.givenArray) - pageStart) + 1
         pageEnd = pageStart + pageEndDistance
 
         # print(pageStart)
         # print("p" ,pageEnd)
-        print("pageend", pageEndDistance, "pagestart", pageStart)
+        ##print("pageend", pageEndDistance, "pagestart", pageStart)
         # print(len( self.givenArray))
         # Remove all 50 (or the rest) elements from the main Array at specific page
         del self.givenArray[pageStart:pageEnd]
@@ -83,12 +83,12 @@ class PageSystem:
 
     def onDelete(self, possibleParamater=None):
 
-        print("bebe")
+        ##print("bebe")
         # ZIEL: alles in "givenArray" reintun in der richtiges stelle
         def insert_position(position, list1, list2):
             return list1[:position] + list2 + list1[position:]
 
-        print("running on deleteORAd")
+        ##print("running on deleteORAd")
         abschnitt = self.table.getTablesInputs()
 
         pageStart = self.currentPage * 50
@@ -98,7 +98,7 @@ class PageSystem:
         if pageStart + 49 < len(self.givenArray):
             pageEndDistance = 50
         else:
-            print("be")
+            ##print("be")
             pageEndDistance = (len(self.givenArray) - pageStart) + 1
 
         pageEnd = pageStart + pageEndDistance
@@ -152,7 +152,7 @@ class PageSystem:
 
     def onUIReady(self):
         dArray = self.convertToPages2dArray(self.givenArray)
-        if(len(dArray) != 0):
+        if len(dArray) != 0:
             self.table.fill(dArray[self.currentPage])
 
         self.table.addEventListener("onAddRow", self.onAdd)
