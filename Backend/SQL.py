@@ -1,3 +1,4 @@
+from typing import Optional
 import addImport
 from Logger import *
 import DDL
@@ -37,6 +38,7 @@ def createAllTables(cursor) -> None:
             cursor.execute(tableStr)
         except:
             Logger.error("while trying to create table", tableStr)
+            return
     cursor.connection.commit()
 
 
@@ -56,6 +58,7 @@ def dropTable(cursor, tableName: str) -> None:
         cursor.execute(f"DROP TABLE IF EXISTS {tableName};")
     except:
         Logger.error("while dropping table", tableName)
+        return
     cursor.connection.commit()
 
 
@@ -75,14 +78,35 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
             tmpData = GTD.generateBlocks(nr)
         elif table == "Wood":
             tmpData = GTD.generateWoods(nr, cursor)
+            if tmpData is None:
+                Logger.error("While generating Wood. Maybe the table 'Block' is empty")
+                return None
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr, cursor)
+            if tmpData is None:
+                Logger.error("While generating Dirt. Maybe the table 'Block' is empty")
+                return None
         elif table == "plays":
             tmpData = GTD.generatePlays(nr, cursor)
+            if tmpData is None:
+                Logger.error(
+                    "While generating plays. Maybe the table 'Player' or 'Serverworld' is empty"
+                )
+                return None
         elif table == "populatedBy":
             tmpData = GTD.generatePopulatedBy(nr, cursor)
+            if tmpData is None:
+                Logger.error(
+                    "While generating populatedBy. Maybe the table 'Serverworld' or 'MEntities' is empty"
+                )
+                return None
         elif table == "buildOf":
             tmpData = GTD.generateBuildOf(nr, cursor)
+            if tmpData is None:
+                Logger.error(
+                    "While generating buildOf. Maybe the table 'Serverworld' or 'Block' is empty"
+                )
+                return None
 
         # insert the generated data into the DB
         insertIntoTable(cursor, table, tmpData)
@@ -92,11 +116,12 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
     tmpData = list(tmpData)
     _data = None  # data for potential error messag
+    # fix strings with " or ' in them
     for i, v in enumerate(tmpData):
         if type(tmpData[i]) == type((1, "some tuple")):
             tmpData[i] = list(tmpData[i])  # fix tuples
         for ii, vv in enumerate(v):
-            MAX_INT = 9223372036854775807
+            MAX_INT = 9007199254740991
             if type(vv) == type(""):  # if its a string
                 # fix ' and " in strings
                 tmpData[i][ii] = tmpData[i][ii].replace("'", "`", MAX_INT)
@@ -133,14 +158,12 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
         elif table == "Wood":
             for data in tmpData:
                 _data = data
-                # TODO absolute_position has to exist in Block
                 cursor.execute(
                     f"INSERT INTO Wood (absolute_position, isOnFire) VALUES ('{data[0]}', {data[1]})"
                 )
         elif table == "Dirt":
             for data in tmpData:
                 _data = data
-                # TODO absolute_position has to exist in Block
                 cursor.execute(
                     f"INSERT INTO Dirt (absolute_position, hasGrass) VALUES ('{data[0]}', {data[1]})"
                 )
@@ -153,20 +176,18 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
         elif table == "populatedBy":
             for data in tmpData:
                 _data = data
-                # TODO m_entities_id and serverworld_id have to exist
                 cursor.execute(
                     f"INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES ({data[0]}, {data[1]})"
                 )
         elif table == "buildOf":
             for data in tmpData:
                 _data = data
-                # TODO absolute_position and serverworld_id have to exist
                 cursor.execute(
                     f"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES ('{data[0]}', {data[1]})"
                 )
     except:
         Logger.error(f"while inserting data into {table} with the data:", _data)
-        #raise Exception("bad data")
+        # raise Exception("bad data")
         return None
     cursor.connection.commit()
 
@@ -175,27 +196,27 @@ def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
 def selectTable(
     cursor, tableName: str, columnNames: str = "*", where: str = "True"
-) -> list[list]:
+) -> Optional[list[list]]:
     try:
         return [
             list(v)
             for v in cursor.execute(
-                f"SELECT {columnNames} FROM {tableName} where {where}"
+                f"SELECT {columnNames} FROM {tableName} WHERE {where}"
             ).fetchall()
         ]
     except:
         Logger.error(
             "while fetching data with the SQLite3 instruction: ",
-            f"SELECT {columnNames} FROM {tableName} where {where}",
+            f"SELECT {columnNames} FROM {tableName} WHERE {where}",
         )
-    return []
+        return None
 
 
 # sqlite3: get the column names of a table
-def selectTableColumns(cursor, tableName: str) -> list:
+def selectTableColumns(cursor, tableName: str) -> Optional[list]:
     try:
-        cursor.execute(f"SELECT * from {tableName}")
+        cursor.execute(f"SELECT * FROM {tableName}")
         return [description[0] for description in cursor.description]
     except:
         Logger.error("while fetching the column names from table", tableName)
-    return []
+        return None

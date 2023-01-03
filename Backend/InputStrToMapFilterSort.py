@@ -7,11 +7,15 @@ import addImport
 from Logger import *
 from TmpData import *
 
-# TODO, add column1,column2
+
 def getMode(
     string: str,
     mode: Literal["auto", "filter", "map", "sort", "slice", "columns"] = "auto",
 ) -> Literal["map", "sort", "slice", "columns", "filter"]:
+    # TODO not perfect, but good enough for now
+    # "player_id1 - player_id2"
+    # would be parsed to sort even tho it is a filter
+
     string = string.strip()
     if mode == "auto":
         # try getting the current mode
@@ -25,7 +29,6 @@ def getMode(
             mode = "map"
         elif re.search("^.*[a-zA-Z_][a-zA-Z0-9_]*(1|2)(.|\n)*$", string) is not None:
             # match ANY test1|2 ANY
-            # TODO, could be "test1" inside the str
             mode = "sort"
         elif string.strip().lower().startswith("slice"):
             mode = "slice"
@@ -41,7 +44,6 @@ def getMode(
             is not None
         ):
             mode = "columns"
-            # TODO, test
         else:
             # couldn't find anything else so it must be filter
             mode = "filter"
@@ -58,8 +60,12 @@ def executeUserStr(
     workingOnIdx2: Optional[int] = None,
 ) -> Union[None, int, bool, any]:
     mode = getMode(string, mode)  # mode stays the same if it was already set
+    if mode == "columns":
+        Logger.error(
+            "Internal error, executeUserStr cannot be called with mode=columns"
+        )
+        return None
 
-    # TODO, add index, length and curDataCpy
     vals = {
         "random": random,
         "math": math,
@@ -80,7 +86,6 @@ def executeUserStr(
             return None
 
         code[0] = code[0].strip()
-        # TODO, what if (val,,,) <- 4
         mustStartWithIdentifier = code[0][0] != "("
         isWrappedIdentifier = [
             v.strip() for v in code[0][1:-1].split(",") if v.strip() != ""
@@ -135,7 +140,9 @@ def executeUserStr(
             return [toUpdateColumn, res]
         else:  # case with mutliple columns
             toUpdateColumns = code[0][1:-1]  # remove leading "(" and trailing ")"
-            toUpdateColumns = [v.strip() for v in toUpdateColumns.split(",")]
+            toUpdateColumns = [
+                v.strip() for v in toUpdateColumns.split(",") if v.strip() != ""
+            ]
             code = code[1]  # get the pure code
 
             # get the indexes of the columns
@@ -217,7 +224,7 @@ def executeUserStr(
                 "slice command didn't work because it doesnt start correctly:", string
             )
             return None
-        string = string[len("slice"):].strip() # remove the "slice"
+        string = string[len("slice") :].strip()  # remove the "slice"
         nm = string.split(";")
         if len(nm) == 0 or len(nm) > 2:
             Logger.error(

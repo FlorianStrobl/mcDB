@@ -11,18 +11,11 @@ from InputStrToMapFilterSort import *
 
 
 class TMP:
-    data: list[any] = []
-    tableName: str = ""
-    columnNames: list[str] = []
+    data: Optional[list[any]] = None
+    tableName: Optional[str] = None
+    columnNames: Optional[list[str]] = None
 
-    # return the length of data
-    def length(self) -> int:
-        return len(self.data)
-
-    # return the amount of columns of the data set
-    def columnLen(self) -> int:
-        return len(self.columnNames)
-
+    # replace the values of the self value by the ones from newTmp
     def replaceTmp(self, newTmp: Optional[TMP]) -> None:
         if newTmp is None:
             Logger.error(
@@ -40,34 +33,40 @@ class TMP:
         columnNames: Optional[list[str]] = None,
         tableName: Optional[str] = None,
     ) -> None:
-        if not data is None:
+        if data is not None:
             self.data = data
-        else:
-            self.data = []
-        if not tableName is None:
+        if tableName is not None:
             self.tableName = tableName
-        if not columnNames is None:
+        if columnNames is not None:
             self.columnNames = columnNames
 
-    def getData(self) -> list[any]:
+    def getData(self) -> Optional[list[any]]:
         return self.data
 
     # get [tableName, columnNames]
-    def getMetaData(self) -> list[str, list[str]]:
-        return [self.tableName, self.columnNames[:]]
+    def getMetaData(self) -> list[Optional[str], Optional[list[str]]]:
+        return [
+            self.tableName,
+            None if self.columnNames is None else self.columnNames[:],
+        ]
 
-    def deepCpyData(self) -> list[any]:
+    # deep copy twice because 2d arrays
+    def deepCpyData(self) -> Optional[list[any]]:
+        if self.data is None:
+            return None
         d = []
         for v in self.data:
             d.append(v[:])
         return d
 
     # return a deep cpy of all the current object
-    def deepCpy(self):
+    def deepCpy(self) -> TMP:
         t = TMP()
         t.data = self.deepCpyData()
-        t.columnNames = self.columnNames[:]
-        t.tableName = "".join([v for v in self.tableName])
+        t.columnNames = None if self.columnNames is None else self.columnNames[:]
+        t.tableName = (
+            None if self.tableName is None else "".join([v for v in self.tableName])
+        )
         return t
 
     # map, filter, sort, slice or columns depending on the string
@@ -78,9 +77,15 @@ class TMP:
             Literal["auto", "filter", "map", "sort", "slice", "columns"]
         ] = None,
     ) -> Optional[TMP]:
+        if self.data is None or self.columnNames is None:
+            Logger.error(f"Cannot edit data as the data or the column names are None")
+            return None
+
         curVals = self.deepCpy()
+
         # TODO what about "&&"
         cmds = userStr.split("&&")  # get all the different cmds
+
         originalMode = mode
         for cmd in cmds:
             cmd = cmd.strip()
@@ -126,6 +131,8 @@ class TMP:
     # returns a deepCpy array of the data which got filtered with the lambda
     def filterData(self, userStr: str) -> Optional[list]:
         tmp = self.deepCpyData()
+        if tmp is None:
+            return None
         arr = []
         for i in range(len(tmp)):
             ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i)
@@ -140,10 +147,11 @@ class TMP:
 
     # returns a deepCpy array of the data edited for each element with the lambda
     def mapData(self, userStr: str) -> Optional[list]:
+        if self.deepCpyData() is None:
+            return None
         arr = []
         for i, v in enumerate(self.deepCpyData()):
             ans = executeUserStr(userStr, "map", self.columnNames, v, i)
-            # TODO, ans could be multiple different columns!!
             if ans is None:
                 Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
                 return None
@@ -227,6 +235,9 @@ class TMP:
         # quickSort(tmp)
         # return tmp
 
+        if self.deepCpyData() is None:
+            return None
+
         return self.__quickSort__(self.deepCpyData(), userStr)
 
     # returns the columns of the current data in the order provided by the userStr. e.g.: "columnName2,columnName1"
@@ -235,6 +246,8 @@ class TMP:
             return [v[idx] for v in arr]
 
         oldData = self.deepCpyData()
+        if oldData is None:
+            return None
 
         MAX_INT = 9007199254740991
         toSaveColumns = [
@@ -269,15 +282,14 @@ class TMP:
         return [toSaveColumns, newDataInOrder]
 
     def sliceData(self, userStr: str) -> Optional[list]:
+        if self.columnNames is None or self.deepCpyData() is None:
+            return None
         return executeUserStr(userStr, "slice", self.columnNames, self.deepCpyData(), 0)
-
-    def printThis(self) -> None:
-        Logger.log("print tmp", self.getData())
 
 
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
-    def reorderArr(array, orderArray):
+    def reorderArr(array: list, orderArray: list) -> list:
         array = array[:]
         newArray = [None for x in orderArray]
         for i in orderArray:
@@ -285,6 +297,7 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return newArray
 
     if data.tableName is None:
+        Logger.error("No table name provided to save data to database")
         return  # no table for data to save
 
     if data.columnNames is None:
@@ -315,7 +328,7 @@ def updateDataInDB(cursor, data: TMP) -> None:
             Logger.error(errStr, data.columnNames, originalColumns)
             return
 
-    # TODO, it could be that the vars are in swapped order
+    # check if the data is in the same order as the columns
     if data.columnNames != originalColumns:
         # TODO swap, should it also swap it in the UI, or just in the database?
         print("SWAP TODO (in: TmpData.py)")

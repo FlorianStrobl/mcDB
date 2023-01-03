@@ -7,15 +7,17 @@ from Logger import *
 from Names import *
 from GenDataJoinSafe import *
 
-TRIM = 2**50 - 1  # max 64 bit integers
+TRIM: int = 2**52 - 1  # max 64 bit integers
 
-def searchForFirstDoublePair(arr1, arr2):
+
+def searchForFirstDoublePair(arr1: list, arr2: list) -> int:
     arr = list(zip(arr1, arr2))
     for i in range(len(arr)):
         for j in range(len(arr)):
-          if i != j and arr[i] == arr[j]:
-            return j
+            if i != j and arr[i] == arr[j]:
+                return j
     return -1
+
 
 class HelperFuncs:
     # generate UIDs in hex format
@@ -177,12 +179,14 @@ class GenerateTableData:
         return blocks
 
     # [absolute_position, isOnFire]
-    def generateWoods(n: int = 1, cursor = None) -> Optional[list[(str, int)]]:
+    def generateWoods(n: int = 1, cursor=None) -> Optional[list[(str, int)]]:
         woods = []
 
         abspos = getRealFirstAbsolute_positions(cursor)
         if abspos is None:
-            Logger.error("Couldn't generate wood because there are no blocks in the database.")
+            Logger.error(
+                "Couldn't generate wood because there are no blocks in the database."
+            )
             return None
         absolute_positions = abspos
         isOnFire = HelperFuncs.generateBoolean(n)
@@ -194,12 +198,14 @@ class GenerateTableData:
         return woods
 
     # [absolute_position, hasGrass]
-    def generateDirt(n: int = 1, cursor = None) -> Optional[list[(str, int)]]:
+    def generateDirt(n: int = 1, cursor=None) -> Optional[list[(str, int)]]:
         dirts = []
 
         abspos = getRealFirstAbsolute_positions(cursor)
         if abspos is None:
-            Logger.error("Couldn't generate dirt because there are no blocks in the database.")
+            Logger.error(
+                "Couldn't generate dirt because there are no blocks in the database."
+            )
             return None
         absolute_positions = abspos
         hasGrass = HelperFuncs.generateBoolean(n)
@@ -211,27 +217,38 @@ class GenerateTableData:
         return dirts
 
     # [player_id, serverworld_id, session_begin, player_position, role]
-    # TODO, this returns Optional, fix the type for the callers (same for the other funcs)
-    def generatePlays(n: int = 1, cursor = None) -> Optional[list[(int, int, int, str, str)]]:
+    def generatePlays(
+        n: int = 1, cursor=None
+    ) -> Optional[list[(int, int, int, str, str)]]:
         plays = []
 
         pids = getRealPlayerIds(cursor, n)
         if pids is None:
-            Logger.error("Couldn't generate plays because there are no players in the database.")
+            Logger.error(
+                "Couldn't generate plays because there are no players in the database."
+            )
             return None
         player_ids = pids
         sids = getRealServerworldIds(cursor, n)
         if sids is None:
-            Logger.error("Couldn't generate plays because there are no servers in the database.")
+            Logger.error(
+                "Couldn't generate plays because there are no servers in the database."
+            )
             return None
         serverworld_ids = sids
 
         # fix double pairs for unique constraint
-        tries = 0 # only try it up to 50% of the ids
-        while searchForFirstDoublePair(player_ids, serverworld_ids) != -1 and tries < n * 0.5:
+        tries = 0  # only try it up to 50% of the ids
+        while searchForFirstDoublePair(player_ids, serverworld_ids) != -1 and tries < n:
             idx = searchForFirstDoublePair(player_ids, serverworld_ids)
             # replace the serverworld_id at idx with a new one
             serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+
+        if searchForFirstDoublePair(player_ids, serverworld_ids) != -1:
+            Logger.error(
+                "Couldn't generate plays because there are probably no unique pairs anymore."
+            )
+            return None
 
         session_begins = HelperFuncs.generateTimestamp(n)
         player_positions = HelperFuncs.generateAbsolutePosition(n)
@@ -252,26 +269,39 @@ class GenerateTableData:
         return plays
 
     # [m_entities_id, serverworld_id]
-    def generatePopulatedBy(n: int = 1, cursor = None) -> Optional[list[(int, int)]]:
+    def generatePopulatedBy(n: int = 1, cursor=None) -> Optional[list[(int, int)]]:
         populatedBy = []
 
         meids = getRealMEntityIds(cursor, n)
         if meids is None:
-            Logger.error("Couldn't generate populatedBy because there are no entities in the database.")
+            Logger.error(
+                "Couldn't generate populatedBy because there are no entities in the database."
+            )
             return None
         m_entities_ids = meids
         swids = getRealServerworldIds(cursor, n)
         if swids is None:
-            Logger.error("Couldn't generate populatedBy because there are no servers in the database.")
+            Logger.error(
+                "Couldn't generate populatedBy because there are no servers in the database."
+            )
             return None
         serverworld_ids = swids
 
         # fix double pairs for unique constraint
-        tries = 0 # only try it up to 50% of the ids
-        while searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1 and tries < n * 0.5:
+        tries = 0  # only try it up to 50% of the ids
+        while (
+            searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1
+            and tries < n
+        ):
             idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids)
             # replace the serverworld_id at idx with a new one
             serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+
+        if searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1:
+            Logger.error(
+                "Couldn't generate populatedBy because there are probably no unique pairs anymore."
+            )
+            return None
 
         # add data to array
         for i in range(n):
@@ -280,26 +310,39 @@ class GenerateTableData:
         return populatedBy
 
     # [absolute_position, serverworld_id]
-    def generateBuildOf(n: int = 1, cursor = None) -> Optional[list[(str, int)]]:
+    def generateBuildOf(n: int = 1, cursor=None) -> Optional[list[(str, int)]]:
         buildOfs = []
 
         abspos = getRealAbsolute_positions(cursor, n)
         if abspos is None:
-            Logger.error("Couldn't generate buildOf because there are no blocks in the database.")
+            Logger.error(
+                "Couldn't generate buildOf because there are no blocks in the database."
+            )
             return None
         absolute_positions = abspos
         swids = getRealServerworldIds(cursor, n)
         if swids is None:
-            Logger.error("Couldn't generate buildOf because there are no servers in the database.")
+            Logger.error(
+                "Couldn't generate buildOf because there are no servers in the database."
+            )
             return None
         serverworld_ids = swids
 
         # fix double pairs for unique constraint
-        tries = 0 # only try it up to 50% of the ids
-        while searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1 and tries < n * 0.5:
+        tries = 0  # only try it up to 50% of the ids
+        while (
+            searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1
+            and tries < n
+        ):
             idx = searchForFirstDoublePair(absolute_positions, serverworld_ids)
             # replace the serverworld_id at idx with a new one
             serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+
+        if searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1:
+            Logger.error(
+                "Couldn't generate buildOf because there are probably no unique pairs anymore."
+            )
+            return None
 
         # add data to array
         for i in range(n):
