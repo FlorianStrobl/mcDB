@@ -75,6 +75,7 @@ def onTableSave(table):
     # print(table.getTablesInputs())
 
 
+# this is only for the preview mode
 def onInputfieldChange(text, mode):
     # def do():
     #     global lastInputFieldChangeTime
@@ -103,6 +104,10 @@ def onInputfieldChange(text, mode):
     else:
         lastInputFieldChangeTime = curTime
         # continue execution
+
+    if mode == "sql":
+        # do the sql cmd and show the result
+        return
 
     if text.strip() == "":
         preview = None
