@@ -28,7 +28,7 @@ tablesStrong: dict[str, str] = {
     birthday INTEGER NOT NULL,
     entity_type INTEGER NOT NULL
     );""",
-    "Block": """CREATE TABLE IF NOT EXISTS Block  (
+    "Block": """CREATE TABLE IF NOT EXISTS Block (
     absolute_position TEXT PRIMARY KEY,
     block_type INTEGER NOT NULL
   );""",
@@ -36,17 +36,17 @@ tablesStrong: dict[str, str] = {
 
 # Wood, Dirt
 tablesWeak: dict[str, str] = {
-    "Wood": """CREATE TABLE IF NOT EXISTS Wood (
+      "Wood": """CREATE TABLE IF NOT EXISTS Wood (
 
-    absolute_position TEXT NOT NULL UNIQUE,
-    isOnFire INTEGER DEFAULT 0,
+      absolute_position TEXT NOT NULL UNIQUE,
+      isOnFire INTEGER DEFAULT 0,
 
-    PRIMARY KEY(absolute_position),
+      PRIMARY KEY(absolute_position),
 
-    FOREIGN KEY(absolute_position) REFERENCES Block(absolute_position)
-      on UPDATE cascade
-      on DELETE cascade
-    );""",
+      FOREIGN KEY(absolute_position) REFERENCES Block(absolute_position)
+        on UPDATE cascade
+        on DELETE cascade
+      );""",
     "Dirt": """CREATE TABLE IF NOT EXISTS Dirt (
 
     absolute_position TEXT NOT NULL UNIQUE,
