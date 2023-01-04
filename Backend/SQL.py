@@ -113,7 +113,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 
 
 # sqlite3: INSERT INTO values for a certain table
-def insertIntoTable(cursor, table: str, tmpData: list[any]) -> None:
+def insertIntoTable(cursor, table: str, tmpData: list[list]) -> None:
     tmpData = list(tmpData)
     _data = None  # data for potential error messag
     # fix strings with " or ' in them
