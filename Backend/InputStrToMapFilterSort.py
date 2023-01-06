@@ -58,10 +58,12 @@ def executeUserStr(
     data: list[any] = [],
     workingOnIdx1: Optional[int] = None,
     workingOnIdx2: Optional[int] = None,
+    showLogs: bool = True
 ) -> Union[None, int, bool, any]:
     mode = getMode(string, mode)  # mode stays the same if it was already set
     if mode == "columns":
-        Logger.Logger.error(
+        if showLogs:
+            Logger.Logger.error(
             "Internal error, executeUserStr cannot be called with mode=columns"
         )
         return None
@@ -82,7 +84,8 @@ def executeUserStr(
         # create a lambda with the signature: Callable[[any], bool]
         code = re.split("<-", string, 1)  # split on first occurence
         if len(code) == 0 or len(code) == 1:
-            Logger.Logger.error("couldn't parse the map expression:", string)
+            if showLogs:
+                Logger.Logger.error("couldn't parse the map expression:", string)
             return None
 
         code[0] = code[0].strip()
@@ -107,7 +110,8 @@ def executeUserStr(
                 columnIndex = columns.index(toUpdateColumn)
             except:
                 # wtf why can .index() error??
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     "column doesnt exist for the map expression:", toUpdateColumn
                 )
                 return None
@@ -124,12 +128,14 @@ def executeUserStr(
             try:
                 res = eval(code, vals)
             except:
-                Logger.Logger.error("couldn't evaluate the following map code:", code)
+                if showLogs:
+                    Logger.Logger.error("couldn't evaluate the following map code:", code)
                 return None
             try:
-                res = fixType(res)
+                res = fixType(res) if res is not None else None
             except:
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     "the following map code evaluated to the wrong type:",
                     code,
                     res,
@@ -151,7 +157,8 @@ def executeUserStr(
                 try:
                     indexes.append(columns.index(toUpdateColumn))
                 except:
-                    Logger.Logger.error(
+                    if showLogs:
+                        Logger.Logger.error(
                         "column doesnt exist for the map expression:",
                         toUpdateColumn,
                         toUpdateColumns,
@@ -173,20 +180,23 @@ def executeUserStr(
             try:
                 res = eval(code, vals)
             except:
-                Logger.Logger.error("couldn't evaluate the following map code:", code)
+                if showLogs:
+                    Logger.Logger.error("couldn't evaluate the following map code:", code)
                 return None
             try:
                 if type(res) != type(("this is a tuple", 1)) and type(res) != type([]):
-                    Logger.Logger.error(
+                    if showLogs:
+                        Logger.Logger.error(
                         "the map code for changing multiple columns at once, did not return a tuple or a list"
                     )
                     return None
                 else:
                     res = list(res)
                 for i in range(len(res)):
-                    res[i] = fixTypes[i](res[i])
+                    res[i] = fixTypes[i](res[i]) if res[i] is not None else None
             except:
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     "the following map code evaluated to the wrong type:",
                     code,
                     res,
@@ -203,7 +213,8 @@ def executeUserStr(
         try:
             return bool(eval(code, vals))
         except:
-            Logger.Logger.error("couldn't evaluate the filter code:", code)
+            if showLogs:
+                Logger.Logger.error("couldn't evaluate the filter code:", code)
             return None
     elif mode == "sort":
         code = string.strip()
@@ -215,19 +226,22 @@ def executeUserStr(
             val = int(eval(code, vals))
             return val
         except:
-            Logger.Logger.error("couldn't evaluate the sort code:", code)
+            if showLogs:
+                Logger.Logger.error("couldn't evaluate the sort code:", code)
             return None
     elif mode == "slice":
         string = string.strip()
         if not string.lower().startswith("slice"):
-            Logger.Logger.error(
+            if showLogs:
+                Logger.Logger.error(
                 "slice command didn't work because it doesnt start correctly:", string
             )
             return None
         string = string[len("slice") :].strip()  # remove the "slice"
         nm = string.split(";")
         if len(nm) == 0 or len(nm) > 2:
-            Logger.Logger.error(
+            if showLogs:
+                Logger.Logger.error(
                 "slice command didn't work because it didnt get 1 to 2 integers as values:",
                 string,
             )
@@ -236,7 +250,8 @@ def executeUserStr(
             try:
                 return data[int(eval(nm[0].strip(), vals)) :]
             except:
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     "slice command couldn't parse code to integer:", string, nm[0]
                 )
                 return None
@@ -246,7 +261,8 @@ def executeUserStr(
                     int(eval(nm[0].strip(), vals)) : int(eval(nm[1].strip(), vals))
                 ]
             except:
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     "slice command couldn't parse code to integer:", nm[0], nm[1]
                 )
                 return None

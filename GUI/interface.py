@@ -33,8 +33,8 @@ setButtonSelected = None
 
 
 def previewFunc(delay=1000):
-    return
     # TODO
+    return
     # if previewEnabled == False:
     #   updateUI(tmp)
     #   return
@@ -43,7 +43,7 @@ def previewFunc(delay=1000):
     #   return
     # preview = tmp.editData(text, mode)
     # updateUI(preview)
-    val = tmp.editData(searchEntry.get(), segemented_button_var.get())
+    val = tmp.editData(searchEntry.get(), segemented_button_var.get(), False)
     print("start preview", val is not None)
     if val is not None:
         updateUI(val)

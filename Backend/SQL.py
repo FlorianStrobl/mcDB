@@ -113,7 +113,8 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 
 
 # sqlite3: INSERT INTO values for a certain table
-def insertIntoTable(cursor, table: str, tmpData: list[list]) -> None:
+# returns True if successful, None if not
+def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
     tmpData = list(tmpData)
     _data = None  # data for potential error messag
     # fix strings with " or ' in them
@@ -188,8 +189,9 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> None:
     except:
         Logger.Logger.error(f"while inserting data into {table} with the data:", _data)
         # raise Exception("bad data")
-        return None
+        return False
     cursor.connection.commit()
+    return True
 
 
 # sqlite3: SELECT
