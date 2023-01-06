@@ -32,9 +32,9 @@ segemented_button_var = None
 setButtonSelected = None
 
 
-def previewFunc(delay=1000):
+def previewFunc(delay=500, count=0):
     # TODO
-    return
+    #return
     # if previewEnabled == False:
     #   updateUI(tmp)
     #   return
@@ -44,11 +44,14 @@ def previewFunc(delay=1000):
     # preview = tmp.editData(text, mode)
     # updateUI(preview)
     val = tmp.editData(searchEntry.get(), segemented_button_var.get(), False)
-    print("start preview", val is not None)
     if val is not None:
         updateUI(val)
+    else:
+        # if user query does not run proprely, revert UI to actual TMP
+        if count % 2 == 0:
+            updateUI(tmp)
 
-    tk.after(delay, previewFunc)
+    tk.after(delay, lambda: previewFunc(delay, count+1))
 
 
 def updateUI(data):
