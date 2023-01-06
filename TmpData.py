@@ -76,9 +76,13 @@ class TMP:
         mode: Optional[
             Literal["auto", "filter", "map", "sort", "slice", "columns"]
         ] = None,
+        showLogs: bool = True
     ) -> Optional[TMP]:
         if self.data is None or self.columnNames is None:
-            Logger.Logger.error(f"Cannot edit data as the data or the column names are None")
+            if showLogs:
+                Logger.Logger.error(
+                f"Cannot edit data as the data or the column names are None"
+            )
             return None
 
         curVals = self.deepCpy()
@@ -94,30 +98,31 @@ class TMP:
             ):  # a chain of xy should always be xy
                 mode = getMode(cmd)
             if mode == "map":
-                v = TMP.mapData(curVals, cmd)
+                v = TMP.mapData(curVals, cmd, showLogs)
                 if v is None:
                     return None
                 curVals.data = v
             elif mode == "filter":
-                v = TMP.filterData(curVals, cmd)
+                v = TMP.filterData(curVals, cmd, showLogs)
                 if v is None:
                     return None
                 curVals.data = v
             elif mode == "sort":
-                v = TMP.sortData(curVals, cmd)
+                v = TMP.sortData(curVals, cmd, showLogs)
                 if v is None:
                     return None
                 curVals.data = v
             elif mode == "slice":
-                v = TMP.sliceData(curVals, cmd)
+                v = TMP.sliceData(curVals, cmd, showLogs)
                 if v is None:
                     # no error message because it is handled before
                     return None
                 curVals.data = v
             elif mode == "columns":
-                v = TMP.selectColumns(curVals, cmd)
+                v = TMP.selectColumns(curVals, cmd, showLogs)
                 if v is None:
-                    Logger.Logger.error(
+                    if showLogs:
+                        Logger.Logger.error(
                         "couldn't execute the select column with the command:", cmd
                     )  # error message because it isnt handled before
                     return None
@@ -129,15 +134,16 @@ class TMP:
         return curVals
 
     # returns a deepCpy array of the data which got filtered with the lambda
-    def filterData(self, userStr: str) -> Optional[list]:
+    def filterData(self, userStr: str, showLogs: bool = True) -> Optional[list]:
         tmp = self.deepCpyData()
         if tmp is None:
             return None
         arr = []
         for i in range(len(tmp)):
-            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i)
+            ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i, None, showLogs)
             if ans is None:
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     "couldn't apply a filter:", userStr, self.columnNames, tmp[i]
                 )
                 return None
@@ -146,14 +152,17 @@ class TMP:
         return arr
 
     # returns a deepCpy array of the data edited for each element with the lambda
-    def mapData(self, userStr: str) -> Optional[list]:
+    def mapData(self, userStr: str, showLogs: bool = True) -> Optional[list]:
         if self.deepCpyData() is None:
             return None
         arr = []
         for i, v in enumerate(self.deepCpyData()):
-            ans = executeUserStr(userStr, "map", self.columnNames, v, i)
+            ans = executeUserStr(userStr, "map", self.columnNames, v, i, None, showLogs)
             if ans is None:
-                Logger.Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
+                if showLogs:
+                    Logger.Logger.error(
+                    "couldn't apply map to:", userStr, self.columnNames, v
+                )
                 return None
 
             # check if there are multiple columns
@@ -163,7 +172,8 @@ class TMP:
                     try:
                         indexes.append(self.columnNames.index(ans[1][i]))
                     except:
-                        Logger.Logger.error(
+                        if showLogs:
+                            Logger.Logger.error(
                             "map coudln't find the column:", ans[1][i], self.columnNames
                         )
                         return None
@@ -175,7 +185,8 @@ class TMP:
                 try:
                     i = self.columnNames.index(ans[0])
                 except:
-                    Logger.Logger.error(
+                    if showLogs:
+                        Logger.Logger.error(
                         "map coudln't find the column:", ans[0], self.columnNames
                     )
                     return None
@@ -183,7 +194,7 @@ class TMP:
                 arr.append(v)
         return arr
 
-    def __quickSort__(self, arr: list, userStr: str) -> Optional[list]:
+    def __quickSort__(self, arr: list, userStr: str, showLogs: bool = True) -> Optional[list]:
         # https://www.geeksforgeeks.org/stable-quicksort/
         if len(arr) <= 1:
             # Base case
@@ -197,10 +208,11 @@ class TMP:
             for index, value in enumerate(arr):
                 if index != mid:
                     ans = executeUserStr(
-                        userStr, "sort", self.columnNames, [value, pivot], mid, index
+                        userStr, "sort", self.columnNames, [value, pivot], mid, index, showLogs
                     )
                     if ans is None:
-                        Logger.Logger.error(
+                        if showLogs:
+                            Logger.Logger.error(
                             "sorting failed with values:",
                             ans,
                             userStr,
@@ -218,13 +230,13 @@ class TMP:
                         else:
                             greater.append(value)
             return (
-                self.__quickSort__(smaller, userStr)
+                self.__quickSort__(smaller, userStr, showLogs)
                 + [pivot]
-                + self.__quickSort__(greater, userStr)
+                + self.__quickSort__(greater, userStr, showLogs)
             )
 
     # returns a deepCpy array of the data sorted by the lambda function, which gets (a,b) and swaps the data if the lambda evaluates to an integer bigger than 0
-    def sortData(self, userStr: str) -> Optional[list]:
+    def sortData(self, userStr: str, showLogs: bool = True) -> Optional[list]:
         # def bubbleSort(arr: list) -> None:
         #     for i in range(len(arr)):
         #         for y in range(i, len(arr)):
@@ -238,10 +250,10 @@ class TMP:
         if self.deepCpyData() is None:
             return None
 
-        return self.__quickSort__(self.deepCpyData(), userStr)
+        return self.__quickSort__(self.deepCpyData(), userStr, showLogs)
 
     # returns the columns of the current data in the order provided by the userStr. e.g.: "columnName2,columnName1"
-    def selectColumns(self, userStr: str) -> Optional[list[list[str], list[any]]]:
+    def selectColumns(self, userStr: str, showLogs: bool = True) -> Optional[list[list[str], list[any]]]:
         def _2DArrayGetColumn(idx: int, arr: list[list]) -> list:
             return [list(v)[idx] for v in arr]
 
@@ -267,7 +279,8 @@ class TMP:
                 newColumnIndexes.append(self.columnNames.index(c))
             except:
                 # check if some column doesnt exist
-                Logger.Logger.error(
+                if showLogs:
+                    Logger.Logger.error(
                     f"select columns failed because the column {c} does not exist in:",
                     self.columnNames,
                 )
@@ -280,15 +293,14 @@ class TMP:
 
         return [toSaveColumns, newDataInOrder]
 
-    def sliceData(self, userStr: str) -> Optional[list]:
+    def sliceData(self, userStr: str, showLogs: bool = True) -> Optional[list]:
         if self.columnNames is None or self.deepCpyData() is None:
             return None
-        return executeUserStr(userStr, "slice", self.columnNames, self.deepCpyData(), 0)
+        return executeUserStr(userStr, "slice", self.columnNames, self.deepCpyData(), 0, None, showLogs)
 
 
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
-    print("Saving TMP to DB \"", data.tableName, "\", \"", data.columnNames, "\" \"", data.data[0:1], "\"")
     def reorderArr(array: list, orderArray: list) -> list:
         array = array[:]
         newArray = [None for x in orderArray]
@@ -307,7 +319,9 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return
 
     if data.data is None:
-        Logger.Logger.error(f"No data provided to save table {data.tableName} to database")
+        Logger.Logger.error(
+            f"No data provided to save table {data.tableName} to database"
+        )
         return
 
     # check if column names are like the original ones
@@ -345,9 +359,9 @@ def updateDataInDB(cursor, data: TMP) -> None:
     SQL.dropTable(cursor, data.tableName)  # delete all existing datas
     SQL.createAllTables(cursor)  # if not exists in SQLite exists
 
-    try:
-        SQL.insertIntoTable(cursor, data.tableName, data.data)  # save all the new datas
-    except:
+    ans = SQL.insertIntoTable(cursor, data.tableName, data.data)  # save all the new datas
+    if ans is False:
+        # an error occured while saving the new data
         # revert to the old, known good, values
         SQL.dropTable(cursor, data.tableName)
         SQL.createAllTables(cursor)

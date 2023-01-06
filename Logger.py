@@ -1,6 +1,8 @@
 import sys
+
 sys.path.append("./GUI")
 import GUI.main as main
+
 # from main import setLogLabel
 
 

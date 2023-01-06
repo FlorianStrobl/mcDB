@@ -37,7 +37,7 @@ tablesStrong: dict[str, str] = {
 
 # Wood, Dirt
 tablesWeak: dict[str, str] = {
-      "Wood": """CREATE TABLE IF NOT EXISTS Wood (
+    "Wood": """CREATE TABLE IF NOT EXISTS Wood (
 
       absolute_position TEXT NOT NULL UNIQUE,
       isOnFire INTEGER DEFAULT 0,
