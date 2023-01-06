@@ -225,6 +225,7 @@ def onImport():
     if filepath:
         # Kopiere die ausgewählte Datei an den Speicherort von "test.db"
         shutil.copy(filepath, "minecraftDatabase.db")
+    onTableButtonClick("Serverworld")
 
 def onExport():
     filepath = customtkinter.filedialog.asksaveasfilename(defaultextension=".mcdb", filetypes=[("Minecraft DB-Datei", "*.mcdb")])

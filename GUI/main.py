@@ -60,7 +60,7 @@ def loadGUI():
 
     app = customtkinter.CTk()  # create CTk window like you do with the Tk window
     app.geometry("800x500")
-
+    app.title("Minecraft Datenbank")
     titleFrame = customtkinter.CTkFrame(master=app, corner_radius=7)
     titleFrame.place(x=20, y=20, width=200, height=75)
 
