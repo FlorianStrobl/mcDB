@@ -33,6 +33,7 @@ setButtonSelected = None
 
 
 def previewFunc(delay=1000):
+    return
     # TODO
     # if previewEnabled == False:
     #   updateUI(tmp)

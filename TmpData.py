@@ -78,7 +78,9 @@ class TMP:
         ] = None,
     ) -> Optional[TMP]:
         if self.data is None or self.columnNames is None:
-            Logger.Logger.error(f"Cannot edit data as the data or the column names are None")
+            Logger.Logger.error(
+                f"Cannot edit data as the data or the column names are None"
+            )
             return None
 
         curVals = self.deepCpy()
@@ -153,7 +155,9 @@ class TMP:
         for i, v in enumerate(self.deepCpyData()):
             ans = executeUserStr(userStr, "map", self.columnNames, v, i)
             if ans is None:
-                Logger.Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
+                Logger.Logger.error(
+                    "couldn't apply map to:", userStr, self.columnNames, v
+                )
                 return None
 
             # check if there are multiple columns
@@ -288,7 +292,16 @@ class TMP:
 
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
-    print("Saving TMP to DB \"", data.tableName, "\", \"", data.columnNames, "\" \"", data.data[0:1], "\"")
+    print(
+        'Saving TMP to DB "',
+        data.tableName,
+        '", "',
+        data.columnNames,
+        '" "',
+        data.data[0:1],
+        '"',
+    )
+
     def reorderArr(array: list, orderArray: list) -> list:
         array = array[:]
         newArray = [None for x in orderArray]
@@ -307,7 +320,9 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return
 
     if data.data is None:
-        Logger.Logger.error(f"No data provided to save table {data.tableName} to database")
+        Logger.Logger.error(
+            f"No data provided to save table {data.tableName} to database"
+        )
         return
 
     # check if column names are like the original ones
