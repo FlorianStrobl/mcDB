@@ -8,6 +8,26 @@ TODO LIST
 fast✓ 5. Multiple pages dingsta
 ⨯     6. Connect all to sql part -> Finish to program interface
 
+TODO JETZT:
+✓ - bugs fixen: man kann scrollen auch wenn weniger objecte da sind als auf dem currentscreen sein MAX 10
+✓ - Schrift kleiner bei header wenn es das nicht lesen kann
+✓ - Buttons machen --> OK ist preview zu updaten und der pfeil um zu resetten
+✓ - logs bug fixen
+✓ - selected button anzeigen
+✓  - 20min - Die table darf leer sein bug (wenn man nen filter eingibt der bei keine row richtig ist)
+✓ - 30min - SQL part hinzufügen
+
+x - 30min - export/import
+
+? - Add delay on writings - wie soll man wissen wann der user fertig geschrieben hat? --> man muss ja ins async
+
+
+finit a max 12:30
+
+
+
+
+
 Zeige 1., 2., 3., ..., n. neben den Rows an
 
 Tipps die erklären wie die Syntax von unserer Sprache funktionieren

@@ -3,14 +3,14 @@ import sqlite3
 import random
 from typing import Optional
 import addImport
-from Logger import *
+import Logger
 
 def getRealFirstAbsolute_positions(cursor) -> Optional[list[int]]:
     try:
         cursor.execute("SELECT absolute_position FROM Block")
         poses = cursor.fetchall()
     except:
-        Logger.error(
+        Logger.Logger.error(
             "Error while getting absolute positions from database while generating data"
         )
         return None
@@ -25,7 +25,7 @@ def getRealAbsolute_positions(cursor, n: int = 1) -> Optional[list[int]]:
         cursor.execute("SELECT absolute_position FROM Block")
         poses = cursor.fetchall()
     except:
-        Logger.error(
+        Logger.Logger.error(
             "Error while getting absolute positions from database while generating data"
         )
         return None
@@ -42,7 +42,7 @@ def getRealMEntityIds(cursor, n: int = 1) -> Optional[list[int]]:
         cursor.execute("SELECT m_entities_id FROM MEntities")
         ids = cursor.fetchall()
     except:
-        Logger.error(
+        Logger.Logger.error(
             "Error while getting entity ids from database while generating data"
         )
         return None
@@ -59,7 +59,7 @@ def getRealPlayerIds(cursor, n: int = 1) -> Optional[list[int]]:
         cursor.execute("SELECT player_id FROM Player")
         ids = cursor.fetchall()
     except:
-        Logger.error(
+        Logger.Logger.error(
             "Error while getting player ids from database while generating data"
         )
         return None
@@ -76,7 +76,7 @@ def getRealServerworldIds(cursor, n: int = 1) -> Optional[list[int]]:
         cursor.execute("SELECT serverworld_id FROM Serverworld")
         ids = cursor.fetchall()
     except:
-        Logger.error(
+        Logger.Logger.error(
             "Error while getting serverworld ids from database while generating data"
         )
         return None

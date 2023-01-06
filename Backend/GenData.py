@@ -3,7 +3,7 @@ import uuid
 import time
 from typing import Union, Optional
 import addImport
-from Logger import *
+import Logger
 from Names import *
 from GenDataJoinSafe import *
 
@@ -184,7 +184,7 @@ class GenerateTableData:
 
         abspos = getRealFirstAbsolute_positions(cursor)
         if abspos is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate wood because there are no blocks in the database."
             )
             return None
@@ -203,7 +203,7 @@ class GenerateTableData:
 
         abspos = getRealFirstAbsolute_positions(cursor)
         if abspos is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate dirt because there are no blocks in the database."
             )
             return None
@@ -224,14 +224,14 @@ class GenerateTableData:
 
         pids = getRealPlayerIds(cursor, n)
         if pids is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate plays because there are no players in the database."
             )
             return None
         player_ids = pids
         sids = getRealServerworldIds(cursor, n)
         if sids is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate plays because there are no servers in the database."
             )
             return None
@@ -245,7 +245,7 @@ class GenerateTableData:
             serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
 
         if searchForFirstDoublePair(player_ids, serverworld_ids) != -1:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate plays because there are probably no unique pairs anymore."
             )
             return None
@@ -274,14 +274,14 @@ class GenerateTableData:
 
         meids = getRealMEntityIds(cursor, n)
         if meids is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate populatedBy because there are no entities in the database."
             )
             return None
         m_entities_ids = meids
         swids = getRealServerworldIds(cursor, n)
         if swids is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate populatedBy because there are no servers in the database."
             )
             return None
@@ -298,7 +298,7 @@ class GenerateTableData:
             serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
 
         if searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate populatedBy because there are probably no unique pairs anymore."
             )
             return None
@@ -315,14 +315,14 @@ class GenerateTableData:
 
         abspos = getRealAbsolute_positions(cursor, n)
         if abspos is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate buildOf because there are no blocks in the database."
             )
             return None
         absolute_positions = abspos
         swids = getRealServerworldIds(cursor, n)
         if swids is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate buildOf because there are no servers in the database."
             )
             return None
@@ -339,7 +339,7 @@ class GenerateTableData:
             serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
 
         if searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't generate buildOf because there are probably no unique pairs anymore."
             )
             return None

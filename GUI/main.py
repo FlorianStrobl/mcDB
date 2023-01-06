@@ -12,22 +12,74 @@ xStart = 127
 logLabel = None
 table = None
 navigatorIndicator = None
+tableButtons = []
 
+tableNamesButtons = []
+buttonNames = ["Serverworld",
+        "Player",
+        "MEntities",
+        "Block",
+        "Wood",
+        "Dirt",
+        "plays",
+        "populatedBy",
+        "buildOf"]
+currentSelectedButtonId = None
 
 def setLogLabel(logText, color):
     logsLabel.configure(text=logText, text_color=color)
+
+def setButtonSelected(buttonName):
+    # Reset Old button
+    print(buttonName)
+
+    global currentSelectedButtonId
+    global tableNamesButtons
+    global buttonNames
+    if(currentSelectedButtonId is not None): tableNamesButtons[currentSelectedButtonId].configure(fg_color="#343638",bg_color="#302c2c")
+    # Update Current Button Variable
+    currentSelectedButtonId = buttonNames.index(buttonName)
+    print(currentSelectedButtonId)
+    tableNamesButtons[currentSelectedButtonId].configure(fg_color=["#325882", "#14375e"])
+
+    # Reset color of current selected
+
+    #Uneable all buttons:
 
 
 def loadGUI():
     global logsLabel
     global table
     global navigatorIndicator
+    global tableButtons
+    global tableNamesButtons
+    global setButtonSelected
 
     customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
     customtkinter.set_default_color_theme("blue")
 
     app = customtkinter.CTk()  # create CTk window like you do with the Tk window
     app.geometry("800x500")
+
+    titleFrame = customtkinter.CTkFrame(master=app, corner_radius=7)
+    titleFrame.place(x=20, y=20, width=200, height=75)
+
+    exportButton = customtkinter.CTkButton(
+            master=titleFrame, text="export", command=onExport, fg_color=["#3a7ebf", "#1f538d"]
+        )
+    exportButton.place(x=10, y=40, width=90)
+    exportButton.configure(fg_color="#343638",bg_color="#302c2c"
+    )
+
+    importButton = customtkinter.CTkButton(
+            master=titleFrame, text="import", command=onImport, fg_color=["#3a7ebf", "#1f538d"]
+        )
+    importButton.place(x=105, y=40, width=90)
+    importButton.configure(fg_color="#343638",bg_color="#302c2c"
+    )
+
+    label = customtkinter.CTkLabel(master=titleFrame, text="Minecraft Database")
+    label.place(x=40, y=5)
 
     navigateBackground = customtkinter.CTkFrame(
         master=app, width=200, height=333, corner_radius=5
@@ -44,18 +96,24 @@ def loadGUI():
         "populatedBy": lambda: onTableButtonClick("populatedBy"),
         "buildOf": lambda: onTableButtonClick("buildOf"),
     }
+    tableNamesButtons = []
 
     def placeTableButton(title, event):
         global xStart
-        customtkinter.CTkButton(
-            master=app, text=title, command=event, fg_color="#343638"
-        ).place(x=45, y=xStart)
+        myButton = customtkinter.CTkButton(
+            master=app, text=title, command=event, fg_color=["#3a7ebf", "#1f538d"]
+        )
+        myButton.place(x=45, y=xStart)
+        myButton.configure(fg_color="#343638",
+        bg_color="#302c2c"
+        )
+        tableNamesButtons.append(myButton)
 
         xStart += 35
 
     def spawnTableButtons():
         for name in tablesNames.keys():
-            placeTableButton(name, tablesNames[name])
+            tableButtons.append( placeTableButton(name, tablesNames[name]))
 
     spawnTableButtons()
 
@@ -109,12 +167,12 @@ def loadGUI():
     searchEntry.place(x=50, y=30, width=400, height=35)
 
     previewButton = customtkinter.CTkButton(
-        master=searchFrame, text="⟳", fg_color="#343638"
+        master=searchFrame, text="⟳", fg_color="#343638", command=onResetButtonClick
     )
     previewButton.place(x=10, y=30, width=30, height=33)
 
     okButton = customtkinter.CTkButton(
-        master=searchFrame, text="Ok", fg_color="#343638"
+        master=searchFrame, text="Ok", fg_color="#343638", command=onOkButtonClick
     )
     okButton.place(x=460, y=30, width=30, height=33)
 
@@ -195,6 +253,6 @@ def loadGUI():
     )
 
     pageSystem.onUIReady()
-    onGuiReady2(table, pageSystem)
+    onGuiReady2(table, pageSystem,searchEntry,setButtonSelected)
 
     app.mainloop()

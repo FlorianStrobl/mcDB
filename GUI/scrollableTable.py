@@ -28,6 +28,7 @@ class ScrollFrame(customtkinter.CTkFrame):
 
         self.onFrameConfigure(None)
 
+        self.widthh = None
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner frame"""
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -35,9 +36,17 @@ class ScrollFrame(customtkinter.CTkFrame):
     def onCanvasConfigure(self, event):
         """Reset the canvas window to encompass inner frame when required"""
         canvas_width = event.width
+        self.width = canvas_width
         self.canvas.itemconfig(self.canvas_window, width=canvas_width)
 
+    #diese 2 Funktionen wurden selber hinzugefügt
+    def disableScroll(self):
+        self.canvas.configure(yscrollcommand=lambda x,y: None)
+    def enableScroll(self):
+        self.canvas.configure(yscrollcommand=self.vsb.set)
+
     def onMouseWheel(self, event):
+
         if platform.system() == "Windows":
             self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
         elif platform.system() == "Darwin":
@@ -99,6 +108,7 @@ class scrollableTable(customtkinter.CTkFrame):
         # BEISPIEL:
         # [["add"],["delete",3]]
         # Zeichnet den Verlauf von actions auf -> SUPER Wichtig für events
+        # VERARLETET - WIRD NICHT MEHR BENUTZT
         self.steps = []
 
         # Event Listener: 0:Delete  1: Add
@@ -149,10 +159,12 @@ class scrollableTable(customtkinter.CTkFrame):
 
     def textFill(self, tableBody):
         # "-1" wegen den Mülleimer object
+
+        print("new textfill:", tableBody)
         if self.tableDataBodyWidgets == []:
             return "none"
 
-        if len(self.tableDataBodyWidgets[0]) - 1 != len(tableBody[0]):
+        if tableBody != [] and len(self.tableDataBodyWidgets[0]) - 1 != len(tableBody[0]):
             return "none"
 
         # -1 because there is always a müllemer
@@ -204,7 +216,11 @@ class scrollableTable(customtkinter.CTkFrame):
         self.tableBody = []
 
         if len(tableBody) == 0:
+            self.clearTableDataBodyWidgets()
+            self.tableData[1] = []
             return
+
+
         # Wenn die gleichen Anzahl and columns vorhanden ist wie bei der vorherigen Tabelle,
         # ist es nicht nötig, die Tabelle komplett neu zu erstellen.
         # --> Mann kann so die fehlenden/zu vielen rows hinzufügen/entfernen und so die Tabelle schneller generieren
@@ -265,6 +281,10 @@ class scrollableTable(customtkinter.CTkFrame):
             self.tableData[1] = tableBody
 
     def setTableHeader(self, arr):
+        # Ein bisschen gehardcoded damit die headers bei ner bestimmten tabelle kleiner werden
+        isTheTablePlays = arr[0] == "player_id" and arr[len(arr)-1] == "role"
+
+
         self.clearTableDataHeaderWidgets()
         startX = self.x + 5
         y = self.y - 30
@@ -277,7 +297,7 @@ class scrollableTable(customtkinter.CTkFrame):
             myLabel = customtkinter.CTkLabel(
                 master=self.app,
                 text="",
-                font=("Helvetica", 15, "bold"),
+                font=("Helvetica", 15 , "bold"),
                 fg_color="#2b2b2b",
                 anchor="w",
             )
@@ -290,7 +310,7 @@ class scrollableTable(customtkinter.CTkFrame):
             myLabel1 = customtkinter.CTkLabel(
                 master=self.app,
                 text=arr[i],
-                font=("Helvetica", 15, "bold"),
+                font=("Helvetica", 12 if isTheTablePlays else 15, "bold"),
                 fg_color="#2b2b2b",
                 anchor="w",
             )

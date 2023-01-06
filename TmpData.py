@@ -1,7 +1,7 @@
 from __future__ import annotations
 import random
 from typing import Optional, Callable, Union
-from Logger import *
+import Logger
 import sys
 
 sys.path.append("./Backend")
@@ -18,7 +18,7 @@ class TMP:
     # replace the values of the self value by the ones from newTmp
     def replaceTmp(self, newTmp: Optional[TMP]) -> None:
         if newTmp is None:
-            Logger.error(
+            Logger.Logger.error(
                 "Couldn't update temporary data. probably because a command failed before."
             )
             return
@@ -78,7 +78,7 @@ class TMP:
         ] = None,
     ) -> Optional[TMP]:
         if self.data is None or self.columnNames is None:
-            Logger.error(f"Cannot edit data as the data or the column names are None")
+            Logger.Logger.error(f"Cannot edit data as the data or the column names are None")
             return None
 
         curVals = self.deepCpy()
@@ -117,7 +117,7 @@ class TMP:
             elif mode == "columns":
                 v = TMP.selectColumns(curVals, cmd)
                 if v is None:
-                    Logger.error(
+                    Logger.Logger.error(
                         "couldn't execute the select column with the command:", cmd
                     )  # error message because it isnt handled before
                     return None
@@ -137,7 +137,7 @@ class TMP:
         for i in range(len(tmp)):
             ans = executeUserStr(userStr, "filter", self.columnNames, tmp[i], i)
             if ans is None:
-                Logger.error(
+                Logger.Logger.error(
                     "couldn't apply a filter:", userStr, self.columnNames, tmp[i]
                 )
                 return None
@@ -153,7 +153,7 @@ class TMP:
         for i, v in enumerate(self.deepCpyData()):
             ans = executeUserStr(userStr, "map", self.columnNames, v, i)
             if ans is None:
-                Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
+                Logger.Logger.error("couldn't apply map to:", userStr, self.columnNames, v)
                 return None
 
             # check if there are multiple columns
@@ -163,7 +163,7 @@ class TMP:
                     try:
                         indexes.append(self.columnNames.index(ans[1][i]))
                     except:
-                        Logger.error(
+                        Logger.Logger.error(
                             "map coudln't find the column:", ans[1][i], self.columnNames
                         )
                         return None
@@ -175,7 +175,7 @@ class TMP:
                 try:
                     i = self.columnNames.index(ans[0])
                 except:
-                    Logger.error(
+                    Logger.Logger.error(
                         "map coudln't find the column:", ans[0], self.columnNames
                     )
                     return None
@@ -200,7 +200,7 @@ class TMP:
                         userStr, "sort", self.columnNames, [value, pivot], mid, index
                     )
                     if ans is None:
-                        Logger.error(
+                        Logger.Logger.error(
                             "sorting failed with values:",
                             ans,
                             userStr,
@@ -267,7 +267,7 @@ class TMP:
                 newColumnIndexes.append(self.columnNames.index(c))
             except:
                 # check if some column doesnt exist
-                Logger.error(
+                Logger.Logger.error(
                     f"select columns failed because the column {c} does not exist in:",
                     self.columnNames,
                 )
@@ -296,17 +296,17 @@ def updateDataInDB(cursor, data: TMP) -> None:
         return newArray
 
     if data.tableName is None:
-        Logger.error("No table name provided to save data to database")
+        Logger.Logger.error("No table name provided to save data to database")
         return  # no table for data to save
 
     if data.columnNames is None:
-        Logger.error(
+        Logger.Logger.error(
             f"No column names provided to save table {data.tableName} to database"
         )
         return
 
     if data.data is None:
-        Logger.error(f"No data provided to save table {data.tableName} to database")
+        Logger.Logger.error(f"No data provided to save table {data.tableName} to database")
         return
 
     # check if column names are like the original ones
@@ -318,13 +318,13 @@ def updateDataInDB(cursor, data: TMP) -> None:
 
     # check if they have the same length
     if len(data.columnNames) != len(originalColumns):
-        Logger.error(errStr, data.columnNames, originalColumns)
+        Logger.Logger.error(errStr, data.columnNames, originalColumns)
         return
 
     # check if they have the same exact values
     for c in originalColumns:
         if not c in data.columnNames:
-            Logger.error(errStr, data.columnNames, originalColumns)
+            Logger.Logger.error(errStr, data.columnNames, originalColumns)
             return
 
     # check if the data is in the same order as the columns
