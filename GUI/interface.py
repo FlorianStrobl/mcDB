@@ -48,7 +48,7 @@ def onTableButtonClick(tableName):
     global currentTableName
     global setButtonSelected
     # names = list(cursor.description)
-
+    table.scrollFrame.canvas.yview_moveto(0)
     data = SQL.selectTable(cursor, tableName)
     if data is None:
         # ERROR
