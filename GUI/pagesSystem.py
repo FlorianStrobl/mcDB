@@ -35,7 +35,7 @@ class PageSystem:
 
     def onAdd(self):
         if(len(self.givenArray) == 0):
-            self.__init__(self.table,self.navigatorIndicator, ["" for i in self.table.tableData[0]])
+            self.__init__(self.table, self.navigatorIndicator, ["" for i in self.table.tableData[0]])
         else:
             # ZIEL: alles in "givenArray" reintun in der richtiges stelle
             def insert_position(position, list1, list2):
@@ -51,14 +51,9 @@ class PageSystem:
             if pageStart + 49 < len(self.givenArray):
                 pageEndDistance = 50
             else:
-                ##print("be")
                 pageEndDistance = (len(self.givenArray) - pageStart) + 1
             pageEnd = pageStart + pageEndDistance
 
-            # print(pageStart)
-            # print("p" ,pageEnd)
-            ##print("pageend", pageEndDistance, "pagestart", pageStart)
-            # print(len( self.givenArray))
             # Remove all 50 (or the rest) elements from the main Array at specific page
             del self.givenArray[pageStart:pageEnd]
 
@@ -66,7 +61,6 @@ class PageSystem:
             # self.givenArray.insert(pageStart-1, abschnitt)
             self.givenArray = insert_position(pageStart, self.givenArray, abschnitt)
 
-            # rint(self.givenArray)
             # Fill the Array:
 
             # LE MIEU C DE PAS FAIRE DE FILL

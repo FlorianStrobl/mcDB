@@ -253,6 +253,6 @@ def loadGUI():
     )
 
     pageSystem.onUIReady()
-    onGuiReady2(table, pageSystem,searchEntry,setButtonSelected, segemented_button_var)
+    onGuiReady2(table, pageSystem,searchEntry,setButtonSelected, segemented_button_var, app)
 
     app.mainloop()

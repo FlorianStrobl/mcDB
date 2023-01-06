@@ -9,6 +9,9 @@ from TmpData import *
 import SQL
 
 # TODO fix drawTableBody() for empty arrays
+# TODO sql klappt net bei z.b. UPDATE mit dem draw()
+
+tk = None
 
 table = None
 pageSystem = None
@@ -18,7 +21,9 @@ tmp: TMP = TMP()
 preview: TMP = (
     None  # the preview for tmp shall be drawn in the UI table IF it is not None
 )
-lastInputFieldChangeTime: int = -1 # the last time the inputfield changed its value by the user
+lastInputFieldChangeTime: int = (
+    -1
+)  # the last time the inputfield changed its value by the user
 
 currentTableName = None
 searchEntry = None
@@ -26,28 +31,55 @@ segemented_button_var = None
 
 setButtonSelected = None
 
+
+def previewFunc(delay=1000):
+    # TODO
+    # if previewEnabled == False:
+    #   updateUI(tmp)
+    #   return
+    # if tmp.editData(text, mode) is None:
+    #   updateUI(tmp)
+    #   return
+    # preview = tmp.editData(text, mode)
+    # updateUI(preview)
+    val = tmp.editData(searchEntry.get(), segemented_button_var.get())
+    print("start preview", val is not None)
+    if val is not None:
+        updateUI(val)
+
+    tk.after(delay, previewFunc)
+
+
 def updateUI(data):
     data = data.deepCpy()
     pageSystem.changeTableBody(data.deepCpyData())
     table.setTableHeader(data.columnNames)
 
-def onGuiReady2(_table, _pageSystem,_searchEntry, _setButtonSelected,  _segemented_button_var):
+
+def onGuiReady2(
+    _table, _pageSystem, _searchEntry, _setButtonSelected, _segemented_button_var, _tk
+):
     global table
     global pageSystem
     global searchEntry
     global setButtonSelected
     global segemented_button_var
+    global tk
 
     table = _table
     pageSystem = _pageSystem
     searchEntry = _searchEntry
     segemented_button_var = _segemented_button_var
+    tk = _tk
 
     setButtonSelected = _setButtonSelected
 
     Logger.Logger.log("")
 
     onTableButtonClick("Serverworld")
+
+    previewFunc()
+
 
 def onTableButtonClick(tableName):
     global table
@@ -93,16 +125,16 @@ def onTableSave(table):
 
     # ist gemacht
 
-    #onInputfieldChange("","auto")
+    # onInputfieldChange("","auto")
     previewOn = preview is not None
     ##print("preview enabled:",previewOn)
 
-    #if(preview is None):
+    # if(preview is None):
     # TODO
     #    tmp.setData(pageSystem.getInput())
-    #tmp.setData(
+    # tmp.setData(
     #    pageSystem.getInput(), None if preview is None else preview.columnNames
-    #)  # <--
+    # )  # <--
 
     tmp.tableName = currentTableName
 
@@ -110,19 +142,11 @@ def onTableSave(table):
     # update UI to the current DB to avoid any bugs
     updateUI(tmp)
 
+
 # this is only for the preview mode
 def onInputfieldChange(text, mode):
-    # TODO
-    # if previewEnabled == False:
-    #   updateUI(tmp)
-    #   return
-    # if tmp.editData(text, mode) is None:
-    #   updateUI(tmp)
-    #   return
-    # preview = tmp.editData(text, mode)
-    # updateUI(preview)
+    # do not need this lol
     return
-
 
     # def do():
     #     global lastInputFieldChangeTime
@@ -144,14 +168,13 @@ def onInputfieldChange(text, mode):
     # 2.
 
     # Before preview showed, backup all tmp
-    if(preview is None):
+    if preview is None:
         tmp.setData(pageSystem.getInput())
 
     # TODO delay bugs
     global lastInputFieldChangeTime
     curTime = round(time.time() * 1000)
-    delay = 1000 # 1s
-
+    delay = 1000  # 1s
 
     # if tmp.editData(text, mode) is None and lastInputFieldChangeTime + delay > curTime:
     #     # but what if tmp.editData(text, mode) STAYS None
@@ -170,7 +193,9 @@ def onInputfieldChange(text, mode):
         if text.strip() == "":
             preview = None
         if preview is not None:
-            Logger.Logger.warn("UNSAVED preview mode, click the 'Ok' Button to apply changes")
+            Logger.Logger.warn(
+                "UNSAVED preview mode, click the 'Ok' Button to apply changes"
+            )
             pageSystem.changeTableBody(preview.deepCpyData())
             table.setTableHeader(preview.columnNames)
         else:
@@ -178,8 +203,6 @@ def onInputfieldChange(text, mode):
             Logger.Logger.warn("")
             pageSystem.changeTableBody(tmp.deepCpyData())
             table.setTableHeader(tmp.columnNames)
-
-
 
         try:
             cursor.execute(text)
@@ -195,7 +218,7 @@ def onInputfieldChange(text, mode):
 
         except:
             pass
-            #return
+            # return
         return
 
     if text.strip() == "":
@@ -204,7 +227,7 @@ def onInputfieldChange(text, mode):
 
     if mode != "sql" and text.strip() != "":
         vv = tmp.editData(text, mode)
-        #print(vv.data)
+        # print(vv.data)
         if vv is None:
             preview = None
         else:
@@ -214,10 +237,12 @@ def onInputfieldChange(text, mode):
     # TODO change the column names if it was a
     # "select columns" command
     if preview is not None:
-        Logger.Logger.warn("UNSAVED preview mode, click the 'Ok' Button to apply changes")
+        Logger.Logger.warn(
+            "UNSAVED preview mode, click the 'Ok' Button to apply changes"
+        )
         pageSystem.changeTableBody(preview.deepCpyData())
         table.setTableHeader(preview.columnNames)
-        #print("preview yet")
+        # print("preview yet")
     else:
         # TODO remove the "preview mode" text described above
         Logger.Logger.warn("")
@@ -225,14 +250,16 @@ def onInputfieldChange(text, mode):
         table.setTableHeader(tmp.columnNames)
     # print(f"[{mode}] inputfield: \"{text}\"; got a preview: {preview is not None}")
 
+
 def onResetButtonClick():
     global tmp
     global preview
     global searchEntry
 
-    if (preview is not None):
-        onInputfieldChange("","auto")
-    searchEntry.delete(0,  customtkinter.END)
+    if preview is not None:
+        onInputfieldChange("", "auto")
+    searchEntry.delete(0, customtkinter.END)
+
 
 def onOkButtonClick():
     global searchEntry
@@ -245,7 +272,9 @@ def onOkButtonClick():
     if segemented_button_var.get() == "sql":
         # TODO
         sqlQuery = searchEntry.get()
-        Logger.Logger.log("SQL Querys will be applied immediately. This means that you can not undo them.")
+        Logger.Logger.log(
+            "SQL Querys will be applied immediately. This means that you can not undo them if they change something in the database."
+        )
         try:
             cursor.execute(sqlQuery)
             cursor.connection.commit()
@@ -254,7 +283,7 @@ def onOkButtonClick():
             return
 
         resultData = cursor.fetchall()
-        print(cursor.description)
+        print(cursor.description is None)
         columnNames = list(map(lambda x: x[0], cursor.description))
 
         # edit tmp data
@@ -278,24 +307,39 @@ def onOkButtonClick():
 
     return
 
-    #global preview
-    #global searchEntry
-    if(preview is not None):
+    # global preview
+    # global searchEntry
+    if preview is not None:
         tmp.replaceTmp(preview)
-    #preview = None
+    # preview = None
 
-    searchEntry.delete(0,  customtkinter.END)
+    searchEntry.delete(0, customtkinter.END)
     return
 
+
 def onImport():
-    filepath = customtkinter.filedialog.askopenfilename(filetypes=[("Minecraft DB-Datei", "*.mcdb")])
+    filepath = customtkinter.filedialog.askopenfilename(
+        filetypes=[
+            ("Minecraft DB-Datei", "*.mcdb"),
+            ("Default DB-Datei", "*.db"),
+            ("Anderer Datentyp", "*.*"),
+        ]
+    )
     if filepath:
         # Kopiere die ausgewählte Datei an den Speicherort von "test.db"
         shutil.copy(filepath, "minecraftDatabase.db")
     onTableButtonClick("Serverworld")
 
+
 def onExport():
-    filepath = customtkinter.filedialog.asksaveasfilename(defaultextension=".mcdb", filetypes=[("Minecraft DB-Datei", "*.mcdb")])
+    filepath = customtkinter.filedialog.asksaveasfilename(
+        defaultextension=".mcdb",
+        filetypes=[
+            ("Minecraft DB-Datei", "*.mcdb"),
+            ("Default DB-Datei", "*.db"),
+            ("Anderer Datentyp", "*.*"),
+        ],
+    )
     if filepath:
         # Kopiere die Datei "test.db" an den von der Benutzer ausgewählten Speicherort
         shutil.copy("minecraftDatabase.db", filepath)
