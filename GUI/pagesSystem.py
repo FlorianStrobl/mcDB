@@ -161,7 +161,7 @@ class PageSystem:
             return
 
         try:
-            print("heeeeerrr", dArray[self.currentPage])
+            #print("heeeeerrr", dArray[self.currentPage])
             self.table.fill(dArray[self.currentPage])
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
@@ -195,7 +195,7 @@ class PageSystem:
         self.givenArray = self.convert2dArrayBack(dArray)
         self.table.scrollFrame.canvas.yview_moveto(0)
         #self.table.scrollFrame.vsb.set(0.0,1.0)
-        print("be",self.table.scrollFrame.vsb.get()[0])
+        #print("be",self.table.scrollFrame.vsb.get()[0])
         #self.table.scrollFrame.disableScroll()
 
         if n == 1:
@@ -204,13 +204,13 @@ class PageSystem:
             self.currentPage = len(dArray) - 1
         if n == 2:
             if self.currentPage == 0:
-                print("Du kannst nicht weiter nach hinten!")
+                #print("Du kannst nicht weiter nach hinten!")
                 Logger.Logger.warn("Du kannst nicht weiter nach hinten!")
             else:
                 self.currentPage -= 1
         elif n == 3:
             if self.currentPage == len(dArray) - 1:
-                print("Du kannst nicht weiter nach vorne!")
+                #print("Du kannst nicht weiter nach vorne!")
                 Logger.Logger.warn("Du kannst nicht weiter nach vorne!")
             else:
                 self.currentPage += 1

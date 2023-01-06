@@ -31,7 +31,7 @@ def setLogLabel(logText, color):
 
 def setButtonSelected(buttonName):
     # Reset Old button
-    print(buttonName)
+    #print(buttonName)
 
     global currentSelectedButtonId
     global tableNamesButtons
@@ -39,7 +39,7 @@ def setButtonSelected(buttonName):
     if(currentSelectedButtonId is not None): tableNamesButtons[currentSelectedButtonId].configure(fg_color="#343638",bg_color="#302c2c")
     # Update Current Button Variable
     currentSelectedButtonId = buttonNames.index(buttonName)
-    print(currentSelectedButtonId)
+    #print(currentSelectedButtonId)
     tableNamesButtons[currentSelectedButtonId].configure(fg_color=["#325882", "#14375e"])
 
     # Reset color of current selected

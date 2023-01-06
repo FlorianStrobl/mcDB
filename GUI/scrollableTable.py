@@ -160,7 +160,7 @@ class scrollableTable(customtkinter.CTkFrame):
     def textFill(self, tableBody):
         # "-1" wegen den Mülleimer object
 
-        print("new textfill:", tableBody)
+        #print("new textfill:", tableBody)
         if self.tableDataBodyWidgets == []:
             return "none"
 
@@ -359,10 +359,10 @@ class scrollableTable(customtkinter.CTkFrame):
 
         self.tableDataBodyWidgets.pop(rowNumber)
         self.updateEvents()
-        print(rowNumber)
+        #print(rowNumber)
         # pass
         if not fromAutoScript:
-            print(rowNumber)
+            #print(rowNumber)
             for deleteEvent in self.eventListenerFunctions[0]:
                 deleteEvent(rowNumber)
 

@@ -1,5 +1,3 @@
-WHAT ABOUT IS-A?? Add INSERT INTO (block_type) (0/1) and foreign keys??
+Add INSERT INTO (block_type) (0/1) and foreign keys??
 
 native user str SQL support (w/ JOINs)
-
-if saviong TMP to db but columns are swapped, should we swap the columns in INSERT INTO (column1, column2) ... AND then in the UI aswell because of the order saved in TMP

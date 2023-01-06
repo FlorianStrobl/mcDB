@@ -32,8 +32,6 @@ Zeige 1., 2., 3., ..., n. neben den Rows an
 
 Tipps die erklären wie die Syntax von unserer Sprache funktionieren
 
-Import/Export .db
-
 Verbinde Error messages mit dem UI
 
 preview activate/deactivate button (and the feature haha)

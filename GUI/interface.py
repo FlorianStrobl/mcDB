@@ -87,7 +87,7 @@ def onTableSave(table):
 
     #onInputfieldChange("","auto")
     previewOn = preview is not None
-    print("preview enabled:",previewOn)
+    ##print("preview enabled:",previewOn)
 
     if(preview is None):
         tmp.setData(pageSystem.getInput())
@@ -193,7 +193,7 @@ def onInputfieldChange(text, mode):
         Logger.Logger.warn("UNSAVED preview mode, click the 'Ok' Button to apply changes")
         pageSystem.changeTableBody(preview.deepCpyData())
         table.setTableHeader(preview.columnNames)
-        print("preview yet")
+        #print("preview yet")
     else:
         # TODO remove the "preview mode" text described above
         Logger.Logger.warn("")
