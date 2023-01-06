@@ -288,6 +288,7 @@ class TMP:
 
 # SQLite3: TMP -> Table
 def updateDataInDB(cursor, data: TMP) -> None:
+    print("Saving TMP to DB \"", data.tableName, "\", \"", data.columnNames, "\" \"", data.data[0:1], "\"")
     def reorderArr(array: list, orderArray: list) -> list:
         array = array[:]
         newArray = [None for x in orderArray]

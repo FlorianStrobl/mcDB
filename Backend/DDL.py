@@ -27,6 +27,7 @@ tablesStrong: dict[str, str] = {
     entity_position TEXT NOT NULL,
     birthday INTEGER NOT NULL,
     entity_type INTEGER NOT NULL
+      CHECK (entity_type >= 0 AND entity_type < 10)
     );""",
     "Block": """CREATE TABLE IF NOT EXISTS Block (
     absolute_position TEXT PRIMARY KEY,

@@ -1,12 +1,12 @@
 import sqlite3
 import threading
+import shutil
 import customtkinter
 import time
 import addImport
 import Logger
 from TmpData import *
 import SQL
-import shutil
 
 # TODO fix drawTableBody() for empty arrays
 
@@ -22,18 +22,26 @@ lastInputFieldChangeTime: int = -1 # the last time the inputfield changed its va
 
 currentTableName = None
 searchEntry = None
+segemented_button_var = None
 
 setButtonSelected = None
 
-def onGuiReady2(_table, _pageSystem,_searchEntry, _setButtonSelected):
+def updateUI(data):
+    data = data.deepCpy()
+    pageSystem.changeTableBody(data.deepCpyData())
+    table.setTableHeader(data.columnNames)
+
+def onGuiReady2(_table, _pageSystem,_searchEntry, _setButtonSelected,  _segemented_button_var):
     global table
     global pageSystem
     global searchEntry
     global setButtonSelected
+    global segemented_button_var
 
     table = _table
     pageSystem = _pageSystem
     searchEntry = _searchEntry
+    segemented_button_var = _segemented_button_var
 
     setButtonSelected = _setButtonSelected
 
@@ -89,8 +97,9 @@ def onTableSave(table):
     previewOn = preview is not None
     ##print("preview enabled:",previewOn)
 
-    if(preview is None):
-        tmp.setData(pageSystem.getInput())
+    #if(preview is None):
+    # TODO
+    #    tmp.setData(pageSystem.getInput())
     #tmp.setData(
     #    pageSystem.getInput(), None if preview is None else preview.columnNames
     #)  # <--
@@ -98,10 +107,23 @@ def onTableSave(table):
     tmp.tableName = currentTableName
 
     updateDataInDB(cursor, tmp)
-    # print(table.getTablesInputs())
+    # update UI to the current DB to avoid any bugs
+    updateUI(tmp)
 
 # this is only for the preview mode
 def onInputfieldChange(text, mode):
+    # TODO
+    # if previewEnabled == False:
+    #   updateUI(tmp)
+    #   return
+    # if tmp.editData(text, mode) is None:
+    #   updateUI(tmp)
+    #   return
+    # preview = tmp.editData(text, mode)
+    # updateUI(preview)
+    return
+
+
     # def do():
     #     global lastInputFieldChangeTime
 
@@ -125,22 +147,23 @@ def onInputfieldChange(text, mode):
     if(preview is None):
         tmp.setData(pageSystem.getInput())
 
+    # TODO delay bugs
     global lastInputFieldChangeTime
     curTime = round(time.time() * 1000)
     delay = 1000 # 1s
 
 
-    if tmp.editData(text, mode) is None and lastInputFieldChangeTime + delay > curTime:
-        # but what if tmp.editData(text, mode) STAYS None
-        # because if there was a preview before that set
-        # this preview is not the one from the inputfield anymore
-        # this means preview has to be set to None and TMP needs to be reshown again
+    # if tmp.editData(text, mode) is None and lastInputFieldChangeTime + delay > curTime:
+    #     # but what if tmp.editData(text, mode) STAYS None
+    #     # because if there was a preview before that set
+    #     # this preview is not the one from the inputfield anymore
+    #     # this means preview has to be set to None and TMP needs to be reshown again
 
-        #threading.Timer(1000, do()) # text errored anyway, so do not show preview anymore but TMP
-        return
-    else:
-        lastInputFieldChangeTime = curTime
-        # continue execution
+    #     #threading.Timer(1000, do()) # text errored anyway, so do not show preview anymore but TMP
+    #     return
+    # else:
+    #     lastInputFieldChangeTime = curTime
+    #     # continue execution
 
     if mode == "sql":
         # do the sql cmd and show the result
@@ -177,6 +200,7 @@ def onInputfieldChange(text, mode):
 
     if text.strip() == "":
         preview = None
+        return
 
     if mode != "sql" and text.strip() != "":
         vv = tmp.editData(text, mode)
@@ -211,8 +235,51 @@ def onResetButtonClick():
     searchEntry.delete(0,  customtkinter.END)
 
 def onOkButtonClick():
-    global preview
     global searchEntry
+    global segemented_button_var
+    global tmp
+
+    if searchEntry.get().strip() == "":
+        return
+
+    if segemented_button_var.get() == "sql":
+        # TODO
+        sqlQuery = searchEntry.get()
+        Logger.Logger.log("SQL Querys will be applied immediately. This means that you can not undo them.")
+        try:
+            cursor.execute(sqlQuery)
+            cursor.connection.commit()
+        except:
+            Logger.Logger.error("Could not execute the following query:", sqlQuery)
+            return
+
+        resultData = cursor.fetchall()
+        print(cursor.description)
+        columnNames = list(map(lambda x: x[0], cursor.description))
+
+        # edit tmp data
+        # do not update tmp.tableName itself
+        tmp.data = resultData
+        tmp.columnNames = columnNames
+
+        print("executed sql query")
+    else:
+        t = tmp.editData(searchEntry.get(), segemented_button_var.get())
+        if t is None:
+            Logger.Logger.error("could not execute the command!")
+            return
+        tmp.replaceTmp(t)
+
+    # clear the entry field
+    searchEntry.delete(0, customtkinter.END)
+
+    # reload UI with new tmp
+    updateUI(tmp)
+
+    return
+
+    #global preview
+    #global searchEntry
     if(preview is not None):
         tmp.replaceTmp(preview)
     #preview = None
