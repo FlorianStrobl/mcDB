@@ -34,31 +34,6 @@ setButtonSelected = None
 currentShowVar = None
 
 
-# originalData has the correct types for each row
-# newDataThatNeedsToBeCasted has ONLY string types
-def castColumns(originalData, newDataThatNeedsToBeCasted):
-  print(len(originalData))
-  if len(originalData) == 0:
-    Logger.Logger.error("the data couldnt be casted")
-    return None
-
-  curLastData = originalData[-1]
-  typesOfColumns = []
-  for d in curLastData:
-    typesOfColumns.append((lambda x: x) if type(d) == type(None) or type(d) == type("") else type(d))
-  print(typesOfColumns[2])
-  for i in range(len(newDataThatNeedsToBeCasted)):
-    for j in range (len(newDataThatNeedsToBeCasted[i])):
-      try:
-        if newDataThatNeedsToBeCasted[i][j] == "null":
-          newDataThatNeedsToBeCasted[i][j] = None
-        else:
-          newDataThatNeedsToBeCasted[i][j] = typesOfColumns[j](newDataThatNeedsToBeCasted[i][j])
-      except:
-        Logger.Logger.error("Could not cast the following data to the correct type:", typesOfColumns[j], newDataThatNeedsToBeCasted[i][j])
-        return None
-
-  return newDataThatNeedsToBeCasted
 
 tableUpdadedBefore = False
 lastQuery = ""
@@ -73,66 +48,57 @@ def previewFunc(delay=500, count=0):
 
 
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
+    # Wenn plötzlich letztlich alles gelöscht wird (z.B mit strg a delete ) dann wird der UP  geupdaded
 
-<<<<<<< HEAD
-=======
+    if(lastQuery.strip() != "" and query.strip() == ""):
+        pageSystem.setTableState(customtkinter.NORMAL)
+        updateUI(tmp)
+
     # Wenn nichts im Input field steht:
-    if("" != ""):
+    if(query.strip() == ""):
+        currentShowVar = None
         # -> Wenn vorher schon die table aktualisiert wurde:
         pageSystem.setTableState(customtkinter.NORMAL)
         if(tableUpdadedBefore):
             # - Nichts tun  - nur sonst TMP im besten Fall updaten
 
             tmp.setData(pageSystem.getInput())
+            print("hi")
 
         # -> Wenn vorher input field nicht leer war:
         else:
             tableUpdadedBefore = True
             tmp.setData(pageSystem.getInput())
+            print("here")
 
             # - Table aktualisieren
             updateUI(tmp)
 
             # - alle Buttons auf NORMAL mit der pagesystem.setState Funktion
 
->>>>>>> ae295eadc6cbd89f0f01693516b86594b8581830
 
 
-    # Wenn was für das erste mal im Input Field steht:
+    # Wenn was für das erste mal im Input Field steht dann wird die tmp lieber davor nochmnal aktalisiert
     if(lastQuery.strip() == "" and query.strip() != ""):
-        #print(tmp.data.copy())
-       # print(castColumns(tmp.data.copy(),pageSystem.getInput().copy() ))
-       # TODO
-        tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
-
-
-        pageSystem.setTableState(customtkinter.DISABLED)
-        updateUI(tmp)
+        pageSystem.setTableState(customtkinter.NORMAL)
+        tmp.setData(pageSystem.getInput())
         # Table in TMP saven
 
-    # Wenn plötzlich letztlich alles gelöscht wird (z.B mit strg a delete ) dann wird der UP  geupdaded
-    if(lastQuery.strip() != "" and query.strip() == ""):
-        pageSystem.setTableState(customtkinter.NORMAL)
-        updateUI(tmp)
+
+
         #tableUpdadedBefore = True
 
     # Wenn was im Input field steht:
     if(query.strip() != ""):
         # - Editierte Datenbank bekommen als "currentShowVar"
-
         currentShowVar = tmp.editData(query, mode, False)
-        #print(query)
-        #print(mode)
-        #print(currentShowVar)
         # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
         if(currentShowVar is None):
             # - Table resetten
-            pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(tmp)
         # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
         else:
             # - "val" anzeigen
-            print(currentShowVar.data)
             pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(currentShowVar.deepCpy())
             # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
@@ -221,8 +187,8 @@ def onTableSave(table):
 
     onResetButtonClick()
 
-    #tmp.setData(pageSystem.getInput())
-    #tmp.tableName = currentTableName
+    tmp.setData(pageSystem.getInput())
+    tmp.tableName = currentTableName
 
     updateDataInDB(cursor, tmp)
     # update UI to the current DB to avoid any bugs
@@ -353,6 +319,14 @@ def onOkButtonClick():
     global searchEntry
     global segemented_button_var
     global tmp
+    global currentShowVar
+
+    # Wenn kein preview gerade ist
+    if(currentShowVar != None):
+        tmp.replaceTmp(currentShowVar)
+        updateUI()
+    return
+
 
     if searchEntry.get().strip() == "":
         return
