@@ -31,62 +31,78 @@ segemented_button_var = None
 
 setButtonSelected = None
 
+currentShowVar = None
 
+
+
+tableUpdadedBefore = False
+lastQuery = ""
 def previewFunc(delay=500, count=0):
-    # TODO
-    #return
-    # if previewEnabled == False:
-    #   updateUI(tmp)
-    #   return
-    # if tmp.editData(text, mode) is None:
-    #   updateUI(tmp)
-    #   return
-    # preview = tmp.editData(text, mode)
-    # updateUI(preview)
+    global searchEntry
+    global segemented_button_var
+    global lastQuery
+    global currentShowVar
+    query = searchEntry.get()
+    mode =segemented_button_var.get()
+
 
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
     # Wenn nichts im Input field steht:
+    if(mode.strip() == ""):
         # -> Wenn vorher schon die table aktualisiert wurde:
+        if(tableUpdadedBefore):
             # - Nichts tun  - nur sonst TMP im besten Fall updaten
+            tmp.setData(pageSystem.getInput())
+
         # -> Wenn vorher input field nicht leer war:
+        else:
+            tableUpdadedBefore = True
+            tmp.setData(pageSystem.getInput())
+
             # - Table aktualisieren
+            updateUI(tmp)
+
             # - alle Buttons auf NORMAL mit der pagesystem.setState Funktion
+            pageSystem.setTableState(customtkinter.NORMAL)
+
 
     # Wenn was für das erste mal im Input Field steht:
+    if(lastQuery.strip() == "" and query.strip() != ""):
+        tmp.setData(pageSystem.getInput())
         # Table in TMP saven
 
-    # Wenn was im Input field steht:
-        # - Editierte Datenbank bekommen als "val"
-        # -> Wenn "val" None ist bzw. der Command Invalid ist dann:
-            # - Table resetten
-        # -> Wenn "val" ein Array ist bzw nicht None ist:
-            # - "val" anzeigen
-            # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
+    # Wenn plötzlich letztlich alles gelöscht wird (z.B mit strg a delete ) dann wird der UP  geupdaded
+    if(lastQuery.strip() != "" and query.strip() == ""):
+        pageSystem.setTableState(customtkinter.NORMAL)
+        updateUI(tmp)
+        #tableUpdadedBefore = True
 
-    # Wenn auf OK geklickt wird:
-       # - Editierte Datenbank bekommen als "val"
-        # -> Wenn "val" None ist bzw. der Command Invalid ist dann:
+    # Wenn was im Input field steht:
+    if(query.strip() != ""):
+        # - Editierte Datenbank bekommen als "currentShowVar"
+        currentShowVar = tmp.editData(query, mode, False)
+        # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
+        if(currentShowVar is None):
             # - Table resetten
-        # -> Wenn "val" ein Array ist bzw nicht None ist:
-            # - val auf TMP setzen
-            # - TMP anzeigen
+            print("reset table")
+            updateUI(tmp)
+        # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
+        else:
+            print("update table show")
+            # - "val" anzeigen
+            pageSystem.setTableState(customtkinter.NORMAL)
+            updateUI(currentShowVar.deepCpy())
+            # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
+            pageSystem.setTableState(customtkinter.DISABLED)
+
+
 
     # Wenn auf save geklickt wird:
         # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
 
-    print("s", searchEntry.get())
-    print("se", segemented_button_var.get())
-    val = tmp.editData(searchEntry.get(), segemented_button_var.get(), False)
-    if val is not None:
-        updateUI(val)
-    else:
-        # if user query does not run proprely, revert UI to actual TMP
-        if count % 2 == 0:
-            updateUI(tmp)
-
+    lastQuery =query
     tk.after(delay, lambda: previewFunc(delay, count+1))
-
 
 def updateUI(data):
     data = data.deepCpy()

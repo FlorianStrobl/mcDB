@@ -155,6 +155,7 @@ class PageSystem:
         self.givenArray = copy.copy(tableBody)
         dArray = self.convertToPages2dArray(self.givenArray)
 
+        print(self.givenArray)
         if(len(tableBody)==0):
             self.table.fill([])
             self.givenArray = []
@@ -165,16 +166,17 @@ class PageSystem:
 
         try:
             #print("heeeeerrr", dArray[self.currentPage])
+
             self.table.fill(dArray[self.currentPage])
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
             )
         except:
+
             self.table.fill(self.givenArray)
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
             )
-
 
     def onUIReady(self):
         dArray = self.convertToPages2dArray(self.givenArray)
