@@ -43,7 +43,7 @@ def previewFunc(delay=500, count=0):
     global lastQuery
     global currentShowVar
     query = searchEntry.get()
-    mode =segemented_button_var.get()
+    mode = segemented_button_var.get()
 
 
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
