@@ -37,7 +37,8 @@ showActivated = False
 # originalData has the correct types for each row
 # newDataThatNeedsToBeCasted has ONLY string types
 
-previewModeOn = True
+
+checkbox = None
 
 def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
     typesOfTables = {
@@ -93,6 +94,8 @@ def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
 
 tableUpdadedBefore = False
 lastQuery = ""
+
+lastCheckBoxMode = 0
 def previewFunc(delay=500, count=0):
     global searchEntry
     global segemented_button_var
@@ -101,11 +104,25 @@ def previewFunc(delay=500, count=0):
     global tableUpdadedBefore
     global currentTableName
     global showActivated
-    global previewModeOn
+    global checkbox
+    global lastCheckBoxMode
 
-    if(not previewModeOn):
+
+    if(not checkbox.get()):
+        # Recall this function to check if preview modes changed
         tk.after(delay, lambda: previewFunc(delay, count+1))
+
+        if(lastCheckBoxMode != checkbox.get()):
+
+
+            #tmp.setData(pageSystem.getInput())
+
+            updateUI(tmp)
+
+        lastCheckBoxMode = checkbox.get()
         return
+    else:
+        lastCheckBoxMode  = checkbox.get()
 
     query = searchEntry.get()
     mode = segemented_button_var.get()
@@ -142,10 +159,12 @@ def previewFunc(delay=500, count=0):
         #print(mode)
         #print(currentShowVar)
         # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
+        pageSystem.setTableState(customtkinter.DISABLED)
         if(currentShowVar is None):
             # - Table resetten
             pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(tmp)
+            pageSystem.setTableState(customtkinter.DISABLED)
         # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
         else:
             # - "val" anzeigen
@@ -170,7 +189,7 @@ def updateUI(data):
 
 
 def onGuiReady2(
-    _table, _pageSystem, _searchEntry, _setButtonSelected, _segemented_button_var, _tk
+    _table, _pageSystem, _searchEntry, _setButtonSelected, _segemented_button_var, _tk,_checkbox
 ):
     global table
     global pageSystem
@@ -178,6 +197,10 @@ def onGuiReady2(
     global setButtonSelected
     global segemented_button_var
     global tk
+    global checkbox
+
+    checkbox =_checkbox
+
 
     table = _table
     pageSystem = _pageSystem
@@ -266,7 +289,6 @@ def onOkButtonClick():
 
     # reload UI with new tmp
     updateUI(tmp)
-
 
     return
 

@@ -162,8 +162,8 @@ def loadGUI():
     searchFrame.place(x=235, y=20, width=515, height=75)
 
 
-    checkbox = customtkinter.CTkCheckBox(master=searchFrame, text="preview aktiviert",checkbox_width=20 )
-    checkbox.place(x = 5, y=5, width=20, height=20)
+    checkbox = customtkinter.CTkCheckBox(master=searchFrame, text="preview aktiviert",checkbox_width=20,checkbox_height=20  )
+    checkbox.place(x = 14, y=3)
 
 
     segemented_button_var = customtkinter.StringVar(value="auto")
@@ -275,6 +275,6 @@ def loadGUI():
     )
 
     pageSystem.onUIReady()
-    onGuiReady2(table, pageSystem,searchEntry,setButtonSelected, segemented_button_var, app)
+    onGuiReady2(table, pageSystem,searchEntry,setButtonSelected, segemented_button_var, app, checkbox)
 
     app.mainloop()
