@@ -37,61 +37,59 @@ showActivated = False
 # originalData has the correct types for each row
 # newDataThatNeedsToBeCasted has ONLY string types
 
+previewModeOn = True
 
-def castColumns2(tableName, newDataThatNeedsToBeCasted):
-    Logger.Logger.error("")
-    newDataThatNeedsToBeCasted
+def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
     typesOfTables = {
-    "Serverworld": [int, str, str],
-    "Player":[int,str,str],
-    "MEntities":[int, str, int, int],
-    "Block":[str,int],
-    "Wood":[str,int],
-    "Dirt":[str, int],
-    "plays":[int,int,int,str,str],
-    "populatedBy":[int,int],
-    "buildOf":[str,int]
+    "Serverworld": {
+      "serverworld_id": int,
+      "name": str,
+      "icon": str
+    },
+    "Player": {
+      "player_id": int,
+      "username": str,
+      "skin": str
+    },
+    # same with others...
+    "MEntities":{
+        "m_entities_id": int,
+      "entity_position": str,
+      "birthday": int,
+      "entity_type": int
+    },
+    "Block":{"absolute_position": str, "block_type":int},
+    "Wood":{"absolute_position":str,"isOnFire":int},
+    "Dirt":{"absolute_position":str,"hasGrass": int},
+    "plays":{"player_id":int,"serverworld_id":int,"session_begin:":int,"player_position":str,"role":str},
+    "populatedBy":{"m_entities_id":int,"serverworld_id":int},
+    "buildOf":{"absolute_position":str,"serverworld_id":int}
     }
-    tableTypes =typesOfTables[tableName]
+
+    tableTypes = typesOfTables[tableName]
 
 
     for i in range(len(newDataThatNeedsToBeCasted)):
         for j in range (len(newDataThatNeedsToBeCasted[i])):
             try:
-                if newDataThatNeedsToBeCasted[i][j] == "null":
+                caster = None
+                if columnNames[j] in tableTypes:
+                    caster = tableTypes[columnNames[j]]
+
+                if newDataThatNeedsToBeCasted[i][j] == "null" and (columnNames[j] == "icon"):
                     newDataThatNeedsToBeCasted[i][j] = None
                 else:
-                        newDataThatNeedsToBeCasted[i][j] = tableTypes[j](newDataThatNeedsToBeCasted[i][j])
+                        if caster is not None:
+                          newDataThatNeedsToBeCasted[i][j] = caster(newDataThatNeedsToBeCasted[i][j])
+                        else:
+                          # no casting if the type unknown
+                          newDataThatNeedsToBeCasted[i][j] = newDataThatNeedsToBeCasted[i][j]
             except:
                 Logger.Logger.error("Could not cast the following data to the correct type: '" + str(newDataThatNeedsToBeCasted[i][j]) + "' at row " + str(i))
                 return None
 
     return newDataThatNeedsToBeCasted
 
-
-
-def castColumns(originalData, newDataThatNeedsToBeCasted):
-  print(len(originalData))
-  if len(originalData) == 0:
-    Logger.Logger.error("the data couldnt be casted")
-    return None
-
-  curLastData = originalData[-1]
-  typesOfColumns = []
-  for d in curLastData:
-    typesOfColumns.append((lambda x: x) if type(d) == type(None) or type(d) == type("") else type(d))
-  for i in range(len(newDataThatNeedsToBeCasted)):
-    for j in range (len(newDataThatNeedsToBeCasted[i])):
-      try:
-        if newDataThatNeedsToBeCasted[i][j] == "null":
-          newDataThatNeedsToBeCasted[i][j] = None
-        else:
-          newDataThatNeedsToBeCasted[i][j] = typesOfColumns[j](newDataThatNeedsToBeCasted[i][j])
-      except:
-        Logger.Logger.error("Could not cast the following data to the correct type:", typesOfColumns[j], newDataThatNeedsToBeCasted[i][j])
-        return None
-
-  return newDataThatNeedsToBeCasted
 
 tableUpdadedBefore = False
 lastQuery = ""
@@ -103,6 +101,11 @@ def previewFunc(delay=500, count=0):
     global tableUpdadedBefore
     global currentTableName
     global showActivated
+    global previewModeOn
+
+    if(not previewModeOn):
+        tk.after(delay, lambda: previewFunc(delay, count+1))
+        return
 
     query = searchEntry.get()
     mode = segemented_button_var.get()
@@ -299,8 +302,12 @@ def onTableSave(table):
         x = castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput())
         if(x != None):
             tmp.setData(x)
+        else:
+            # Return if invalid data in UI
+            return
     updateDataInDB(cursor, tmp)
         # update UI to the current DB to avoid any bugs
+    print(tmp.data[0])
     onInputfieldChange("","auto")
     updateUI(tmp)
 
