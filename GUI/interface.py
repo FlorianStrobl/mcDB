@@ -44,11 +44,39 @@ def previewFunc(delay=500, count=0):
     # preview = tmp.editData(text, mode)
     # updateUI(preview)
 
-    # SI rien dans le input il fait ABSOLUMENT RIEN
+    # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
-    # SI IL Y A QUELQUECHOSE IL LE MONTRE
+    # Wenn nichts im Input field steht:
+        # -> Wenn vorher schon die table aktualisiert wurde:
+            # - Nichts tun  - nur sonst TMP im besten Fall updaten
+        # -> Wenn vorher input field nicht leer war:
+            # - Table aktualisieren
+            # - alle Buttons auf NORMAL mit der pagesystem.setState Funktion
 
+    # Wenn was für das erste mal im Input Field steht:
+        # Table in TMP saven
 
+    # Wenn was im Input field steht:
+        # - Editierte Datenbank bekommen als "val"
+        # -> Wenn "val" None ist bzw. der Command Invalid ist dann:
+            # - Table resetten
+        # -> Wenn "val" ein Array ist bzw nicht None ist:
+            # - "val" anzeigen
+            # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
+
+    # Wenn auf OK geklickt wird:
+       # - Editierte Datenbank bekommen als "val"
+        # -> Wenn "val" None ist bzw. der Command Invalid ist dann:
+            # - Table resetten
+        # -> Wenn "val" ein Array ist bzw nicht None ist:
+            # - val auf TMP setzen
+            # - TMP anzeigen
+
+    # Wenn auf save geklickt wird:
+        # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
+
+    print("s", searchEntry.get())
+    print("se", segemented_button_var.get())
     val = tmp.editData(searchEntry.get(), segemented_button_var.get(), False)
     if val is not None:
         updateUI(val)
