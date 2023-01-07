@@ -218,8 +218,6 @@ class scrollableTable(customtkinter.CTkFrame):
             deleteButton = row[len(self.tableDataBodyWidgets[0]) - 1]
             deleteButton.configure(command=lambda i=i: self.onRemove(i))
 
-
-
     def fill(self, tableBody):
         self.updateEvents()
 
