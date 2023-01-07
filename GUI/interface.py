@@ -112,6 +112,7 @@ def previewFunc(delay=500, count=0):
         # Recall this function to check if preview modes changed
         tk.after(delay, lambda: previewFunc(delay, count+1))
 
+        # When checkbox is off
         if(lastCheckBoxMode != checkbox.get()):
 
 
@@ -122,6 +123,10 @@ def previewFunc(delay=500, count=0):
         lastCheckBoxMode = checkbox.get()
         return
     else:
+        #When Checkbox is on
+        if(lastCheckBoxMode !=checkbox.get()):
+            # When Checkbox from off to on then save UI data to TEMP
+            tmp.setData(pageSystem.getInput())
         lastCheckBoxMode  = checkbox.get()
 
     query = searchEntry.get()
