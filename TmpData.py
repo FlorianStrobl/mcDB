@@ -254,6 +254,11 @@ class TMP:
 
     # returns the columns of the current data in the order provided by the userStr. e.g.: "columnName2,columnName1"
     def selectColumns(self, userStr: str, showLogs: bool = True) -> Optional[list[list[str], list[any]]]:
+        if userStr.strip() == "":
+            if showLogs:
+                Logger.Logger.error("Der columns select string war leer.")
+            return None
+
         def _2DArrayGetColumn(idx: int, arr: list[list]) -> list:
             return [list(v)[idx] for v in arr]
 
