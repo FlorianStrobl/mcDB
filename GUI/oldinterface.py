@@ -31,7 +31,7 @@ segemented_button_var = None
 
 setButtonSelected = None
 
-
+myBool = True
 def previewFunc(delay=500, count=0):
     # TODO
     #return
@@ -44,18 +44,22 @@ def previewFunc(delay=500, count=0):
     # preview = tmp.editData(text, mode)
     # updateUI(preview)
 
-    # SI rien dans le input il fait ABSOLUMENT RIEN
-
-    # SI IL Y A QUELQUECHOSE IL LE MONTRE
+    global myBool
 
 
-    val = tmp.editData(searchEntry.get(), segemented_button_var.get(), False)
-    if val is not None:
-        updateUI(val)
-    else:
-        # if user query does not run proprely, revert UI to actual TMP
-        if count % 2 == 0:
-            updateUI(tmp)
+    tmp.data = pageSystem.getInput().copy()
+    if(searchEntry.get() != ""):
+        val = tmp.editData(searchEntry.get(), segemented_button_var.get(), False)
+        if val is not None:
+            updateUI(val)
+            myBool = True
+            pageSystem.setTableState(customtkinter.DISABLED)
+        else:
+            # if user query does not run proprely, revert UI to actual TMP
+            if count % 2 == 0 and myBool:
+                updateUI(tmp)
+                myBool = True
+                pageSystem.setTableState(customtkinter.NORMAL)
 
     tk.after(delay, lambda: previewFunc(delay, count+1))
 
@@ -88,7 +92,7 @@ def onGuiReady2(
 
     onTableButtonClick("Serverworld")
 
-    previewFunc()
+    #previewFunc()
 
 
 def onTableButtonClick(tableName):
@@ -139,9 +143,8 @@ def onTableSave(table):
     previewOn = preview is not None
     ##print("preview enabled:",previewOn)
 
-    # if(preview is None):
-    # TODO
-    #    tmp.setData(pageSystem.getInput())
+    #if(preview is not None):
+    tmp.setData(pageSystem.getInput())
     # tmp.setData(
     #    pageSystem.getInput(), None if preview is None else preview.columnNames
     # )  # <--
@@ -156,7 +159,6 @@ def onTableSave(table):
 # this is only for the preview mode
 def onInputfieldChange(text, mode):
     # do not need this lol
-    return
 
     # def do():
     #     global lastInputFieldChangeTime
@@ -252,12 +254,14 @@ def onInputfieldChange(text, mode):
         )
         pageSystem.changeTableBody(preview.deepCpyData())
         table.setTableHeader(preview.columnNames)
+        pageSystem.setTableState(customtkinter.DISABLED)
         # print("preview yet")
     else:
         # TODO remove the "preview mode" text described above
         Logger.Logger.warn("")
         pageSystem.changeTableBody(tmp.deepCpyData())
         table.setTableHeader(tmp.columnNames)
+        pageSystem.setTableState(customtkinter.NORMAL)
     # print(f"[{mode}] inputfield: \"{text}\"; got a preview: {preview is not None}")
 
 

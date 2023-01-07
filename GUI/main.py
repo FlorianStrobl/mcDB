@@ -26,8 +26,14 @@ buttonNames = ["Serverworld",
         "buildOf"]
 currentSelectedButtonId = None
 
+arrow = None
+
 def setLogLabel(logText, color):
     logsLabel.configure(text=logText, text_color=color)
+
+def setArrowToPos(heightIndex):
+    arrow.place(x=10, y=14 + heightIndex * 35)
+    # start 14 difference de 34
 
 def setButtonSelected(buttonName):
     # Reset Old button
@@ -42,9 +48,11 @@ def setButtonSelected(buttonName):
     #print(currentSelectedButtonId)
     tableNamesButtons[currentSelectedButtonId].configure(fg_color=["#325882", "#14375e"])
 
+    setArrowToPos(currentSelectedButtonId)
     # Reset color of current selected
 
     #Uneable all buttons:
+
 
 
 def loadGUI():
@@ -54,6 +62,7 @@ def loadGUI():
     global tableButtons
     global tableNamesButtons
     global setButtonSelected
+    global arrow
 
     customtkinter.set_appearance_mode("dark")  # Modes: system (default), light, dark
     customtkinter.set_default_color_theme("blue")
@@ -85,6 +94,11 @@ def loadGUI():
         master=app, width=200, height=333, corner_radius=5
     )
     navigateBackground.place(x=20, y=115)
+
+    arrow = customtkinter.CTkLabel(master=navigateBackground, text="➜")
+    arrow.place(x=10, y=48)
+    # start 14 difference de 34
+
     tablesNames = {
         "Serverworld": lambda: onTableButtonClick("Serverworld"),
         "Player": lambda: onTableButtonClick("Player"),
@@ -98,12 +112,14 @@ def loadGUI():
     }
     tableNamesButtons = []
 
+
+
     def placeTableButton(title, event):
         global xStart
         myButton = customtkinter.CTkButton(
-            master=app, text=title, command=event, fg_color=["#3a7ebf", "#1f538d"]
+            master=app, text=title, command=event
         )
-        myButton.place(x=45, y=xStart)
+        myButton.place(x=55, y=xStart)
         myButton.configure(fg_color="#343638",
         bg_color="#302c2c"
         )

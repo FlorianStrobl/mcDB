@@ -80,12 +80,14 @@ class scrollableTable(customtkinter.CTkFrame):
     def __init__(self, app, tableData, pos):
         customtkinter.CTkFrame.__init__(self, app)
         self.scrollFrame = ScrollFrame(self)
-
+        self.oldColumns = None
         self.scrollFrame.pack(side="top", fill="both", expand=True)
         self.currentEntrys = []
         self.app = app
         self.colors = ["#343638", "#2d2f31"]
         self.actionColumnWidth = 25
+
+        self.createButton = None
 
         self.numberCreatedRows = 0
 
@@ -113,6 +115,8 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # Event Listener: 0:Delete  1: Add
         self.eventListenerFunctions = [[], []]
+
+
 
     def calculateStepsFromStart(self, row):
         # Berechnet wie die Rows ID's sein sollen relativ zu den vom Anfang also "row" hier im parameter(für den delete Event)
@@ -228,9 +232,6 @@ class scrollableTable(customtkinter.CTkFrame):
                     )
                     inputField.configure(textvariable=searchEntryStringVar)
 
-
-
-
     def fill(self, tableBody):
         self.updateEvents()
 
@@ -293,6 +294,7 @@ class scrollableTable(customtkinter.CTkFrame):
                         width=self.actionColumnWidth,
                         fg_color=self.colors[self.colorIndex % 2],
                     )
+                    deleteButton["state"] = customtkinter.DISABLED
                     deleteButton.grid(row=row, column=col)
                     rowWidgets.append(deleteButton)
 
@@ -305,6 +307,10 @@ class scrollableTable(customtkinter.CTkFrame):
         # Ein bisschen gehardcoded damit die headers bei ner bestimmten tabelle kleiner werden
         isTheTablePlays = arr[0] == "player_id" and arr[len(arr)-1] == "role"
 
+        #Sonst wird alles nochmal erstellt obwohl es vorher schonmal erstellt wurde
+        if(self.oldColumns == arr):
+            return
+        self.oldColumns = arr.copy()
 
         self.clearTableDataHeaderWidgets()
         startX = self.x + 5
@@ -312,6 +318,8 @@ class scrollableTable(customtkinter.CTkFrame):
         fillstartLength = 10
         fillstart = self.x
         adding = 19
+
+        self.tableDataHeaderWidgets = []
 
         acL = self.actionColumnWidth
         if fillstart != None and fillstartLength != None:
@@ -341,14 +349,14 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # myLabel2 = customtkinter.CTkLabel(master=self.app, text="d",fg_color="#2b2b2b",anchor="w")
 
-        button2 = customtkinter.CTkButton(
+        self.createButton = customtkinter.CTkButton(
             master=self.app,
             text="+",
             command=self.appendEmptyRowOnTop,
             corner_radius=0,
             fg_color="#343638",
         )
-        button2.place(
+        self.createButton.place(
             x=startX - 5,
             y=y,
             width=acL,
@@ -356,7 +364,7 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # myLabel2.place(x = startX,y = y,width = acL)
         startX += acL - 3
-        self.tableDataHeaderWidgets.append(button2)
+        self.tableDataHeaderWidgets.append(self.createButton)
 
         myLabel3 = customtkinter.CTkLabel(
             master=self.app, text="", fg_color="#2b2b2b", anchor="w"
@@ -365,6 +373,13 @@ class scrollableTable(customtkinter.CTkFrame):
         self.tableDataHeaderWidgets.append(myLabel3)
 
         self.tableData[0] = arr
+
+    def setState(self,_state):
+        self.createButton.configure(state=_state)
+        for widgetRow in self.tableDataBodyWidgets:
+            for widget in range(len(widgetRow)):
+                widgetRow[widget].configure(state=_state)
+
 
     # Sender erwähnt,default fase, ob diese Funktion direkt vom user aufgerufen wird (über button klick) oder ob die funktion von einer for schleife oder sowas aufgerufen wurde
     def onRemove(self, rowNumber, fromAutoScript=False):
@@ -437,6 +452,7 @@ class scrollableTable(customtkinter.CTkFrame):
                     width=self.actionColumnWidth,
                     fg_color=self.colors[self.colorIndex % 2],
                 )
+
                 deleteButton.grid(row=gridRow, column=col)
                 rowWidget.append(deleteButton)
         self.colorIndex += 1

@@ -3,6 +3,7 @@ import copy
 import math
 import addImport
 import Logger
+import customtkinter
 
 
 class PageSystem:
@@ -15,6 +16,8 @@ class PageSystem:
         self.tableBody = tableBody
         # can always be modified
         self.givenArray = copy.copy(tableBody)
+
+        self.tableState = customtkinter.NORMAL
 
     @staticmethod
     def convert2dArrayBack(arr_2d):
@@ -78,7 +81,7 @@ class PageSystem:
                 + str(len(self.convertToPages2dArray(self.givenArray)))
             )
 
-
+            self.table.setState(self.tableState)
     # self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(dArray)))
 
     def onDelete(self, possibleParamater=None):
@@ -139,6 +142,12 @@ class PageSystem:
             + "/"
             + str(len(self.convertToPages2dArray(self.givenArray)))
         )
+
+        self.table.setState(self.tableState)
+
+    def setTableState(self,_state):
+        self.tableState = _state
+        self.table.setState(_state)
 
     def changeTableBody(self, tableBody):
         self.currentPage = 0
