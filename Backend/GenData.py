@@ -1,24 +1,25 @@
 import random
 import uuid
 import time
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 import addImport
 import Logger
 from Names import *
 from GenDataJoinSafe import *
 
-TRIM: int = 2**52 - 1  # max 64 bit integers
+TRIM: int = 2**52 - 1  # max 52 bit integers for IDs
 
-
+# for two given lists, return the index of the first pair of elements that are equal
 def searchForFirstDoublePair(arr1: list, arr2: list) -> int:
-    arr = list(zip(arr1, arr2))
+    arr = list(zip(arr1, arr2))  # combine the two lists into a list of tuples
     for i in range(len(arr)):
         for j in range(len(arr)):
             if i != j and arr[i] == arr[j]:
-                return j
+                return j  # search in O(n^2) if two elements are the same
     return -1
 
 
+# Helper functions for generating random data
 class HelperFuncs:
     # generate UIDs in hex format
     def generateUID(n: int = 1) -> list[str]:
@@ -27,6 +28,7 @@ class HelperFuncs:
             UIDs.append(uuid.uuid4().hex)
         return UIDs
 
+    # generate icons in the format: "https://mc-icons/" + uid
     def generateIcons(n: int = 1) -> list[Optional[str]]:
         icons = []
         for i in range(n):
@@ -36,19 +38,21 @@ class HelperFuncs:
                 icons.append("https://mc-icons/" + uuid.uuid4().hex)
         return icons
 
+    # generate skins in the format: "https://mc-skin/" + uid
     def generateSkins(n: int = 1) -> list[str]:
         icons = []
         for i in range(n):
             icons.append("https://mc-skin/" + uuid.uuid4().hex)
         return icons
 
+    # generate integers between 0 and 1
     def generateBoolean(n: int = 1) -> list[int]:
         bools = []
         for i in range(n):
             bools.append(int(random.random() < 0.5))
         return bools
 
-    # uses current time and adds/subtracts 0s to 10000000s (about 115 days)
+    # uses current time as timestamp and adds/subtracts 0 to 10000000 (about 115 days)
     def generateTimestamp(n: int = 1) -> list[int]:
         timestamps = []
         for i in range(n):
@@ -81,6 +85,7 @@ class HelperFuncs:
             )
         return positions
 
+    # generate names
     def generateServernames(n: int = 1, namePool: list[str] = names1) -> list[str]:
         possibleNames = namePool.splitlines()
         names = []
@@ -88,6 +93,7 @@ class HelperFuncs:
             names.append(random.choice(possibleNames))
         return names
 
+    # generate names
     def generateUsernames(n: int = 1, namePool: list[str] = names2) -> list[str]:
         possibleNames = namePool.splitlines()
 
@@ -96,18 +102,19 @@ class HelperFuncs:
             names.append(random.choice(possibleNames))
         return names
 
-    # generate roles which can be "Admin", "Moderator", "Player"
-    def generateRoles(
-        n: int = 1, possibleRoles: list[str] = ["Admin", "Moderator", "Player"]
-    ) -> list[str]:
+    # generate roles which can be one of those: ("Admin", "Moderator", "Player")
+    def generateRoles(n: int = 1) -> Literal["Admin", "Moderator", "Player"]:
+        possibleRoles: list[str] = ["Admin", "Moderator", "Player"]
         roles = []
         while len(roles) < n:
             roles.append(random.choice(possibleRoles))
         return roles
 
+    # takes a hex UID str and converts it to an int
     def convertUIDStrToInt(uid: str) -> int:
         return int(uid, 16)
 
+    # takes a list of hex UID strs and converts them to ints
     def convertUIDsStrToInts(uids: list[str]) -> list[int]:
         for i in range(len(uids)):
             uids[i] = HelperFuncs.convertUIDStrToInt(uids[i])
@@ -178,8 +185,9 @@ class GenerateTableData:
 
         return blocks
 
-    # [absolute_position, isOnFire]
+    # [absolute_position, isOnFire] but only half of n
     def generateWoods(n: int = 1, cursor=None) -> Optional[list[(str, int)]]:
+        n = n // 2
         woods = []
 
         abspos = getRealFirstAbsolute_positions(cursor)
@@ -189,6 +197,9 @@ class GenerateTableData:
             )
             return None
         absolute_positions = abspos
+        # get the first half of the block positions
+        absolute_positions = absolute_positions[: len(absolute_positions) // 2]
+        random.shuffle(absolute_positions)  #  randomize the order of the positions
         isOnFire = HelperFuncs.generateBoolean(n)
 
         # add data to array
@@ -197,8 +208,9 @@ class GenerateTableData:
 
         return woods
 
-    # [absolute_position, hasGrass]
+    # [absolute_position, hasGrass]  but only half of n
     def generateDirt(n: int = 1, cursor=None) -> Optional[list[(str, int)]]:
+        n = n // 2
         dirts = []
 
         abspos = getRealFirstAbsolute_positions(cursor)
@@ -208,6 +220,9 @@ class GenerateTableData:
             )
             return None
         absolute_positions = abspos
+        # get the second half of the block positions
+        absolute_positions = absolute_positions[len(absolute_positions) // 2 :]
+        random.shuffle(absolute_positions)  #  randomize the order of the positions
         hasGrass = HelperFuncs.generateBoolean(n)
 
         # add data to array

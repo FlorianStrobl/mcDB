@@ -79,12 +79,16 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
         elif table == "Wood":
             tmpData = GTD.generateWoods(nr, cursor)
             if tmpData is None:
-                Logger.Logger.error("While generating Wood. Maybe the table 'Block' is empty")
+                Logger.Logger.error(
+                    "While generating Wood. Maybe the table 'Block' is empty"
+                )
                 return None
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr, cursor)
             if tmpData is None:
-                Logger.Logger.error("While generating Dirt. Maybe the table 'Block' is empty")
+                Logger.Logger.error(
+                    "While generating Dirt. Maybe the table 'Block' is empty"
+                )
                 return None
         elif table == "plays":
             tmpData = GTD.generatePlays(nr, cursor)
