@@ -347,7 +347,7 @@ def onOkButtonClick():
 
         print("executed sql query")
     else:
-        t = tmp.editData(searchEntry.get(), segemented_button_var.get())
+        t = tmp.editData(searchEntry.get(), segemented_button_var.get(), True)
         if t is None:
             Logger.Logger.error("could not execute the command!")
             return

@@ -30,7 +30,7 @@ def getMode(
         elif re.search("^.*[a-zA-Z_][a-zA-Z0-9_]*(1|2)(.|\n)*$", string) is not None:
             # match ANY test1|2 ANY
             mode = "sort"
-        elif string.strip().lower().startswith("slice"):
+        elif string.lower().startswith("slice"):
             mode = "slice"
         elif (
             re.search(
@@ -41,7 +41,7 @@ def getMode(
                 .lower()
                 .strip(),
             )
-            is not None
+            is not None and string != "True" and string != "False"
         ):
             mode = "columns"
         else:
