@@ -145,6 +145,65 @@ class PageSystem:
 
         self.table.setState(self.tableState)
 
+    def updateGivenArray(self):
+         ##print("bebe")
+        # ZIEL: alles in "givenArray" reintun in der richtiges stelle
+        def insert_position(position, list1, list2):
+            return list1[:position] + list2 + list1[position:]
+
+        ##print("running on deleteORAd")
+        abschnitt = self.table.getTablesInputs()
+
+        pageStart = self.currentPage * 50
+
+        # Get the distance between pageStart and pageEnd
+        pageEndDistance = 0
+        if pageStart + 49 < len(self.givenArray):
+            pageEndDistance = 50
+        else:
+            ##print("be")
+            pageEndDistance = (len(self.givenArray) - pageStart) + 1
+
+        pageEnd = pageStart + pageEndDistance
+
+        # print(pageStart)
+        # print("p" ,pageEnd)
+
+        # print(len( self.givenArray))
+        # Remove all 50 (or the rest) elements from the main Array at specific page
+        del self.givenArray[pageStart:pageEnd]
+
+        # Insert the new Table Input Array
+        # self.givenArray.insert(pageStart-1, abschnitt)
+        self.givenArray = insert_position(pageStart, self.givenArray, abschnitt)
+
+        # rint(self.givenArray)
+        # Fill the Array:
+
+        # 1. Une row au pif est deleted
+        # 2. On remanage la given Array en deletant 50 elements de la page et en in insertant 49
+        # 3. On obtient la nouvelle selection
+        # 4. On ajoute tout en bas la nouvelle row du dernier element de la selection du givenArray
+        # --> que si c possible bien sur
+        # PAS FILL - IL FAUT AJOUTER UNE ROW EN BA SI IL EN EXISTE DES PROCHAINES
+        if len(self.givenArray[pageStart:pageEnd]) == 0:
+            self.table.fill(self.givenArray[pageStart - 50 :])
+            self.currentPage -= 1
+            self.navigatorIndicator.configure(
+                text=str(self.currentPage + 1)
+                + "/"
+                + str(len(self.convertToPages2dArray(self.givenArray)))
+            )
+            return
+
+        self.navigatorIndicator.configure(
+            text=str(self.currentPage + 1)
+            + "/"
+            + str(len(self.convertToPages2dArray(self.givenArray)))
+        )
+
+        self.table.setState(self.tableState)
+
     def setTableState(self,_state):
         self.tableState = _state
         self.table.setState(_state)
@@ -189,7 +248,7 @@ class PageSystem:
         )
 
     def getInput(self):
-        self.onDelete()
+        self.updateGivenArray()
         return self.givenArray
 
     def onNavigateButtonClick(self, n):

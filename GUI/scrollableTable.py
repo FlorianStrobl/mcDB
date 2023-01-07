@@ -219,18 +219,6 @@ class scrollableTable(customtkinter.CTkFrame):
             deleteButton.configure(command=lambda i=i: self.onRemove(i))
 
 
-    def asctualiueOnSomeThingHappen(self):
-        for widget in range(len(self.tableDataBodyWidgets)):
-            for inputFieldNumber in range(len(self.tableDataBodyWidgets)-1):
-                    print(widget)
-                    print(inputFieldNumber)
-                    inputField = self.tableDataBodyWidgets[widget][inputFieldNumber]
-                    searchEntryStringVar = customtkinter.StringVar()
-                    searchEntryStringVar.trace(
-                    "w",
-                        lambda name, index, mode, sv=searchEntryStringVar: self.onSomethingHappen(sv)
-                    )
-                    inputField.configure(textvariable=searchEntryStringVar)
 
     def fill(self, tableBody):
         self.updateEvents()
