@@ -42,6 +42,7 @@ def previewFunc(delay=500, count=0):
     global segemented_button_var
     global lastQuery
     global currentShowVar
+    global tableUpdadedBefore
     query = searchEntry.get()
     mode =segemented_button_var.get()
 
@@ -49,10 +50,12 @@ def previewFunc(delay=500, count=0):
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
     # Wenn nichts im Input field steht:
-    if(mode.strip() == ""):
+    if(query.strip() == ""):
         # -> Wenn vorher schon die table aktualisiert wurde:
+        pageSystem.setTableState(customtkinter.NORMAL)
         if(tableUpdadedBefore):
             # - Nichts tun  - nur sonst TMP im besten Fall updaten
+
             tmp.setData(pageSystem.getInput())
 
         # -> Wenn vorher input field nicht leer war:
@@ -64,7 +67,7 @@ def previewFunc(delay=500, count=0):
             updateUI(tmp)
 
             # - alle Buttons auf NORMAL mit der pagesystem.setState Funktion
-            pageSystem.setTableState(customtkinter.NORMAL)
+
 
 
     # Wenn was für das erste mal im Input Field steht:
