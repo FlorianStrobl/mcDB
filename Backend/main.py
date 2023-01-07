@@ -35,7 +35,9 @@ _tmp.replaceTmp(
   &&
   a1 - a2
   &&
-  b <- 3 + len(data) * 0 + index * 0
+  (b,) <- 3 + len(data) * 0 + index * 0
+  &&
+  (a, b, c) <- (a, b, c)
   &&
   a < 44
   &&
