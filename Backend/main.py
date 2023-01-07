@@ -55,5 +55,3 @@ print(
 )
 
 loadGUI()
-
-# v = tmp.editData("""session_begin <- 0 && session_begin, player_id, serverworld_id, role, player_position""") # TODO, if i swap, should i swap the order of the columns in the UI too?

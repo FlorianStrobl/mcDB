@@ -40,53 +40,62 @@ showActivated = False
 
 checkbox = None
 
+
 def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
     typesOfTables = {
-    "Serverworld": {
-      "serverworld_id": int,
-      "name": str,
-      "icon": str
-    },
-    "Player": {
-      "player_id": int,
-      "username": str,
-      "skin": str
-    },
-    # same with others...
-    "MEntities":{
-        "m_entities_id": int,
-      "entity_position": str,
-      "birthday": int,
-      "entity_type": int
-    },
-    "Block":{"absolute_position": str, "block_type":int},
-    "Wood":{"absolute_position":str,"isOnFire":int},
-    "Dirt":{"absolute_position":str,"hasGrass": int},
-    "plays":{"player_id":int,"serverworld_id":int,"session_begin:":int,"player_position":str,"role":str},
-    "populatedBy":{"m_entities_id":int,"serverworld_id":int},
-    "buildOf":{"absolute_position":str,"serverworld_id":int}
+        "Serverworld": {"serverworld_id": int, "name": str, "icon": str},
+        "Player": {"player_id": int, "username": str, "skin": str},
+        # same with others...
+        "MEntities": {
+            "m_entities_id": int,
+            "entity_position": str,
+            "birthday": int,
+            "entity_type": int,
+        },
+        "Block": {"absolute_position": str, "block_type": int},
+        "Wood": {"absolute_position": str, "isOnFire": int},
+        "Dirt": {"absolute_position": str, "hasGrass": int},
+        "plays": {
+            "player_id": int,
+            "serverworld_id": int,
+            "session_begin:": int,
+            "player_position": str,
+            "role": str,
+        },
+        "populatedBy": {"m_entities_id": int, "serverworld_id": int},
+        "buildOf": {"absolute_position": str, "serverworld_id": int},
     }
 
     tableTypes = typesOfTables[tableName]
 
-
     for i in range(len(newDataThatNeedsToBeCasted)):
-        for j in range (len(newDataThatNeedsToBeCasted[i])):
+        for j in range(len(newDataThatNeedsToBeCasted[i])):
             try:
                 caster = None
                 if columnNames[j] in tableTypes:
                     caster = tableTypes[columnNames[j]]
 
-                if newDataThatNeedsToBeCasted[i][j] == "null" and (columnNames[j] == "icon"):
+                if newDataThatNeedsToBeCasted[i][j] == "null" and (
+                    columnNames[j] == "icon"
+                ):
                     newDataThatNeedsToBeCasted[i][j] = None
                 else:
-                        if caster is not None:
-                          newDataThatNeedsToBeCasted[i][j] = caster(newDataThatNeedsToBeCasted[i][j])
-                        else:
-                          # no casting if the type unknown
-                          newDataThatNeedsToBeCasted[i][j] = newDataThatNeedsToBeCasted[i][j]
+                    if caster is not None:
+                        newDataThatNeedsToBeCasted[i][j] = caster(
+                            newDataThatNeedsToBeCasted[i][j]
+                        )
+                    else:
+                        # no casting if the type unknown
+                        newDataThatNeedsToBeCasted[i][j] = newDataThatNeedsToBeCasted[
+                            i
+                        ][j]
             except:
-                Logger.Logger.error("Could not cast the following data to the correct type: '" + str(newDataThatNeedsToBeCasted[i][j]) + "' at row " + str(i))
+                Logger.Logger.error(
+                    "Could not cast the following data to the correct type: '"
+                    + str(newDataThatNeedsToBeCasted[i][j])
+                    + "' at row "
+                    + str(i)
+                )
                 return None
 
     return newDataThatNeedsToBeCasted
@@ -96,6 +105,8 @@ tableUpdadedBefore = False
 lastQuery = ""
 
 lastCheckBoxMode = 0
+
+
 def previewFunc(delay=500, count=0):
     global searchEntry
     global segemented_button_var
@@ -107,65 +118,64 @@ def previewFunc(delay=500, count=0):
     global checkbox
     global lastCheckBoxMode
 
-
-    if(not checkbox.get()):
+    # check if the preview mode is even on
+    if not checkbox.get():
         # Recall this function to check if preview modes changed
-        tk.after(delay, lambda: previewFunc(delay, count+1))
+        tk.after(delay, lambda: previewFunc(delay, count + 1))
 
         # When checkbox is off
-        if(lastCheckBoxMode != checkbox.get()):
+        if lastCheckBoxMode != checkbox.get():
 
-
-            #tmp.setData(pageSystem.getInput())
+            # tmp.setData(pageSystem.getInput())
 
             updateUI(tmp)
 
         lastCheckBoxMode = checkbox.get()
         return
     else:
-        #When Checkbox is on
-        if(lastCheckBoxMode !=checkbox.get()):
-            # When Checkbox from off to on then save UI data to TEMP
+        # preview mode is on
+        if lastCheckBoxMode != checkbox.get():
+            # preview mode was just toggeld
+            # from off to on
+            # so save UI data to TMP
             tmp.setData(pageSystem.getInput())
-        lastCheckBoxMode  = checkbox.get()
+        lastCheckBoxMode = checkbox.get()
 
     query = searchEntry.get()
     mode = segemented_button_var.get()
 
-
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
     # Wenn was für das erste mal im Input Field steht:
-    if(lastQuery.strip() == "" and query.strip() != ""):
-        #print(tmp.data.copy())
-       # print(castColumns(tmp.data.copy(),pageSystem.getInput().copy() ))
-       # TODO
-        #tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
-        #print(castColumns2(currentTableName,pageSystem.getInput().copy()))
-        tmp.setData(castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput().copy() ))
+    if lastQuery.strip() == "" and query.strip() != "":
+        # TODO
+        # tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
+        tmp.setData(
+            castColumns2(
+                currentTableName, tmp.columnNames, pageSystem.getInput().copy()
+            )
+        )
 
         pageSystem.setTableState(customtkinter.DISABLED)
         updateUI(tmp)
         # Table in TMP saven
 
     # Wenn plötzlich letztlich alles gelöscht wird (z.B mit strg a delete ) dann wird der UP  geupdaded
-    if(lastQuery.strip() != "" and query.strip() == ""):
+    if lastQuery.strip() != "" and query.strip() == "":
         pageSystem.setTableState(customtkinter.NORMAL)
         updateUI(tmp)
         showActivated = False
-        #tableUpdadedBefore = True
+        # tableUpdadedBefore = True
 
     # Wenn was im Input field steht:
-    if(query.strip() != ""):
+    if query.strip() != "":
         # - Editierte Datenbank bekommen als "currentShowVar"
         showActivated = True
         currentShowVar = tmp.editData(query, mode, False)
-        #print(query)
-        #print(mode)
-        #print(currentShowVar)
+
         # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
         pageSystem.setTableState(customtkinter.DISABLED)
-        if(currentShowVar is None):
+        if currentShowVar is None:
             # - Table resetten
             pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(tmp)
@@ -173,19 +183,17 @@ def previewFunc(delay=500, count=0):
         # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
         else:
             # - "val" anzeigen
-            #print(currentShowVar.data)
             pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(currentShowVar.deepCpy())
             # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
             pageSystem.setTableState(customtkinter.DISABLED)
 
-
-
     # Wenn auf save geklickt wird:
-        # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
+    # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
 
-    lastQuery =query
-    tk.after(delay, lambda: previewFunc(delay, count+1))
+    lastQuery = query
+    tk.after(delay, lambda: previewFunc(delay, count + 1))
+
 
 def updateUI(data):
     data = data.deepCpy()
@@ -194,7 +202,13 @@ def updateUI(data):
 
 
 def onGuiReady2(
-    _table, _pageSystem, _searchEntry, _setButtonSelected, _segemented_button_var, _tk,_checkbox
+    _table,
+    _pageSystem,
+    _searchEntry,
+    _setButtonSelected,
+    _segemented_button_var,
+    _tk,
+    _checkbox,
 ):
     global table
     global pageSystem
@@ -204,8 +218,7 @@ def onGuiReady2(
     global tk
     global checkbox
 
-    checkbox =_checkbox
-
+    checkbox = _checkbox
 
     table = _table
     pageSystem = _pageSystem
@@ -241,8 +254,6 @@ def onTableButtonClick(tableName):
     )
     columnNames = list(map(lambda x: x[0], cursor.description))
 
-    # print(columnNames)
-    # print(tmp.getData())
     pageSystem.changeTableBody(tmp.getData())
     table.setTableHeader(columnNames)
 
@@ -250,6 +261,7 @@ def onTableButtonClick(tableName):
     # pageSystem.changeTableBody([[i,"j","l","l","l"] for i in range(100)])
 
     setButtonSelected(tableName)
+
 
 def onOkButtonClick():
     global searchEntry
@@ -273,15 +285,12 @@ def onOkButtonClick():
             return
 
         resultData = cursor.fetchall()
-        print(cursor.description is None)
         columnNames = list(map(lambda x: x[0], cursor.description))
 
         # edit tmp data
         # do not update tmp.tableName itself
         tmp.data = resultData
         tmp.columnNames = columnNames
-
-        print("executed sql query")
     else:
         t = tmp.editData(searchEntry.get(), segemented_button_var.get(), True)
         if t is None:
@@ -306,6 +315,7 @@ def onOkButtonClick():
     searchEntry.delete(0, customtkinter.END)
     return
 
+
 def onTableSave(table):
     global pageSystem
     global currentTableName
@@ -319,27 +329,22 @@ def onTableSave(table):
     # the user changes a field of the previews
     # saving the preview and replacing TMP then?
 
-
-    #tmp.setData(pageSystem.getInput())
-    #tmp.tableName = currentTableName
+    # tmp.setData(pageSystem.getInput())
+    # tmp.tableName = currentTableName
 
     # wenn
 
-    if(not showActivated):
-        x = castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput())
-        if(x != None):
+    if not showActivated:
+        x = castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput())
+        if x != None:
             tmp.setData(x)
         else:
             # Return if invalid data in UI
             return
     updateDataInDB(cursor, tmp)
-        # update UI to the current DB to avoid any bugs
-    print(tmp.data[0])
-    onInputfieldChange("","auto")
+    # update UI to the current DB to avoid any bugs
+    onInputfieldChange("", "auto")
     updateUI(tmp)
-
-
-
 
 
 # this is only for the preview mode
@@ -426,7 +431,6 @@ def onInputfieldChange(text, mode):
 
     if mode != "sql" and text.strip() != "":
         vv = tmp.editData(text, mode)
-        # print(vv.data)
         if vv is None:
             preview = None
         else:
@@ -441,13 +445,11 @@ def onInputfieldChange(text, mode):
         )
         pageSystem.changeTableBody(preview.deepCpyData())
         table.setTableHeader(preview.columnNames)
-        # print("preview yet")
     else:
         # TODO remove the "preview mode" text described above
         Logger.Logger.warn("")
         pageSystem.changeTableBody(tmp.deepCpyData())
         table.setTableHeader(tmp.columnNames)
-    # print(f"[{mode}] inputfield: \"{text}\"; got a preview: {preview is not None}")
 
 
 def onResetButtonClick():
@@ -458,8 +460,6 @@ def onResetButtonClick():
     if preview is not None:
         onInputfieldChange("", "auto")
     searchEntry.delete(0, customtkinter.END)
-
-
 
 
 def onImport():

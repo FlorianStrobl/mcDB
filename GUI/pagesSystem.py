@@ -37,14 +37,17 @@ class PageSystem:
         return arr_2d
 
     def onAdd(self):
-        if(len(self.givenArray) == 0):
-            self.__init__(self.table, self.navigatorIndicator, ["" for i in self.table.tableData[0]])
+        if len(self.givenArray) == 0:
+            self.__init__(
+                self.table,
+                self.navigatorIndicator,
+                ["" for i in self.table.tableData[0]],
+            )
         else:
             # ZIEL: alles in "givenArray" reintun in der richtiges stelle
             def insert_position(position, list1, list2):
                 return list1[:position] + list2 + list1[position:]
 
-            ##print("running on deleteORAd")
             abschnitt = self.table.getTablesInputs()
 
             pageStart = self.currentPage * 50
@@ -82,16 +85,15 @@ class PageSystem:
             )
 
             self.table.setState(self.tableState)
+
     # self.navigatorIndicator.configure(text= str(self.currentPage+1) +  "/" + str(len(dArray)))
 
     def onDelete(self, possibleParamater=None):
 
-        ##print("bebe")
         # ZIEL: alles in "givenArray" reintun in der richtiges stelle
         def insert_position(position, list1, list2):
             return list1[:position] + list2 + list1[position:]
 
-        ##print("running on deleteORAd")
         abschnitt = self.table.getTablesInputs()
 
         pageStart = self.currentPage * 50
@@ -101,15 +103,10 @@ class PageSystem:
         if pageStart + 49 < len(self.givenArray):
             pageEndDistance = 50
         else:
-            ##print("be")
             pageEndDistance = (len(self.givenArray) - pageStart) + 1
 
         pageEnd = pageStart + pageEndDistance
 
-        # print(pageStart)
-        # print("p" ,pageEnd)
-
-        # print(len( self.givenArray))
         # Remove all 50 (or the rest) elements from the main Array at specific page
         del self.givenArray[pageStart:pageEnd]
 
@@ -128,7 +125,7 @@ class PageSystem:
         # PAS FILL - IL FAUT AJOUTER UNE ROW EN BA SI IL EN EXISTE DES PROCHAINES
 
         # Automatisches ändern der pages wenn eine page leer ist wenn es noch andere pages gibt
-        if (len(self.givenArray[pageStart:pageEnd]) == 0 and len(self.givenArray) != 0 ):
+        if len(self.givenArray[pageStart:pageEnd]) == 0 and len(self.givenArray) != 0:
             self.table.fill(self.givenArray[pageStart - 50 :])
             self.currentPage -= 1
             self.navigatorIndicator.configure(
@@ -137,18 +134,21 @@ class PageSystem:
                 + str(len(self.convertToPages2dArray(self.givenArray)))
             )
             return
-        print("test")
         self.table.fill(self.givenArray[pageStart:pageEnd])
 
         self.navigatorIndicator.configure(
             text=str(self.currentPage + 1)
             + "/"
-            + str(len(self.convertToPages2dArray(self.givenArray)) if len(self.givenArray) != 0 else 1)
+            + str(
+                len(self.convertToPages2dArray(self.givenArray))
+                if len(self.givenArray) != 0
+                else 1
+            )
         )
 
         self.table.setState(self.tableState)
 
-    def setTableState(self,_state):
+    def setTableState(self, _state):
         self.tableState = _state
         self.table.setState(_state)
 
@@ -158,16 +158,14 @@ class PageSystem:
         self.givenArray = copy.copy(tableBody)
         dArray = self.convertToPages2dArray(self.givenArray)
 
-        if(len(tableBody)==0):
+        if len(tableBody) == 0:
             self.table.fill([])
             self.givenArray = []
-            self.navigatorIndicator.configure(
-                "1" + "/" + "1")
+            self.navigatorIndicator.configure("1" + "/" + "1")
 
             return
 
         try:
-            #print("heeeeerrr", dArray[self.currentPage])
             self.table.fill(dArray[self.currentPage])
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
@@ -199,9 +197,8 @@ class PageSystem:
         dArray[self.currentPage] = self.table.getTablesInputs()
         self.givenArray = self.convert2dArrayBack(dArray)
         self.table.scrollFrame.canvas.yview_moveto(0)
-        #self.table.scrollFrame.vsb.set(0.0,1.0)
-        #print("be",self.table.scrollFrame.vsb.get()[0])
-        #self.table.scrollFrame.disableScroll()
+        # self.table.scrollFrame.vsb.set(0.0,1.0)
+        # self.table.scrollFrame.disableScroll()
 
         if n == 1:
             self.currentPage = 0
@@ -209,13 +206,11 @@ class PageSystem:
             self.currentPage = len(dArray) - 1
         if n == 2:
             if self.currentPage == 0:
-                #print("Du kannst nicht weiter nach hinten!")
                 Logger.Logger.warn("Du kannst nicht weiter nach hinten!")
             else:
                 self.currentPage -= 1
         elif n == 3:
             if self.currentPage == len(dArray) - 1:
-                #print("Du kannst nicht weiter nach vorne!")
                 Logger.Logger.warn("Du kannst nicht weiter nach vorne!")
             else:
                 self.currentPage += 1

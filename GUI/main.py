@@ -15,15 +15,17 @@ navigatorIndicator = None
 tableButtons = []
 
 tableNamesButtons = []
-buttonNames = ["Serverworld",
-        "Player",
-        "MEntities",
-        "Block",
-        "Wood",
-        "Dirt",
-        "plays",
-        "populatedBy",
-        "buildOf"]
+buttonNames = [
+    "Serverworld",
+    "Player",
+    "MEntities",
+    "Block",
+    "Wood",
+    "Dirt",
+    "plays",
+    "populatedBy",
+    "buildOf",
+]
 currentSelectedButtonId = None
 
 arrow = None
@@ -32,28 +34,32 @@ arrow = None
 def setLogLabel(logText, color):
     logsLabel.configure(text=logText, text_color=color)
 
+
 def setArrowToPos(heightIndex):
     arrow.place(x=10, y=14 + heightIndex * 35)
     # start 14 difference de 34
 
+
 def setButtonSelected(buttonName):
     # Reset Old button
-    #print(buttonName)
 
     global currentSelectedButtonId
     global tableNamesButtons
     global buttonNames
-    if(currentSelectedButtonId is not None): tableNamesButtons[currentSelectedButtonId].configure(fg_color="#343638",bg_color="#302c2c")
+    if currentSelectedButtonId is not None:
+        tableNamesButtons[currentSelectedButtonId].configure(
+            fg_color="#343638", bg_color="#302c2c"
+        )
     # Update Current Button Variable
     currentSelectedButtonId = buttonNames.index(buttonName)
-    #print(currentSelectedButtonId)
-    tableNamesButtons[currentSelectedButtonId].configure(fg_color=["#325882", "#14375e"])
+    tableNamesButtons[currentSelectedButtonId].configure(
+        fg_color=["#325882", "#14375e"]
+    )
 
     setArrowToPos(currentSelectedButtonId)
     # Reset color of current selected
 
-    #Uneable all buttons:
-
+    # Uneable all buttons:
 
 
 def loadGUI():
@@ -75,18 +81,22 @@ def loadGUI():
     titleFrame.place(x=20, y=20, width=200, height=75)
 
     exportButton = customtkinter.CTkButton(
-            master=titleFrame, text="export", command=onExport, fg_color=["#3a7ebf", "#1f538d"]
-        )
-    exportButton.place(x=10, y=40, width=90)
-    exportButton.configure(fg_color="#343638",bg_color="#302c2c"
+        master=titleFrame,
+        text="export",
+        command=onExport,
+        fg_color=["#3a7ebf", "#1f538d"],
     )
+    exportButton.place(x=10, y=40, width=90)
+    exportButton.configure(fg_color="#343638", bg_color="#302c2c")
 
     importButton = customtkinter.CTkButton(
-            master=titleFrame, text="import", command=onImport, fg_color=["#3a7ebf", "#1f538d"]
-        )
-    importButton.place(x=105, y=40, width=90)
-    importButton.configure(fg_color="#343638",bg_color="#302c2c"
+        master=titleFrame,
+        text="import",
+        command=onImport,
+        fg_color=["#3a7ebf", "#1f538d"],
     )
+    importButton.place(x=105, y=40, width=90)
+    importButton.configure(fg_color="#343638", bg_color="#302c2c")
 
     label = customtkinter.CTkLabel(master=titleFrame, text="Minecraft Database")
     label.place(x=40, y=5)
@@ -113,24 +123,18 @@ def loadGUI():
     }
     tableNamesButtons = []
 
-
-
     def placeTableButton(title, event):
         global xStart
-        myButton = customtkinter.CTkButton(
-            master=app, text=title, command=event
-        )
+        myButton = customtkinter.CTkButton(master=app, text=title, command=event)
         myButton.place(x=55, y=xStart)
-        myButton.configure(fg_color="#343638",
-        bg_color="#302c2c"
-        )
+        myButton.configure(fg_color="#343638", bg_color="#302c2c")
         tableNamesButtons.append(myButton)
 
         xStart += 35
 
     def spawnTableButtons():
         for name in tablesNames.keys():
-            tableButtons.append( placeTableButton(name, tablesNames[name]))
+            tableButtons.append(placeTableButton(name, tablesNames[name]))
 
     spawnTableButtons()
 
@@ -147,13 +151,7 @@ def loadGUI():
     # table.pagesFillInit([[i, "t", "j", "j", "j"] for i in range(160)])
     # table.showPage(0)
 
-    # print(
-    #    "textfill was "
-    #    + table.textFill([[random.randint(0, 100), "x", "x", "x", "x"] for i in range(20)])
-    # )
     # table.appendEmptyRowOnTop()
-
-    # print(table.tableData)
 
     # button = customtkinter.CTkButton(master=app,text="+",command=table.appendEmptyRowOnTop,  corner_radius=0,fg_color="#343638")
     # button.place(x = 500, y = 420, width=25, height=25)
@@ -161,10 +159,13 @@ def loadGUI():
     searchFrame = customtkinter.CTkFrame(master=app, corner_radius=7)
     searchFrame.place(x=235, y=20, width=515, height=75)
 
-
-    checkbox = customtkinter.CTkCheckBox(master=searchFrame, text="preview aktiviert",checkbox_width=20,checkbox_height=20  )
-    checkbox.place(x = 14, y=3)
-
+    checkbox = customtkinter.CTkCheckBox(
+        master=searchFrame,
+        text="preview aktiviert",
+        checkbox_width=20,
+        checkbox_height=20,
+    )
+    checkbox.place(x=14, y=3)
 
     segemented_button_var = customtkinter.StringVar(value="auto")
     segemented_button = customtkinter.CTkSegmentedButton(
@@ -275,6 +276,14 @@ def loadGUI():
     )
 
     pageSystem.onUIReady()
-    onGuiReady2(table, pageSystem,searchEntry,setButtonSelected, segemented_button_var, app, checkbox)
+    onGuiReady2(
+        table,
+        pageSystem,
+        searchEntry,
+        setButtonSelected,
+        segemented_button_var,
+        app,
+        checkbox,
+    )
 
     app.mainloop()

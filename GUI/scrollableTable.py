@@ -29,6 +29,7 @@ class ScrollFrame(customtkinter.CTkFrame):
         self.onFrameConfigure(None)
 
         self.widthh = None
+
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner frame"""
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -39,9 +40,10 @@ class ScrollFrame(customtkinter.CTkFrame):
         self.width = canvas_width
         self.canvas.itemconfig(self.canvas_window, width=canvas_width)
 
-    #diese 2 Funktionen wurden selber hinzugefügt
+    # diese 2 Funktionen wurden selber hinzugefügt
     def disableScroll(self):
-        self.canvas.configure(yscrollcommand=lambda x,y: None)
+        self.canvas.configure(yscrollcommand=lambda x, y: None)
+
     def enableScroll(self):
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
@@ -116,8 +118,6 @@ class scrollableTable(customtkinter.CTkFrame):
         # Event Listener: 0:Delete  1: Add
         self.eventListenerFunctions = [[], []]
 
-
-
     def calculateStepsFromStart(self, row):
         # Berechnet wie die Rows ID's sein sollen relativ zu den vom Anfang also "row" hier im parameter(für den delete Event)
         newRow = row
@@ -164,11 +164,12 @@ class scrollableTable(customtkinter.CTkFrame):
     def textFill(self, tableBody):
         # "-1" wegen den Mülleimer object
 
-        #print("new textfill:", tableBody)
         if self.tableDataBodyWidgets == []:
             return "none"
 
-        if tableBody != [] and len(self.tableDataBodyWidgets[0]) - 1 != len(tableBody[0]):
+        if tableBody != [] and len(self.tableDataBodyWidgets[0]) - 1 != len(
+            tableBody[0]
+        ):
             return "none"
 
         # -1 because there is always a müllemer
@@ -177,7 +178,6 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # AUSGLEICHEN DER ROWS AUF DER TABELLE:
         rowsDifference = (rowsLengthOld - rowsLength) * -1
-        # print(rowsDifference)
         if rowsDifference > 0:
             for i in range(rowsDifference):
 
@@ -190,7 +190,6 @@ class scrollableTable(customtkinter.CTkFrame):
         self.tableData[1] = tableBody
 
         # Einsetzen aller Texte von TABLEBODY in die Tabelle
-        # print(len(self.tableDataBodyWidgets))
 
         for widgetsRowCounter in range(len(self.tableDataBodyWidgets)):
             widgetsRow = self.tableDataBodyWidgets[widgetsRowCounter]
@@ -198,7 +197,6 @@ class scrollableTable(customtkinter.CTkFrame):
             for widgetCounter in range(len(widgetsRow) - 1):
                 inputField = widgetsRow[widgetCounter]
                 inputField.delete(0, customtkinter.END)
-                # print(widgetsRowCounter, widgetCounter)
                 inputField.insert(
                     0,
                     tableBody[widgetsRowCounter][widgetCounter]
@@ -207,17 +205,12 @@ class scrollableTable(customtkinter.CTkFrame):
                 )
         return "succes"
 
-    def onSomethingHappen(self,sv):
-        print("something happened" ,sv)
-        return 1
-
     def updateEvents(self):
         self.steps = []
         for i in range(len(self.tableDataBodyWidgets)):
             row = self.tableDataBodyWidgets[i]
             deleteButton = row[len(self.tableDataBodyWidgets[0]) - 1]
             deleteButton.configure(command=lambda i=i: self.onRemove(i))
-
 
     def fill(self, tableBody):
         self.updateEvents()
@@ -229,13 +222,11 @@ class scrollableTable(customtkinter.CTkFrame):
             self.tableData[1] = []
             return
 
-
         # Wenn die gleichen Anzahl and columns vorhanden ist wie bei der vorherigen Tabelle,
         # ist es nicht nötig, die Tabelle komplett neu zu erstellen.
         # --> Mann kann so die fehlenden/zu vielen rows hinzufügen/entfernen und so die Tabelle schneller generieren
 
         if self.textFill(tableBody) == "succes":
-            ##print("suces")
             return
 
         self.steps = []
@@ -249,7 +240,6 @@ class scrollableTable(customtkinter.CTkFrame):
         for row in range(numberRows):
             rowWidgets = []
             if tableBody[row] == None:
-                # print("is none")
                 continue
             for col in range(numberColumns + 1):
                 if col < numberColumns:
@@ -292,10 +282,10 @@ class scrollableTable(customtkinter.CTkFrame):
 
     def setTableHeader(self, arr):
         # Ein bisschen gehardcoded damit die headers bei ner bestimmten tabelle kleiner werden
-        isTheTablePlays = arr[0] == "player_id" and arr[len(arr)-1] == "role"
+        isTheTablePlays = arr[0] == "player_id" and arr[len(arr) - 1] == "role"
 
-        #Sonst wird alles nochmal erstellt obwohl es vorher schonmal erstellt wurde
-        if(self.oldColumns == arr):
+        # Sonst wird alles nochmal erstellt obwohl es vorher schonmal erstellt wurde
+        if self.oldColumns == arr:
             return
         self.oldColumns = arr.copy()
 
@@ -313,7 +303,7 @@ class scrollableTable(customtkinter.CTkFrame):
             myLabel = customtkinter.CTkLabel(
                 master=self.app,
                 text="",
-                font=("Helvetica", 15 , "bold"),
+                font=("Helvetica", 15, "bold"),
                 fg_color="#2b2b2b",
                 anchor="w",
             )
@@ -361,7 +351,7 @@ class scrollableTable(customtkinter.CTkFrame):
 
         self.tableData[0] = arr
 
-    def setState(self,_state):
+    def setState(self, _state):
         self.createButton.configure(state=_state)
         for widgetRow in self.tableDataBodyWidgets:
             for widget in range(len(widgetRow)):
@@ -372,8 +362,6 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # self.steps.append(["delete", rowNumber])
 
-        # print(rowNumber)
-
         self.tableData[1].pop(rowNumber)
 
         for row in self.tableDataBodyWidgets[rowNumber]:
@@ -381,10 +369,8 @@ class scrollableTable(customtkinter.CTkFrame):
 
         self.tableDataBodyWidgets.pop(rowNumber)
         self.updateEvents()
-        #print(rowNumber)
         # pass
         if not fromAutoScript:
-            #print(rowNumber)
             for deleteEvent in self.eventListenerFunctions[0]:
                 deleteEvent(rowNumber)
 
