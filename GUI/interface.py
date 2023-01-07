@@ -33,7 +33,7 @@ setButtonSelected = None
 
 currentShowVar = None
 
-
+showActivated = False
 # originalData has the correct types for each row
 # newDataThatNeedsToBeCasted has ONLY string types
 
@@ -54,14 +54,13 @@ def castColumns2(tableName, newDataThatNeedsToBeCasted):
     }
     tableTypes =typesOfTables[tableName]
 
+
     for i in range(len(newDataThatNeedsToBeCasted)):
         for j in range (len(newDataThatNeedsToBeCasted[i])):
             try:
                 if newDataThatNeedsToBeCasted[i][j] == "null":
                     newDataThatNeedsToBeCasted[i][j] = None
                 else:
-                        print( "1",type(newDataThatNeedsToBeCasted[i][j]))
-                        print( "2",tableTypes[j])
                         newDataThatNeedsToBeCasted[i][j] = tableTypes[j](newDataThatNeedsToBeCasted[i][j])
             except:
                 Logger.Logger.error("Could not cast the following data to the correct type: '" + str(newDataThatNeedsToBeCasted[i][j]) + "' at row " + str(i))
@@ -103,6 +102,8 @@ def previewFunc(delay=500, count=0):
     global currentShowVar
     global tableUpdadedBefore
     global currentTableName
+    global showActivated
+
     query = searchEntry.get()
     mode = segemented_button_var.get()
 
@@ -116,7 +117,7 @@ def previewFunc(delay=500, count=0):
        # TODO
         #tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
         #print(castColumns2(currentTableName,pageSystem.getInput().copy()))
-        tmp.setData(castColumns2(currentTableName,pageSystem.getInput().copy() ))
+        tmp.setData(castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput().copy() ))
 
         pageSystem.setTableState(customtkinter.DISABLED)
         updateUI(tmp)
@@ -126,12 +127,13 @@ def previewFunc(delay=500, count=0):
     if(lastQuery.strip() != "" and query.strip() == ""):
         pageSystem.setTableState(customtkinter.NORMAL)
         updateUI(tmp)
+        showActivated = False
         #tableUpdadedBefore = True
 
     # Wenn was im Input field steht:
     if(query.strip() != ""):
         # - Editierte Datenbank bekommen als "currentShowVar"
-
+        showActivated = True
         currentShowVar = tmp.editData(query, mode, False)
         #print(query)
         #print(mode)
@@ -262,6 +264,7 @@ def onOkButtonClick():
     # reload UI with new tmp
     updateUI(tmp)
 
+
     return
 
     # global preview
@@ -278,6 +281,7 @@ def onTableSave(table):
     global currentTableName
     global cursor
     global tmp
+    global showActivated
     # TODO, No! because if there is a preview
     # which was NOT confirmed by the "Ok" button
     # you may not want to save it/apply the changes
@@ -289,12 +293,17 @@ def onTableSave(table):
     #tmp.setData(pageSystem.getInput())
     #tmp.tableName = currentTableName
 
-    castedData = castColumns2(currentTableName,pageSystem.getInput().copy())
-    if(castedData != None):
-        tmp.setData(castedData)
-        updateDataInDB(cursor, tmp)
+    # wenn
+
+    if(not showActivated):
+        x = castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput())
+        if(x != None):
+            tmp.setData(x)
+    updateDataInDB(cursor, tmp)
         # update UI to the current DB to avoid any bugs
-        updateUI(tmp)
+    onInputfieldChange("","auto")
+    updateUI(tmp)
+
 
 
 

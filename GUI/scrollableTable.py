@@ -218,6 +218,7 @@ class scrollableTable(customtkinter.CTkFrame):
             deleteButton = row[len(self.tableDataBodyWidgets[0]) - 1]
             deleteButton.configure(command=lambda i=i: self.onRemove(i))
 
+
     def fill(self, tableBody):
         self.updateEvents()
 
@@ -365,7 +366,6 @@ class scrollableTable(customtkinter.CTkFrame):
         for widgetRow in self.tableDataBodyWidgets:
             for widget in range(len(widgetRow)):
                 widgetRow[widget].configure(state=_state)
-
 
     # Sender erwähnt,default fase, ob diese Funktion direkt vom user aufgerufen wird (über button klick) oder ob die funktion von einer for schleife oder sowas aufgerufen wurde
     def onRemove(self, rowNumber, fromAutoScript=False):

@@ -2,6 +2,7 @@ import re
 import random
 import numpy
 import math
+import time
 from typing import Union, Literal
 import addImport
 import Logger
@@ -79,6 +80,7 @@ def executeUserStr(
         "random": random,
         "math": math,
         "numpy": numpy,
+        "time": time,
         "data": (data or [])[:],
         "length": len(data or []),
     }
