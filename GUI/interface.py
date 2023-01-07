@@ -33,32 +33,63 @@ setButtonSelected = None
 
 currentShowVar = None
 
-
+showActivated = False
 # originalData has the correct types for each row
 # newDataThatNeedsToBeCasted has ONLY string types
-def castColumns(originalData, newDataThatNeedsToBeCasted):
-  print(len(originalData))
-  if len(originalData) == 0:
-    Logger.Logger.error("the data couldnt be casted")
-    return None
 
-  curLastData = originalData[-1]
-  typesOfColumns = []
-  for d in curLastData:
-    typesOfColumns.append((lambda x: x) if type(d) == type(None) or type(d) == type("") else type(d))
-  print(typesOfColumns[2])
-  for i in range(len(newDataThatNeedsToBeCasted)):
-    for j in range (len(newDataThatNeedsToBeCasted[i])):
-      try:
-        if newDataThatNeedsToBeCasted[i][j] == "null":
-          newDataThatNeedsToBeCasted[i][j] = None
-        else:
-          newDataThatNeedsToBeCasted[i][j] = typesOfColumns[j](newDataThatNeedsToBeCasted[i][j])
-      except:
-        Logger.Logger.error("Could not cast the following data to the correct type:", typesOfColumns[j], newDataThatNeedsToBeCasted[i][j])
-        return None
+previewModeOn = True
 
-  return newDataThatNeedsToBeCasted
+def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
+    typesOfTables = {
+    "Serverworld": {
+      "serverworld_id": int,
+      "name": str,
+      "icon": str
+    },
+    "Player": {
+      "player_id": int,
+      "username": str,
+      "skin": str
+    },
+    # same with others...
+    "MEntities":{
+        "m_entities_id": int,
+      "entity_position": str,
+      "birthday": int,
+      "entity_type": int
+    },
+    "Block":{"absolute_position": str, "block_type":int},
+    "Wood":{"absolute_position":str,"isOnFire":int},
+    "Dirt":{"absolute_position":str,"hasGrass": int},
+    "plays":{"player_id":int,"serverworld_id":int,"session_begin:":int,"player_position":str,"role":str},
+    "populatedBy":{"m_entities_id":int,"serverworld_id":int},
+    "buildOf":{"absolute_position":str,"serverworld_id":int}
+    }
+
+    tableTypes = typesOfTables[tableName]
+
+
+    for i in range(len(newDataThatNeedsToBeCasted)):
+        for j in range (len(newDataThatNeedsToBeCasted[i])):
+            try:
+                caster = None
+                if columnNames[j] in tableTypes:
+                    caster = tableTypes[columnNames[j]]
+
+                if newDataThatNeedsToBeCasted[i][j] == "null" and (columnNames[j] == "icon"):
+                    newDataThatNeedsToBeCasted[i][j] = None
+                else:
+                        if caster is not None:
+                          newDataThatNeedsToBeCasted[i][j] = caster(newDataThatNeedsToBeCasted[i][j])
+                        else:
+                          # no casting if the type unknown
+                          newDataThatNeedsToBeCasted[i][j] = newDataThatNeedsToBeCasted[i][j]
+            except:
+                Logger.Logger.error("Could not cast the following data to the correct type: '" + str(newDataThatNeedsToBeCasted[i][j]) + "' at row " + str(i))
+                return None
+
+    return newDataThatNeedsToBeCasted
+
 
 tableUpdadedBefore = False
 lastQuery = ""
@@ -68,6 +99,14 @@ def previewFunc(delay=500, count=0):
     global lastQuery
     global currentShowVar
     global tableUpdadedBefore
+    global currentTableName
+    global showActivated
+    global previewModeOn
+
+    if(not previewModeOn):
+        tk.after(delay, lambda: previewFunc(delay, count+1))
+        return
+
     query = searchEntry.get()
     mode = segemented_button_var.get()
 
@@ -79,8 +118,9 @@ def previewFunc(delay=500, count=0):
         #print(tmp.data.copy())
        # print(castColumns(tmp.data.copy(),pageSystem.getInput().copy() ))
        # TODO
-        tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
-
+        #tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
+        #print(castColumns2(currentTableName,pageSystem.getInput().copy()))
+        tmp.setData(castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput().copy() ))
 
         pageSystem.setTableState(customtkinter.DISABLED)
         updateUI(tmp)
@@ -90,12 +130,13 @@ def previewFunc(delay=500, count=0):
     if(lastQuery.strip() != "" and query.strip() == ""):
         pageSystem.setTableState(customtkinter.NORMAL)
         updateUI(tmp)
+        showActivated = False
         #tableUpdadedBefore = True
 
     # Wenn was im Input field steht:
     if(query.strip() != ""):
         # - Editierte Datenbank bekommen als "currentShowVar"
-
+        showActivated = True
         currentShowVar = tmp.editData(query, mode, False)
         #print(query)
         #print(mode)
@@ -108,7 +149,7 @@ def previewFunc(delay=500, count=0):
         # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
         else:
             # - "val" anzeigen
-            print(currentShowVar.data)
+            #print(currentShowVar.data)
             pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(currentShowVar.deepCpy())
             # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
@@ -182,12 +223,68 @@ def onTableButtonClick(tableName):
 
     setButtonSelected(tableName)
 
+def onOkButtonClick():
+    global searchEntry
+    global segemented_button_var
+    global tmp
+
+    if searchEntry.get().strip() == "":
+        return
+
+    if segemented_button_var.get() == "sql":
+        # TODO
+        sqlQuery = searchEntry.get()
+        Logger.Logger.log(
+            "SQL Querys will be applied immediately. This means that you can not undo them if they change something in the database."
+        )
+        try:
+            cursor.execute(sqlQuery)
+            cursor.connection.commit()
+        except:
+            Logger.Logger.error("Could not execute the following query:", sqlQuery)
+            return
+
+        resultData = cursor.fetchall()
+        print(cursor.description is None)
+        columnNames = list(map(lambda x: x[0], cursor.description))
+
+        # edit tmp data
+        # do not update tmp.tableName itself
+        tmp.data = resultData
+        tmp.columnNames = columnNames
+
+        print("executed sql query")
+    else:
+        t = tmp.editData(searchEntry.get(), segemented_button_var.get(), True)
+        if t is None:
+            Logger.Logger.error("could not execute the command!")
+            return
+        tmp.replaceTmp(t)
+
+    # clear the entry field
+    searchEntry.delete(0, customtkinter.END)
+
+    # reload UI with new tmp
+    updateUI(tmp)
+
+
+    return
+
+    # global preview
+    # global searchEntry
+    if preview is not None:
+        tmp.replaceTmp(preview)
+    # preview = None
+
+    searchEntry.delete(0, customtkinter.END)
+    return
 
 def onTableSave(table):
     global pageSystem
     global currentTableName
     global cursor
     global tmp
+    global showActivated
     # TODO, No! because if there is a preview
     # which was NOT confirmed by the "Ok" button
     # you may not want to save it/apply the changes
@@ -195,14 +292,25 @@ def onTableSave(table):
     # the user changes a field of the previews
     # saving the preview and replacing TMP then?
 
-    onResetButtonClick()
 
     #tmp.setData(pageSystem.getInput())
     #tmp.tableName = currentTableName
 
+    # wenn
+
+    if(not showActivated):
+        x = castColumns2(currentTableName,tmp.columnNames, pageSystem.getInput())
+        if(x != None):
+            tmp.setData(x)
+        else:
+            # Return if invalid data in UI
+            return
     updateDataInDB(cursor, tmp)
-    # update UI to the current DB to avoid any bugs
+        # update UI to the current DB to avoid any bugs
+    print(tmp.data[0])
+    onInputfieldChange("","auto")
     updateUI(tmp)
+
 
 
 
@@ -325,60 +433,6 @@ def onResetButtonClick():
     searchEntry.delete(0, customtkinter.END)
 
 
-def onOkButtonClick():
-    global searchEntry
-    global segemented_button_var
-    global tmp
-
-    if searchEntry.get().strip() == "":
-        return
-
-    if segemented_button_var.get() == "sql":
-        # TODO
-        sqlQuery = searchEntry.get()
-        Logger.Logger.log(
-            "SQL Querys will be applied immediately. This means that you can not undo them if they change something in the database."
-        )
-        try:
-            cursor.execute(sqlQuery)
-            cursor.connection.commit()
-        except:
-            Logger.Logger.error("Could not execute the following query:", sqlQuery)
-            return
-
-        resultData = cursor.fetchall()
-        print(cursor.description is None)
-        columnNames = list(map(lambda x: x[0], cursor.description))
-
-        # edit tmp data
-        # do not update tmp.tableName itself
-        tmp.data = resultData
-        tmp.columnNames = columnNames
-
-        print("executed sql query")
-    else:
-        t = tmp.editData(searchEntry.get(), segemented_button_var.get(), True)
-        if t is None:
-            Logger.Logger.error("could not execute the command!")
-            return
-        tmp.replaceTmp(t)
-
-    # clear the entry field
-    searchEntry.delete(0, customtkinter.END)
-
-    # reload UI with new tmp
-    updateUI(tmp)
-
-    return
-
-    # global preview
-    # global searchEntry
-    if preview is not None:
-        tmp.replaceTmp(preview)
-    # preview = None
-
-    searchEntry.delete(0, customtkinter.END)
-    return
 
 
 def onImport():

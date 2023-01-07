@@ -1,5 +1,0 @@
-Add INSERT INTO (block_type) (0/1) and foreign keys??
-
-native user str SQL support (w/ JOINs)
-
-wenn jemand bei icon: `null` schreibt, dann replace das mit None

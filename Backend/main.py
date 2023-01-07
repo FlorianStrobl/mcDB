@@ -11,7 +11,7 @@ cursor: sqlite3.Connection.cursor = sqlite3.connect("minecraftDatabase.db").curs
 
 SQL.dropAllTables(cursor)  # reset the current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 10)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 151)  # fill random data into the tables
 
 # DEBUG Code
 _tmp = TMP()
@@ -40,6 +40,8 @@ _tmp.replaceTmp(
   (a, b, c) <- (a, b, c)
   &&
   a < 44
+  &&
+  True
 """,
         "auto",
         True,

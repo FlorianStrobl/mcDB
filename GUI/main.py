@@ -28,6 +28,7 @@ currentSelectedButtonId = None
 
 arrow = None
 
+
 def setLogLabel(logText, color):
     logsLabel.configure(text=logText, text_color=color)
 
@@ -160,13 +161,18 @@ def loadGUI():
     searchFrame = customtkinter.CTkFrame(master=app, corner_radius=7)
     searchFrame.place(x=235, y=20, width=515, height=75)
 
+
+    checkbox = customtkinter.CTkCheckBox(master=searchFrame, text="preview aktiviert",checkbox_width=20 )
+    checkbox.place(x = 5, y=5, width=20, height=20)
+
+
     segemented_button_var = customtkinter.StringVar(value="auto")
     segemented_button = customtkinter.CTkSegmentedButton(
         master=app,
         values=["sql", "auto", "columns", "slice", "filter", "sort", "map"],
         variable=segemented_button_var,
     )
-    segemented_button.place(x=350, y=10, width=300)
+    segemented_button.place(x=400, y=10, width=300)
 
     searchEntryStringVar = customtkinter.StringVar()
     searchEntryStringVar.trace(
