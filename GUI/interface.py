@@ -85,11 +85,9 @@ def previewFunc(delay=500, count=0):
         # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
         if(currentShowVar is None):
             # - Table resetten
-            print("reset table")
             updateUI(tmp)
         # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
         else:
-            print("update table show")
             # - "val" anzeigen
             pageSystem.setTableState(customtkinter.NORMAL)
             updateUI(currentShowVar.deepCpy())
@@ -177,24 +175,16 @@ def onTableSave(table):
     # the user changes a field of the previews
     # saving the preview and replacing TMP then?
 
-    # ist gemacht
+    onResetButtonClick()
 
-    # onInputfieldChange("","auto")
-    previewOn = preview is not None
-    ##print("preview enabled:",previewOn)
-
-    # if(preview is None):
-    # TODO
-    #    tmp.setData(pageSystem.getInput())
-    # tmp.setData(
-    #    pageSystem.getInput(), None if preview is None else preview.columnNames
-    # )  # <--
-
+    tmp.setData(pageSystem.getInput())
     tmp.tableName = currentTableName
 
     updateDataInDB(cursor, tmp)
     # update UI to the current DB to avoid any bugs
     updateUI(tmp)
+
+
 
 
 # this is only for the preview mode
