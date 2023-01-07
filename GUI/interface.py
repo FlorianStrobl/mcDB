@@ -74,30 +74,6 @@ def previewFunc(delay=500, count=0):
 
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
-<<<<<<< HEAD
-=======
-    # Wenn nichts im Input field steht:
-    if("" != ""):
-        # -> Wenn vorher schon die table aktualisiert wurde:
-        pageSystem.setTableState(customtkinter.NORMAL)
-        if(tableUpdadedBefore):
-            # - Nichts tun  - nur sonst TMP im besten Fall updaten
-
-            tmp.setData(pageSystem.getInput())
-
-        # -> Wenn vorher input field nicht leer war:
-        else:
-            tableUpdadedBefore = True
-            tmp.setData(pageSystem.getInput())
-
-            # - Table aktualisieren
-            updateUI(tmp)
-
-            # - alle Buttons auf NORMAL mit der pagesystem.setState Funktion
-
->>>>>>> ae295eadc6cbd89f0f01693516b86594b8581830
-
-
     # Wenn was für das erste mal im Input Field steht:
     if(lastQuery.strip() == "" and query.strip() != ""):
         #print(tmp.data.copy())
