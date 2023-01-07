@@ -50,7 +50,7 @@ def previewFunc(delay=500, count=0):
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
     # Wenn nichts im Input field steht:
-    if(query.strip() == ""):
+    if("" != ""):
         # -> Wenn vorher schon die table aktualisiert wurde:
         pageSystem.setTableState(customtkinter.NORMAL)
         if(tableUpdadedBefore):
