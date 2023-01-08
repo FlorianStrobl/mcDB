@@ -12,10 +12,13 @@ TRIM: int = 2**52 - 1  # max 52 bit integers for IDs
 # for two given lists, return the index of the first pair of elements that are equal
 def searchForFirstDoublePair(arr1: list, arr2: list) -> int:
     arr = list(zip(arr1, arr2))  # combine the two lists into a list of tuples
+    theSet = set([])
     for i in range(len(arr)):
-        for j in range(len(arr)):
-            if i != j and arr[i] == arr[j]:
-                return j  # search in O(n^2) if two elements are the same
+      oldLen = len(theSet)
+      theSet.add(arr[i])
+      # keep adding the next element to the set and check if it got replaced
+      if oldLen + 1 != len(theSet):
+        return i
     return -1
 
 
@@ -254,12 +257,18 @@ class GenerateTableData:
 
         # fix double pairs for unique constraint
         tries = 0  # only try it up to 50% of the ids
-        while searchForFirstDoublePair(player_ids, serverworld_ids) != -1 and tries < n:
-            idx = searchForFirstDoublePair(player_ids, serverworld_ids)
+        # cannot be None since it was already checked
+        cache = getRealServerworldIds(cursor, n) # instead of getting all the ids over and over, cache them and use them
+        idx = searchForFirstDoublePair(player_ids, serverworld_ids)
+        # only try it while there are collisions and up to once all of the n times
+        while idx != -1 and tries < n:
             # replace the serverworld_id at idx with a new one
-            serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+            serverworld_ids[idx] = random.choice(cache)
 
-        if searchForFirstDoublePair(player_ids, serverworld_ids) != -1:
+            idx = searchForFirstDoublePair(player_ids, serverworld_ids) # search for new collision
+
+        # idx is still set from the very last while loop iteration
+        if idx != -1:
             Logger.Logger.error(
                 "Couldn't generate plays because there are probably no unique pairs anymore."
             )
@@ -304,15 +313,21 @@ class GenerateTableData:
 
         # fix double pairs for unique constraint
         tries = 0  # only try it up to 50% of the ids
+        cache = getRealServerworldIds(cursor, n) # instead of getting all the ids over and over, cache them and use them
+        # cannot be None since it was already checked
+        idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids)
+        # only try it while there are collisions and up to once all of the n times
         while (
-            searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1
+            idx != -1
             and tries < n
         ):
-            idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids)
             # replace the serverworld_id at idx with a new one
-            serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+            serverworld_ids[idx] = random.choice(cache)
 
-        if searchForFirstDoublePair(m_entities_ids, serverworld_ids) != -1:
+            idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids) # search for new collision
+
+        # idx is still set from the very last while loop iteration
+        if idx != -1:
             Logger.Logger.error(
                 "Couldn't generate populatedBy because there are probably no unique pairs anymore."
             )
@@ -345,15 +360,20 @@ class GenerateTableData:
 
         # fix double pairs for unique constraint
         tries = 0  # only try it up to 50% of the ids
+        # cannot be None since it was already checked
+        cache = getRealServerworldIds(cursor, n) # instead of getting all the ids over and over, cache them and use them
+        idx = searchForFirstDoublePair(absolute_positions, serverworld_ids)
+        # only try it while there are collisions and up to once all of the n times
         while (
-            searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1
+            idx != -1
             and tries < n
         ):
-            idx = searchForFirstDoublePair(absolute_positions, serverworld_ids)
             # replace the serverworld_id at idx with a new one
-            serverworld_ids[idx] = getRealServerworldIds(cursor, 1)[0]
+            serverworld_ids[idx] = random.choice(cache)
 
-        if searchForFirstDoublePair(absolute_positions, serverworld_ids) != -1:
+            idx = searchForFirstDoublePair(absolute_positions, serverworld_ids) # search for new collision
+
+        if idx != -1:
             Logger.Logger.error(
                 "Couldn't generate buildOf because there are probably no unique pairs anymore."
             )

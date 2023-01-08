@@ -31,11 +31,10 @@ def getRealAbsolute_positions(cursor, n: int = 1) -> Optional[list[int]]:
         )
         return None
 
-    ans = []
-    for i in range(n):
-        ans.append(random.choice(list(poses))[0])
+    poses = [pos[0] for pos in poses]
+    random.shuffle(poses)
 
-    return ans
+    return poses[0:n]
 
 
 # get the entities ids in random order (and with doubles) from the database
@@ -49,11 +48,10 @@ def getRealMEntityIds(cursor, n: int = 1) -> Optional[list[int]]:
         )
         return None
 
-    ans = []
-    for i in range(n):
-        ans.append(random.choice(list(ids))[0])
+    ids = [_id[0] for _id in ids]
+    random.shuffle(ids)
 
-    return ans
+    return ids[0:n]
 
 
 # get the player ids in random order (and with doubles) from the database
@@ -67,11 +65,10 @@ def getRealPlayerIds(cursor, n: int = 1) -> Optional[list[int]]:
         )
         return None
 
-    ans = []
-    for i in range(n):
-        ans.append(random.choice(list(ids))[0])
+    ids = [_id[0] for _id in ids]
+    random.shuffle(ids)
 
-    return ans
+    return ids[0:n]
 
 
 # get the serverworld ids in random order (and with doubles) from the database
@@ -85,8 +82,7 @@ def getRealServerworldIds(cursor, n: int = 1) -> Optional[list[int]]:
         )
         return None
 
-    ans = []
-    for i in range(n):
-        ans.append(random.choice(list(ids))[0])
+    ids = [_id[0] for _id in ids]
+    random.shuffle(ids)
 
-    return ans
+    return ids[0:n]

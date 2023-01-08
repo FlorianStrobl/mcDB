@@ -70,14 +70,19 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
         tmpData = []
         if table == "Serverworld":
             tmpData = GTD.generateServerworlds(nr)
+            #print("did serverworld")
         elif table == "Player":
             tmpData = GTD.generatePlayers(nr)
+            #print("did player")
         elif table == "MEntities":
             tmpData = GTD.generateMEntities(nr)
+            #print("did MEntities")
         elif table == "Block":
             tmpData = GTD.generateBlocks(nr)
+            #print("did block")
         elif table == "Wood":
             tmpData = GTD.generateWoods(nr, cursor)
+            #print("did wood")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating Wood. Maybe the table 'Block' is empty"
@@ -85,6 +90,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 return None
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr, cursor)
+            #print("did dirt")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating Dirt. Maybe the table 'Block' is empty"
@@ -92,6 +98,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 return None
         elif table == "plays":
             tmpData = GTD.generatePlays(nr, cursor)
+            #print("did play")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating plays. Maybe the table 'Player' or 'Serverworld' is empty"
@@ -99,6 +106,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 return None
         elif table == "populatedBy":
             tmpData = GTD.generatePopulatedBy(nr, cursor)
+            #print("did populatedBy")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating populatedBy. Maybe the table 'Serverworld' or 'MEntities' is empty"
@@ -106,6 +114,7 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 return None
         elif table == "buildOf":
             tmpData = GTD.generateBuildOf(nr, cursor)
+            #print("did build of")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating buildOf. Maybe the table 'Serverworld' or 'Block' is empty"
@@ -132,16 +141,19 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
                 tmpData[i][ii] = tmpData[i][ii].replace("'", "`", MAX_INT)
                 tmpData[i][ii] = tmpData[i][ii].replace('"', "`", MAX_INT)
 
+    #print("insert generated data into .db")
     try:
         if table == "Serverworld":
+            #print("before for loop")
             for data in tmpData:
                 _data = data
                 tmpPart = "null"
-                if not data[2] is None:
+                if data[2] is not None:
                     tmpPart = f"'{data[2]}'"
                 cursor.execute(
                     f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', {tmpPart})"
                 )
+            #print("after for loop")
         elif table == "Player":
             for data in tmpData:
                 _data = data
