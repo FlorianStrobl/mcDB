@@ -6,6 +6,7 @@ import GUI.main as main
 # from main import setLogLabel
 
 
+# TODO clear message after 5 seconds
 class Logger:
 
     # log a message to the console and the GUI

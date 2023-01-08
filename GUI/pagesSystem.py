@@ -175,7 +175,6 @@ class PageSystem:
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
             )
         except:
-            print("except case")
             self.table.fill(self.givenArray)
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
@@ -221,9 +220,6 @@ class PageSystem:
             else:
                 self.currentPage += 1
 
-        #print(self.convertToPages2dArray(self.givenArray)[self.currentPage])
-        #print(self.convertToPages2dArray(self.givenArray)[self.currentPage])
-
         tableStateBefore = self.tableState
         self.setTableState(customtkinter.NORMAL)
 
@@ -231,8 +227,6 @@ class PageSystem:
             self.convertToPages2dArray(self.givenArray)[self.currentPage]
         )
 
-
-        print(self.currentPage)
         self.navigatorIndicator.configure(
             text=str(self.currentPage + 1) + "/" + str(len(dArray))
         )
