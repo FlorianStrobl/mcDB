@@ -188,7 +188,7 @@ def selectTable(
     except:
         Logger.Logger.error(
             "while fetching data with the SQLite3 instruction: ",
-            f"SELECT {columnNames} FROM {tableName} WHERE {where}",
+            f"SELECT {columnNames} FROM {tableName}",
         )
         return None
 

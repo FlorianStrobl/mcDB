@@ -18,7 +18,7 @@ def text_zu_mehrehren_Linien(string, n=38):
     return ''.join(result)
 
 def calculateAdditionalHigh(string, maxAnzahlLinien=38):
-    heighOneLine = 15
+    heighOneLine = 17
     return ((len(string) // maxAnzahlLinien) * heighOneLine) - heighOneLine
 
 allWindows = []

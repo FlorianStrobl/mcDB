@@ -126,19 +126,19 @@ def previewFunc(delay=500, count=0):
 
 
     if(lastMode != "sql" and mode == "sql"):
-        Logger.Logger.warn("Preview mode does not work here")
+        Logger.Logger.warn("Der Preview modus funktionniert nicht mit SQL Eingaben. \nWenn der OK Button gedrückt wird, der save button automatisch mitgedrückt")
 
     # check if the preview mode is on
     if not checkbox.get():
         # The preview mode is off
-
+        if(lastQuery != query):
+            tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
 
         if lastCheckBoxMode != checkbox.get():
             # Preview Mode was toggled from on to off
             # When not in preview mode you can edit the data
             pageSystem.setTableState(customtkinter.NORMAL)
 
-            print("update the ui pls", len(tmp.data))
             updateUI(tmp) # TODO doesnt work as intended: its like it was really updated by just the preview code
         elif(query != ""):
             # The preview is off BUT the user has written something
@@ -148,6 +148,7 @@ def previewFunc(delay=500, count=0):
 
         lastCheckBoxMode = checkbox.get()
         lastMode = mode
+        lastQuery = query
         # Recall this function to check if preview modes changed
         tk.after(delay, lambda: previewFunc(delay, count + 1))
         return
@@ -158,17 +159,14 @@ def previewFunc(delay=500, count=0):
             # so save UI data to TMP
             if(lastMode == mode):
                 tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
-            print("tmp length after from off to on", len(tmp.data))
             previewTmp = tmp.editData(query, mode, False)
             if previewTmp is not None:
                 updateUI(previewTmp)
             else:
                 updateUI(tmp)
-            #print(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
         pageSystem.setTableState(customtkinter.DISABLED)
 
-        lastMode = mode
-        lastCheckBoxMode = checkbox.get()
+
 
 
     # Wenn was für das erste mal im Input Field steht:
@@ -183,7 +181,6 @@ def previewFunc(delay=500, count=0):
                 )
             )
         justSwitchedTable = False
-        print("the query was changed by the user from empty to new", len(tmp.data))
 
         pageSystem.setTableState(customtkinter.DISABLED)
         updateUI(tmp)
@@ -221,9 +218,9 @@ def previewFunc(delay=500, count=0):
     # Wenn auf save geklickt wird:
     # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
 
-    #print(pageSystem.getInput())
-
     lastQuery = query
+    lastMode = mode
+    lastCheckBoxMode = checkbox.get()
     # recall itself in a loop
     tk.after(delay, lambda: previewFunc(delay, count + 1))
 
@@ -301,16 +298,21 @@ def onOkButtonClick():
     global searchEntry
     global segemented_button_var
     global tmp
+    global currentTableName
+    global cursor
 
     if searchEntry.get().strip() == "":
         return
 
     if segemented_button_var.get() == "sql":
         # TODO
-        sqlQuery = searchEntry.get()
-        Logger.Logger.log(
-            "SQL Querys will be applied immediately. This means that you can not undo them if they change something in the database."
-        )
+        #tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+        # Das SQL nicht auf tmp läuft, muss erst die DB geupdated werden
+        updateDataInDB(cursor, tmp)
+        sqlQuery = searchEntry.get().strip()
+        # Logger.Logger.log(
+        #     "SQL Querys will be applied immediately. This means that you can not undo them if they change something in the database."
+        # )
         try:
             cursor.execute(sqlQuery)
             cursor.connection.commit()
@@ -319,12 +321,15 @@ def onOkButtonClick():
             return
 
         resultData = cursor.fetchall()
-        columnNames = list(map(lambda x: x[0], cursor.description))
+        if(cursor.description is None):
+            onTableButtonClick(currentTableName)
+        else:
+            columnNames = list(map(lambda x: x[0], cursor.description))
 
-        # edit tmp data
-        # do not update tmp.tableName itself
-        tmp.data = resultData
-        tmp.columnNames = columnNames
+            # edit tmp data
+            # do not update tmp.tableName itself
+            tmp.data = resultData
+            tmp.columnNames = columnNames
     else:
         t = tmp.editData(searchEntry.get(), segemented_button_var.get(), True)
         if t is None:
