@@ -42,38 +42,30 @@ checkbox = None
 
 
 def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
-    typesOfTables = {
-        "Serverworld": {"serverworld_id": int, "name": str, "icon": str},
-        "Player": {"player_id": int, "username": str, "skin": str},
+    typesOfColumns = {
+        "serverworld_id": int, "name": str, "icon": str,
+        "player_id": int, "username": str, "skin": str,
         # same with others...
-        "MEntities": {
             "m_entities_id": int,
             "entity_position": str,
             "birthday": int,
             "entity_type": int,
-        },
-        "Block": {"absolute_position": str, "block_type": int},
-        "Wood": {"absolute_position": str, "isOnFire": int},
-        "Dirt": {"absolute_position": str, "hasGrass": int},
-        "plays": {
-            "player_id": int,
-            "serverworld_id": int,
+            "block_type": int,
+        "absolute_position": str, "isOnFire": int,
+         "hasGrass": int,
+
             "session_begin:": int,
             "player_position": str,
-            "role": str,
-        },
-        "populatedBy": {"m_entities_id": int, "serverworld_id": int},
-        "buildOf": {"absolute_position": str, "serverworld_id": int},
+            "role": str
     }
 
-    tableTypes = typesOfTables[tableName]
 
     for i in range(len(newDataThatNeedsToBeCasted)):
         for j in range(len(newDataThatNeedsToBeCasted[i])):
+            caster = None
             try:
-                caster = None
-                if columnNames[j] in tableTypes:
-                    caster = tableTypes[columnNames[j]]
+                if columnNames[j] in typesOfColumns:
+                    caster = typesOfColumns[columnNames[j]]
 
                 if newDataThatNeedsToBeCasted[i][j] == "null" and (
                     columnNames[j] == "icon"
@@ -94,7 +86,7 @@ def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
                     "Could not cast the following data to the correct type: '"
                     + str(newDataThatNeedsToBeCasted[i][j])
                     + "' at row "
-                    + str(i)
+                    + str(i), type(newDataThatNeedsToBeCasted[i][j]), caster
                 )
                 return None
 
@@ -132,6 +124,7 @@ def previewFunc(delay=500, count=0):
     if not checkbox.get():
         # The preview mode is off
         if(lastQuery != query):
+            print("135")
             tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
 
         if lastCheckBoxMode != checkbox.get():
@@ -158,6 +151,7 @@ def previewFunc(delay=500, count=0):
             # preview mode was just toggeld from off to on
             # so save UI data to TMP
             if(lastMode == mode):
+                print("161")
                 tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
             previewTmp = tmp.editData(query, mode, False)
             if previewTmp is not None:
@@ -175,6 +169,7 @@ def previewFunc(delay=500, count=0):
         # TODO
         # we know the preview mode is on
         if not justSwitchedTable:
+            print("178")
             tmp.setData(
                 castColumns2(
                     currentTableName, tmp.columnNames, pageSystem.getInput().copy()
@@ -375,13 +370,17 @@ def onTableSave(table):
     if(query != "" or checkbox.get()):
         Logger.Logger.warn("You are saving without the preview applied")
 
+
     if not showActivated:
+        # Preview mode is off
         x = castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput())
         if x != None:
             tmp.setData(x)
         else:
+            # UI data could not be casted => invalid data in gui
             # Return if invalid data in UI
             # TODO, no error message??
+            Logger.Logger.error("Invalid data in UI")
             return
     updateDataInDB(cursor, tmp)
     onTableButtonClick(currentTableName)
@@ -393,106 +392,6 @@ def onTableSave(table):
 def onInputfieldChange(text, mode):
     # do not need this lol
     return
-
-    # def do():
-    #     global lastInputFieldChangeTime
-
-    #     delay = 1000
-    #     if lastInputFieldChangeTime + delay > round(time.time() * 1000):
-    #         # the text was NOT changed by the user in the last delay time, and the code errored
-    #         pageSystem.changeTableBody(tmp.deepCpyData())
-    #         table.setTableHeader(tmp.columnNames)
-    #         return
-
-    global preview
-    global cursor
-    global tmp
-
-    # TODO add a delay before ACTUALLY doing the preview to reduce lag of fast text inputs
-
-    # 1. Get timestamp for everytimne he writes
-    # 2.
-
-    # Before preview showed, backup all tmp
-    if preview is None:
-        tmp.setData(pageSystem.getInput())
-
-    # TODO delay bugs
-    global lastInputFieldChangeTime
-    curTime = round(time.time() * 1000)
-    delay = 1000  # 1s
-
-    # if tmp.editData(text, mode) is None and lastInputFieldChangeTime + delay > curTime:
-    #     # but what if tmp.editData(text, mode) STAYS None
-    #     # because if there was a preview before that set
-    #     # this preview is not the one from the inputfield anymore
-    #     # this means preview has to be set to None and TMP needs to be reshown again
-
-    #     #threading.Timer(1000, do()) # text errored anyway, so do not show preview anymore but TMP
-    #     return
-    # else:
-    #     lastInputFieldChangeTime = curTime
-    #     # continue execution
-
-    if mode == "sql":
-        # do the sql cmd and show the result
-        if text.strip() == "":
-            preview = None
-        if preview is not None:
-            Logger.Logger.warn(
-                "UNSAVED preview mode, click the 'Ok' Button to apply changes"
-            )
-            pageSystem.changeTableBody(preview.deepCpyData())
-            table.setTableHeader(preview.columnNames)
-        else:
-            # TODO remove the "preview mode" text described above
-            Logger.Logger.warn("")
-            pageSystem.changeTableBody(tmp.deepCpyData())
-            table.setTableHeader(tmp.columnNames)
-
-        try:
-            cursor.execute(text)
-            columnNames = list(map(lambda x: x[0], cursor.description))
-            resultData = cursor.fetchall()
-
-            preview = TMP()
-            preview.data = resultData
-            preview.columnNames = columnNames
-
-            pageSystem.changeTableBody(preview.data)
-            table.setTableHeader(preview.columnNames)
-
-        except:
-            pass
-            # return
-        return
-
-    if text.strip() == "":
-        preview = None
-        return
-
-    if mode != "sql" and text.strip() != "":
-        vv = tmp.editData(text, mode)
-        if vv is None:
-            preview = None
-        else:
-            preview = TMP()
-            preview.replaceTmp(vv)
-
-    # TODO change the column names if it was a
-    # "select columns" command
-    if preview is not None:
-        Logger.Logger.warn(
-            "UNSAVED preview mode, click the 'Ok' Button to apply changes"
-        )
-        pageSystem.changeTableBody(preview.deepCpyData())
-        table.setTableHeader(preview.columnNames)
-    else:
-        # TODO remove the "preview mode" text described above
-        Logger.Logger.warn("")
-        pageSystem.changeTableBody(tmp.deepCpyData())
-        table.setTableHeader(tmp.columnNames)
-
 
 def onResetButtonClick():
     global tmp
