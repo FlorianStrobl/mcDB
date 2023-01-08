@@ -26,6 +26,8 @@ lastInputFieldChangeTime: int = (
 )  # the last time the inputfield changed its value by the user
 
 currentTableName = None
+currentColumnNames = None
+
 searchEntry = None
 segemented_button_var = None
 
@@ -73,9 +75,12 @@ def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
                     newDataThatNeedsToBeCasted[i][j] = None
                 else:
                     if caster is not None:
-                        newDataThatNeedsToBeCasted[i][j] = caster(
-                            newDataThatNeedsToBeCasted[i][j]
-                        )
+                        try:
+                            newDataThatNeedsToBeCasted[i][j] = caster(
+                                newDataThatNeedsToBeCasted[i][j]
+                            )
+                        except:
+                            print("here", newDataThatNeedsToBeCasted[i][j], caster)
                     else:
                         # no casting if the type unknown
                         newDataThatNeedsToBeCasted[i][j] = newDataThatNeedsToBeCasted[
@@ -125,9 +130,10 @@ def previewFunc(delay=500, count=0):
         # The preview mode is off
         if(lastQuery != query):
             print("135")
-            tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+
 
         if lastCheckBoxMode != checkbox.get():
+            tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()),currentColumnNames)
             # Preview Mode was toggled from on to off
             # When not in preview mode you can edit the data
             pageSystem.setTableState(customtkinter.NORMAL)
@@ -152,7 +158,7 @@ def previewFunc(delay=500, count=0):
             # so save UI data to TMP
             if(lastMode == mode):
                 print("161")
-                tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+                tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()),currentColumnNames)
             previewTmp = tmp.editData(query, mode, False)
             if previewTmp is not None:
                 updateUI(previewTmp)
@@ -173,7 +179,7 @@ def previewFunc(delay=500, count=0):
             tmp.setData(
                 castColumns2(
                     currentTableName, tmp.columnNames, pageSystem.getInput().copy()
-                )
+                ),currentColumnNames
             )
         justSwitchedTable = False
 
@@ -221,6 +227,8 @@ def previewFunc(delay=500, count=0):
 
 
 def updateUI(data):
+    global currentColumnNames
+    currentColumnNames = data.columnNames
     data = data.deepCpy()
     pageSystem.changeTableBody(data.deepCpyData())
     table.setTableHeader(data.columnNames)
@@ -267,7 +275,7 @@ def onTableButtonClick(tableName):
     global setButtonSelected
     global lastQuery
     global justSwitchedTable
-
+    global currentColumnNames
     lastQuery = "" # TODO will error if you toggle preview mode with already a query in the search field
     justSwitchedTable = True
     # names = list(cursor.description)
@@ -281,7 +289,7 @@ def onTableButtonClick(tableName):
         columnNames=SQL.selectTableColumns(cursor, tableName),
         tableName=tableName,
     )
-
+    currentColumnNames = tmp.columnNames
     updateUI(tmp)
 
     currentTableName = tableName
@@ -295,13 +303,14 @@ def onOkButtonClick():
     global tmp
     global currentTableName
     global cursor
+    global currentColumnNames
 
     if searchEntry.get().strip() == "":
         return
 
     if segemented_button_var.get() == "sql":
         # TODO
-        #tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+        tmp.setData(castColumns2(currentTableName,currentColumnNames , pageSystem.getInput().copy()),currentColumnNames)
         # Das SQL nicht auf tmp läuft, muss erst die DB geupdated werden
         updateDataInDB(cursor, tmp)
         sqlQuery = searchEntry.get().strip()
@@ -320,16 +329,19 @@ def onOkButtonClick():
             onTableButtonClick(currentTableName)
         else:
             columnNames = list(map(lambda x: x[0], cursor.description))
-
+            currentColumnNames = columnNames
             # edit tmp data
             # do not update tmp.tableName itself
             tmp.data = resultData
             tmp.columnNames = columnNames
+            print(tmp.columnNames)
     else:
         t = tmp.editData(searchEntry.get(), segemented_button_var.get(), True)
+
         if t is None:
             Logger.Logger.error("could not execute the command!")
             return
+        currentColumnNames = t.columnNames
         tmp.replaceTmp(t)
 
     # clear the entry field
@@ -375,7 +387,7 @@ def onTableSave(table):
         # Preview mode is off
         x = castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput())
         if x != None:
-            tmp.setData(x)
+            tmp.setData(x,currentColumnNames)
         else:
             # UI data could not be casted => invalid data in gui
             # Return if invalid data in UI
