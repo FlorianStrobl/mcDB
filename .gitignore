@@ -3,3 +3,4 @@ Backend/__pycache__/*.pyc
 GUI/__pycache__/*.pyc
 minecraftDatabase.db
 minecraftDatabase.db-journal
+1Mio_minecraftDatabase.db

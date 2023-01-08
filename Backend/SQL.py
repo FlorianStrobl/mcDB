@@ -70,35 +70,28 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
         tmpData = []
         if table == "Serverworld":
             tmpData = GTD.generateServerworlds(nr)
-            #print("did serverworld")
         elif table == "Player":
             tmpData = GTD.generatePlayers(nr)
-            #print("did player")
         elif table == "MEntities":
             tmpData = GTD.generateMEntities(nr)
-            #print("did MEntities")
         elif table == "Block":
             tmpData = GTD.generateBlocks(nr)
-            #print("did block")
         elif table == "Wood":
             tmpData = GTD.generateWoods(nr, cursor)
-            #print("did wood")
             if tmpData is None:
                 Logger.Logger.error(
-                    "While generating Wood. Maybe the table 'Block' is empty"
+                   "While generating Wood. Maybe the table 'Block' is empty"
                 )
                 return None
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr, cursor)
-            #print("did dirt")
             if tmpData is None:
                 Logger.Logger.error(
-                    "While generating Dirt. Maybe the table 'Block' is empty"
+                   "While generating Dirt. Maybe the table 'Block' is empty"
                 )
                 return None
         elif table == "plays":
             tmpData = GTD.generatePlays(nr, cursor)
-            #print("did play")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating plays. Maybe the table 'Player' or 'Serverworld' is empty"
@@ -106,7 +99,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 return None
         elif table == "populatedBy":
             tmpData = GTD.generatePopulatedBy(nr, cursor)
-            #print("did populatedBy")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating populatedBy. Maybe the table 'Serverworld' or 'MEntities' is empty"
@@ -114,7 +106,6 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
                 return None
         elif table == "buildOf":
             tmpData = GTD.generateBuildOf(nr, cursor)
-            #print("did build of")
             if tmpData is None:
                 Logger.Logger.error(
                     "While generating buildOf. Maybe the table 'Serverworld' or 'Block' is empty"
@@ -128,6 +119,8 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 # sqlite3: INSERT INTO values for a certain table
 # returns True if successful, None if not
 def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
+    BULK_INSERT_LIMIT = 5000
+
     tmpData = list(tmpData)
     _data = None  # data for potential error messag
     # fix strings with " or ' in them
@@ -141,67 +134,37 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
                 tmpData[i][ii] = tmpData[i][ii].replace("'", "`", MAX_INT)
                 tmpData[i][ii] = tmpData[i][ii].replace('"', "`", MAX_INT)
 
-    #print("insert generated data into .db")
+    tableSQLInsert = {
+        "Serverworld": "INSERT INTO Serverworld (serverworld_id, name, icon) VALUES (?, ?, ?)",
+        "Player": "INSERT INTO Player (player_id, username, skin) VALUES (?, ?, ?)",
+        "MEntities": "INSERT INTO MEntities (m_entities_id, entity_position, birthday, entity_type) VALUES (?, ?, ?, ?)",
+        "Block": "INSERT INTO Block (absolute_position, block_type) VALUES (?, ?)",
+        "Wood": "INSERT INTO Wood (absolute_position, isOnFire) VALUES (?, ?)",
+        "Dirt": "INSERT INTO Dirt (absolute_position, hasGrass) VALUES (?, ?)",
+        "plays": "INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES (?, ?, ?, ?, ?)",
+        "populatedBy": "INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES (?, ?)",
+        "buildOf":"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES (?, ?)",
+    }
+
     try:
-        if table == "Serverworld":
-            #print("before for loop")
+        if not table in tableSQLInsert:
+            # the table does not exist!
+            Logger.Logger.error("table does not exist", table)
+            return False
+
+        if len(tmpData) < BULK_INSERT_LIMIT:
+            # single insert for better error messages
             for data in tmpData:
                 _data = data
-                tmpPart = "null"
-                if data[2] is not None:
-                    tmpPart = f"'{data[2]}'"
-                cursor.execute(
-                    f"INSERT INTO Serverworld (serverworld_id, name, icon) VALUES ({data[0]}, '{data[1]}', {tmpPart})"
-                )
-            #print("after for loop")
-        elif table == "Player":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO Player (player_id, username, skin) VALUES ({data[0]}, '{data[1]}', '{data[2]}')"
-                )
-        elif table == "MEntities":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO MEntities (m_entities_id, entity_position, birthday, entity_type) VALUES ({data[0]}, '{data[1]}', {data[2]}, {data[3]})"
-                )
-        elif table == "Block":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO Block (absolute_position, block_type) VALUES ('{data[0]}', {data[1]})"
-                )
-        elif table == "Wood":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO Wood (absolute_position, isOnFire) VALUES ('{data[0]}', {data[1]})"
-                )
-        elif table == "Dirt":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO Dirt (absolute_position, hasGrass) VALUES ('{data[0]}', {data[1]})"
-                )
-        elif table == "plays":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES ({data[0]}, {data[1]}, {data[2]}, '{data[3]}', '{data[4]}')"
-                )
-        elif table == "populatedBy":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES ({data[0]}, {data[1]})"
-                )
-        elif table == "buildOf":
-            for data in tmpData:
-                _data = data
-                cursor.execute(
-                    f"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES ('{data[0]}', {data[1]})"
-                )
+                cursor.execute(tableSQLInsert[table], data)
+        else:
+            # bulk insert for better performance:
+            # saidly no precise error message anymore
+            _data = tmpData
+            cursor.executemany(
+                tableSQLInsert[table],
+                tmpData,
+            )
     except:
         Logger.Logger.error(f"while inserting data into {table} with the data:", _data)
         # raise Exception("bad data")
@@ -213,13 +176,13 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
 # sqlite3: SELECT
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
 def selectTable(
-    cursor, tableName: str, columnNames: str = "*", where: str = "True"
+    cursor, tableName: str, columnNames: str = "*"
 ) -> Optional[list[list]]:
     try:
         return [
             list(v)
             for v in cursor.execute(
-                f"SELECT {columnNames} FROM {tableName} WHERE {where}"
+                f"SELECT {columnNames} FROM {tableName}"
             ).fetchall()
         ]
     except:

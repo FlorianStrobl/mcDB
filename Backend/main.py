@@ -6,12 +6,12 @@ import SQL
 from TmpData import *
 from InputStrToMapFilterSort import *
 from GUI.main import loadGUI
-
+#comment
 cursor: sqlite3.Connection.cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # reset the current db
 SQL.createAllTables(cursor)  # create all tables
-SQL.fillAllTablesRand(cursor, 101)  # fill random data into the tables
+SQL.fillAllTablesRand(cursor, 10)  # fill random data into the tables
 
 # DEBUG Code
 _tmp = TMP()
