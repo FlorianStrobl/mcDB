@@ -118,8 +118,6 @@ class scrollableTable(customtkinter.CTkFrame):
         # Event Listener: 0:Delete  1: Add
         self.eventListenerFunctions = [[], []]
 
-
-
     def calculateStepsFromStart(self, row):
         # Berechnet wie die Rows ID's sein sollen relativ zu den vom Anfang also "row" hier im parameter(für den delete Event)
         newRow = row
@@ -217,14 +215,13 @@ class scrollableTable(customtkinter.CTkFrame):
         self.updateEvents()
         return "succes"
 
-
-
     def updateEvents(self):
         self.steps = []
         for i in range(len(self.tableDataBodyWidgets)):
             row = self.tableDataBodyWidgets[i]
             deleteButton = row[len(self.tableDataBodyWidgets[0]) - 1]
             deleteButton.configure(command=lambda i=i: self.onRemove(i))
+
 
     def fill(self, tableBody):
         self.updateEvents()
@@ -367,11 +364,17 @@ class scrollableTable(customtkinter.CTkFrame):
         self.tableData[0] = arr
 
     def setState(self, _state):
+
         self.currentState = _state
-        self.createButton.configure(state=_state)
-        for widgetRow in self.tableDataBodyWidgets:
-            for widget in range(len(widgetRow)):
-                widgetRow[widget].configure(state=_state)
+        try: self.createButton.configure(state=_state)
+        except:
+            x = 0
+        try:
+            for widgetRow in self.tableDataBodyWidgets:
+                for widget in range(len(widgetRow)):
+                    widgetRow[widget].configure(state=_state)
+        except:
+            print("Error on set state")
 
     # Sender erwähnt,default fase, ob diese Funktion direkt vom user aufgerufen wird (über button klick) oder ob die funktion von einer for schleife oder sowas aufgerufen wurde
     def onRemove(self, rowNumber, fromAutoScript=False):
