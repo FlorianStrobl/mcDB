@@ -6,7 +6,7 @@ import SQL
 from TmpData import *
 from InputStrToMapFilterSort import *
 from GUI.main import loadGUI
-
+#h
 cursor: sqlite3.Connection.cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
 SQL.dropAllTables(cursor)  # reset the current db
