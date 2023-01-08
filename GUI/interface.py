@@ -157,9 +157,6 @@ def previewFunc(delay=500, count=0):
 
         lastCheckBoxMode = checkbox.get()
 
-
-
-
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
     # Wenn was für das erste mal im Input Field steht:
@@ -188,9 +185,10 @@ def previewFunc(delay=500, count=0):
         # - Editierte Datenbank bekommen als "currentShowVar"
         showActivated = True
         currentShowVar = tmp.editData(query, mode, False)
-
         # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
         pageSystem.setTableState(customtkinter.DISABLED)
+
+
         if(lastQuery != query):
             #Only update UI when user field was changed
             if currentShowVar is None:
@@ -258,6 +256,9 @@ def onTableButtonClick(tableName):
     global cursor
     global currentTableName
     global setButtonSelected
+    global lastQuery
+
+    lastQuery = ""
     # names = list(cursor.description)
     table.scrollFrame.canvas.yview_moveto(0)
     data = SQL.selectTable(cursor, tableName)
