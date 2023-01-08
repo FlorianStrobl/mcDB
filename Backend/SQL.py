@@ -6,7 +6,7 @@ from GenData import GenerateTableData as GTD
 
 
 # get [keys, values] from an dictionary
-def getKeyValues(dictionnary: dict) -> [list[str], list[str]]:
+def getKeyValues(dictionnary: dict) -> list[list[str], list[str]]:
     keys = []
     values = []
     for key, value in dictionnary.items():
@@ -16,7 +16,7 @@ def getKeyValues(dictionnary: dict) -> [list[str], list[str]]:
 
 
 # get ./DDL.py dictionary values as [keys, values]
-def getAllTableStr() -> [list[str], list[str]]:
+def getAllTableStr() -> list[list[str], list[str]]:
     keys = (
         getKeyValues(DDL.tablesStrong)[0]
         + getKeyValues(DDL.tablesWeak)[0]
@@ -38,7 +38,7 @@ def createAllTables(cursor) -> None:
             cursor.execute(tableStr)
         except:
             Logger.Logger.error("while trying to create table", tableStr)
-            returnWHERE
+            return
     cursor.connection.commit()
 
 
