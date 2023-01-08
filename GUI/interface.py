@@ -106,7 +106,7 @@ lastQuery = ""
 justSwitchedTable = False
 
 lastCheckBoxMode = 0
-
+lastMode = "auto"
 
 def previewFunc(delay=500, count=0):
     global searchEntry
@@ -119,6 +119,7 @@ def previewFunc(delay=500, count=0):
     global checkbox
     global lastCheckBoxMode
     global justSwitchedTable
+    global lastMode
 
     query = searchEntry.get().strip()
     mode = segemented_button_var.get()
@@ -142,16 +143,17 @@ def previewFunc(delay=500, count=0):
             pageSystem.setTableState(customtkinter.NORMAL)
 
         lastCheckBoxMode = checkbox.get()
-
+        lastMode = mode
         # Recall this function to check if preview modes changed
         tk.after(delay, lambda: previewFunc(delay, count + 1))
         return
     else:
         # preview mode is on
-        if lastCheckBoxMode != checkbox.get():
+        if lastCheckBoxMode != checkbox.get() or lastMode != mode:
             # preview mode was just toggeld from off to on
             # so save UI data to TMP
-            tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+            if(lastMode == mode):
+                tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
             print("tmp length after from off to on", len(tmp.data))
             previewTmp = tmp.editData(query, mode, False)
             if previewTmp is not None:
@@ -161,6 +163,7 @@ def previewFunc(delay=500, count=0):
             #print(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
         pageSystem.setTableState(customtkinter.DISABLED)
 
+        lastMode = mode
         lastCheckBoxMode = checkbox.get()
 
 
@@ -290,9 +293,6 @@ def onTableButtonClick(tableName):
 
     setButtonSelected(tableName)
 
-
-
-
 def onOkButtonClick():
     global searchEntry
     global segemented_button_var
@@ -345,7 +345,6 @@ def onOkButtonClick():
     searchEntry.delete(0, customtkinter.END)
     return
 
-
 def onTableSave(table):
     global pageSystem
     global currentTableName
@@ -375,7 +374,6 @@ def onTableSave(table):
     updateDataInDB(cursor, tmp)
     # update UI to the current DB to avoid any bugs
     updateUI(tmp)
-
 
 # this is only for the preview mode
 def onInputfieldChange(text, mode):
@@ -503,7 +501,6 @@ def onImport():
         shutil.copy(filepath, "minecraftDatabase.db")
     onTableButtonClick("Serverworld")
 
-
 def onExport():
     filepath = customtkinter.filedialog.asksaveasfilename(
         defaultextension=".mcdb",
@@ -516,3 +513,34 @@ def onExport():
     if filepath:
         # Kopiere die Datei "test.db" an den von der Benutzer ausgewählten Speicherort
         shutil.copy("minecraftDatabase.db", filepath)
+
+
+
+def fillAllDataRand():
+    global currentTableName
+    SQL.dropAllTables(cursor)  # reset the current db
+    SQL.createAllTables(cursor)  # create all tables
+    dataNumber = customtkinter.CTkInputDialog(text="Wie viele Datensätze willst du pro Tabelle random generieren lassen?", title="Test")
+    result = 0
+    try:
+        result = int(dataNumber)
+        if(result < 0):
+            Logger.Logger.error("Du hast keine negative zahlen eingegeben!")
+    except:
+        Logger.Logger.error("Du hast keine valide zahl eingegeben!")
+        return
+    SQL.fillAllTablesRand(cursor, 151)
+    # musst halt das global tmp meinen!! und tableName muss stimmen...
+    tmp.setData(SQL.selectTable(cursor,currentTableName) , SQL.selectTableColumns(cursor, currentTableName), currentTableName)
+
+    onTableButtonClick(currentTableName)
+
+def deleteAllData():
+    global currentTableName
+    SQL.dropAllTables(cursor)  # reset the current db
+    SQL.createAllTables(cursor)  # create all tables
+
+    # musst halt das global tmp meinen!! und tableName muss stimmen...
+    tmp.setData([] , SQL.selectTableColumns(cursor, currentTableName), currentTableName)
+
+    onTableButtonClick(currentTableName)

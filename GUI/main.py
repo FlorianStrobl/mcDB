@@ -86,7 +86,7 @@ def loadGUI():
         command=onExport,
         fg_color=["#3a7ebf", "#1f538d"],
     )
-    exportButton.place(x=10, y=40, width=90)
+    exportButton.place(x=10, y=10, width=90)
     exportButton.configure(fg_color="#343638", bg_color="#302c2c")
 
     importButton = customtkinter.CTkButton(
@@ -95,11 +95,29 @@ def loadGUI():
         command=onImport,
         fg_color=["#3a7ebf", "#1f538d"],
     )
-    importButton.place(x=105, y=40, width=90)
-    importButton.configure(fg_color="#343638", bg_color="#302c2c")
+    importButton.place(x=105, y=10, width=90)
+    importButton.configure(fg_color="#343638", bg_color="#302c2c", command=onImport)
 
-    label = customtkinter.CTkLabel(master=titleFrame, text="Minecraft Database")
-    label.place(x=40, y=5)
+    emptyButton = customtkinter.CTkButton(
+        master=titleFrame,
+        text="empty db",
+        fg_color=["#3a7ebf", "#1f538d"],
+    )
+    emptyButton.place(x=10, y=40, width=90)
+    emptyButton.configure(fg_color="#343638", bg_color="#302c2c", command=deleteAllData)
+
+    fillRand = customtkinter.CTkButton(
+        master=titleFrame,
+        text="fill rand",
+        fg_color=["#3a7ebf", "#1f538d"],
+    )
+    fillRand.place(x=105, y=40, width=90)
+    fillRand.configure(fg_color="#343638", bg_color="#302c2c", command=fillAllDataRand)
+
+
+
+    #label = customtkinter.CTkLabel(master=titleFrame, text="Minecraft Database")
+    #label.place(x=40, y=5)
 
     navigateBackground = customtkinter.CTkFrame(
         master=app, width=200, height=333, corner_radius=5
@@ -280,7 +298,7 @@ def loadGUI():
         setButtonSelected,
         segemented_button_var,
         app,
-        checkbox,
+        checkbox
     )
 
     app.mainloop()
