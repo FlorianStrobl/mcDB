@@ -370,10 +370,10 @@ def onTableSave(table):
             tmp.setData(x)
         else:
             # Return if invalid data in UI
+            # TODO, no error message??
             return
     updateDataInDB(cursor, tmp)
     # update UI to the current DB to avoid any bugs
-    onInputfieldChange("", "auto")
     updateUI(tmp)
 
 
@@ -487,8 +487,6 @@ def onResetButtonClick():
     global preview
     global searchEntry
 
-    if preview is not None:
-        onInputfieldChange("", "auto")
     searchEntry.delete(0, customtkinter.END)
 
 
