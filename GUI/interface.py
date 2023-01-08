@@ -358,8 +358,6 @@ def onTableSave(table):
     # the user changes a field of the previews
     # saving the preview and replacing TMP then?
 
-    # tmp.tableName = currentTableName
-
     # wenn
 
     # when the preview mode is not activated
@@ -372,8 +370,9 @@ def onTableSave(table):
             # TODO, no error message??
             return
     updateDataInDB(cursor, tmp)
+    onTableButtonClick(currentTableName)
     # update UI to the current DB to avoid any bugs
-    updateUI(tmp)
+    #updateUI(tmp)
 
 # this is only for the preview mode
 def onInputfieldChange(text, mode):
