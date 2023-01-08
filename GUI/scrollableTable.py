@@ -164,8 +164,9 @@ class scrollableTable(customtkinter.CTkFrame):
             self.eventListenerFunctions[1].append(function)
 
     def textFill(self, tableBody):
+
         tableBody = tableBody.copy()
-        print(tableBody)
+
         # "-1" wegen den Mülleimer object
 
         if self.tableDataBodyWidgets == []:
@@ -196,14 +197,20 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # Einsetzen aller Texte von TABLEBODY in die Tabelle
 
-        print(tableBody)
+        #print(tableBody)
+        #print(len(self.tableDataBodyWidgets))
         for widgetsRowCounter in range(len(self.tableDataBodyWidgets)):
             widgetsRow = self.tableDataBodyWidgets[widgetsRowCounter]
             # -1 Because we want to ignore the Mülleimer
             for widgetCounter in range(len(widgetsRow) - 1):
                 inputField = widgetsRow[widgetCounter]
                 inputField.delete(0, customtkinter.END)
+                #print(tableBody[widgetsRowCounter][widgetCounter])
                 print(tableBody[widgetsRowCounter][widgetCounter])
+
+                #Bis hier werden alle richtigen Daten angezeigt
+
+                # IL PEUT PAS INSERTEN QUAND TOUT EST DUR DESACTIVATE
                 inputField.insert(
                     0,
                     tableBody[widgetsRowCounter][widgetCounter]

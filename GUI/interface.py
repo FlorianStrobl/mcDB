@@ -43,7 +43,7 @@ checkbox = None
 
 def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
     typesOfTables = {
-        "Serverworld": {"serverworld_id": int, "name": str, "icon": str}, # icon can be None, but that is handled somewhere else
+        "Serverworld": {"serverworld_id": int, "name": str, "icon": str},
         "Player": {"player_id": int, "username": str, "skin": str},
         # same with others...
         "MEntities": {
@@ -150,8 +150,8 @@ def previewFunc(delay=500, count=0):
             # from off to on
             # so save UI data to TMP
             tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
-            #print()
-            updateUI(tmp)
+
+            #updateUI(tmp)
             #print(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
         pageSystem.setTableState(customtkinter.DISABLED)
 
@@ -215,9 +215,7 @@ def previewFunc(delay=500, count=0):
 
 def updateUI(data):
     data = data.deepCpy()
-
     pageSystem.changeTableBody(data.deepCpyData())
-    #print(data.deepCpyData())
     table.setTableHeader(data.columnNames)
 
 

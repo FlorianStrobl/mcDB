@@ -223,6 +223,10 @@ class PageSystem:
 
         #print(self.convertToPages2dArray(self.givenArray)[self.currentPage])
         #print(self.convertToPages2dArray(self.givenArray)[self.currentPage])
+
+        tableStateBefore = self.tableState
+        self.setTableState(customtkinter.NORMAL)
+
         self.table.textFill(
             self.convertToPages2dArray(self.givenArray)[self.currentPage]
         )
@@ -232,3 +236,6 @@ class PageSystem:
         self.navigatorIndicator.configure(
             text=str(self.currentPage + 1) + "/" + str(len(dArray))
         )
+
+
+        self.setTableState(tableStateBefore)
