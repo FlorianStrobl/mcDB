@@ -103,6 +103,7 @@ def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
 
 tableUpdadedBefore = False
 lastQuery = ""
+justSwitchedTable = False
 
 lastCheckBoxMode = 0
 
@@ -117,6 +118,7 @@ def previewFunc(delay=500, count=0):
     global showActivated
     global checkbox
     global lastCheckBoxMode
+    global justSwitchedTable
 
     query = searchEntry.get().strip()
     mode = segemented_button_var.get()
@@ -124,50 +126,57 @@ def previewFunc(delay=500, count=0):
     # check if the preview mode is on
     if not checkbox.get():
         # The preview mode is off
-        # Recall this function to check if preview modes changed
-        tk.after(delay, lambda: previewFunc(delay, count + 1))
 
 
         if lastCheckBoxMode != checkbox.get():
             # Preview Mode was toggled from on to off
             # When not in preview mode you can edit the data
             pageSystem.setTableState(customtkinter.NORMAL)
-            # tmp.setData(pageSystem.getInput())
 
-            updateUI(tmp)
+            print("update the ui pls", len(tmp.data))
+            updateUI(tmp) # TODO doesnt work as intended: its like it was really updated by just the preview code
         elif(query != ""):
             # The preview is off BUT the user has written something
-
             pageSystem.setTableState(customtkinter.DISABLED)
         elif(query == ""):
             pageSystem.setTableState(customtkinter.NORMAL)
+
         lastCheckBoxMode = checkbox.get()
+
+        # Recall this function to check if preview modes changed
+        tk.after(delay, lambda: previewFunc(delay, count + 1))
         return
     else:
         # preview mode is on
         if lastCheckBoxMode != checkbox.get():
-            # preview mode was just toggeld
-            # from off to on
+            # preview mode was just toggeld from off to on
             # so save UI data to TMP
             tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
-
-            #updateUI(tmp)
+            print("tmp length after from off to on", len(tmp.data))
+            previewTmp = tmp.editData(query, mode, False)
+            if previewTmp is not None:
+                updateUI(previewTmp)
+            else:
+                updateUI(tmp)
             #print(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
         pageSystem.setTableState(customtkinter.DISABLED)
 
         lastCheckBoxMode = checkbox.get()
 
-    # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
     # Wenn was für das erste mal im Input Field steht:
+    # wir sind im preview mode
     if lastQuery.strip() == "" and query.strip() != "":
         # TODO
-        # tmp.setData(castColumns(tmp.deepCpyData(),pageSystem.getInput().copy() ))
-        tmp.setData(
-            castColumns2(
-                currentTableName, tmp.columnNames, pageSystem.getInput().copy()
+        # we know the preview mode is on
+        if not justSwitchedTable:
+            tmp.setData(
+                castColumns2(
+                    currentTableName, tmp.columnNames, pageSystem.getInput().copy()
+                )
             )
-        )
+        justSwitchedTable = False
+        print("the query was changed by the user from empty to new", len(tmp.data))
 
         pageSystem.setTableState(customtkinter.DISABLED)
         updateUI(tmp)
@@ -208,6 +217,7 @@ def previewFunc(delay=500, count=0):
     #print(pageSystem.getInput())
 
     lastQuery = query
+    # recall itself in a loop
     tk.after(delay, lambda: previewFunc(delay, count + 1))
 
 
@@ -257,8 +267,10 @@ def onTableButtonClick(tableName):
     global currentTableName
     global setButtonSelected
     global lastQuery
+    global justSwitchedTable
 
-    lastQuery = ""
+    lastQuery = "" # TODO will error if you toggle preview mode with already a query in the search field
+    justSwitchedTable = True
     # names = list(cursor.description)
     table.scrollFrame.canvas.yview_moveto(0)
     data = SQL.selectTable(cursor, tableName)
@@ -350,11 +362,11 @@ def onTableSave(table):
     # the user changes a field of the previews
     # saving the preview and replacing TMP then?
 
-    # tmp.setData(pageSystem.getInput())
     # tmp.tableName = currentTableName
 
     # wenn
 
+    # when the preview mode is not activated
     if not showActivated:
         x = castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput())
         if x != None:
