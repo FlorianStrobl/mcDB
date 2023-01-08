@@ -285,11 +285,8 @@ def onTableButtonClick(tableName):
         columnNames=SQL.selectTableColumns(cursor, tableName),
         tableName=tableName,
     )
-    columnNames = list(map(lambda x: x[0], cursor.description))
 
-    #print(tmp.getData())
-    pageSystem.changeTableBody(tmp.getData().copy())
-    table.setTableHeader(columnNames)
+    updateUI(tmp)
 
     currentTableName = tableName
     # pageSystem.changeTableBody([[i,"j","l","l","l"] for i in range(100)])
