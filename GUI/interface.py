@@ -518,8 +518,7 @@ def onExport():
 
 def fillAllDataRand():
     global currentTableName
-    SQL.dropAllTables(cursor)  # reset the current db
-    SQL.createAllTables(cursor)  # create all tables
+
     dataNumber = customtkinter.CTkInputDialog(text="Wie viele Datensätze willst du pro Tabelle random generieren lassen?", title="Minecraft Database ")
     result = 0
     try:
@@ -530,9 +529,9 @@ def fillAllDataRand():
     except:
         Logger.Logger.error("Du hast keine valide zahl eingegeben!")
         return
+    SQL.dropAllTables(cursor)  # reset the current db
+    SQL.createAllTables(cursor)  # create all tables
     SQL.fillAllTablesRand(cursor, result)
-    # musst halt das global tmp meinen!! und tableName muss stimmen...
-    tmp.setData(SQL.selectTable(cursor,currentTableName) , SQL.selectTableColumns(cursor, currentTableName), currentTableName)
 
     onTableButtonClick(currentTableName)
 
@@ -540,8 +539,5 @@ def deleteAllData():
     global currentTableName
     SQL.dropAllTables(cursor)  # reset the current db
     SQL.createAllTables(cursor)  # create all tables
-
-    # musst halt das global tmp meinen!! und tableName muss stimmen...
-    tmp.setData([] , SQL.selectTableColumns(cursor, currentTableName), currentTableName)
 
     onTableButtonClick(currentTableName)
