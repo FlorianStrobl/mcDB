@@ -9,9 +9,9 @@ from GUI.main import loadGUI
 #comment
 cursor: sqlite3.Connection.cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
-#SQL.dropAllTables(cursor)  # reset the current db
-#SQL.createAllTables(cursor)  # create all tables
-#SQL.fillAllTablesRand(cursor, 10)  # fill random data into the tables
+#SQL.dropAllTables(cursor)  # do not reset the current db at the start
+SQL.createAllTables(cursor)  # create all tables if not exist
+#SQL.fillAllTablesRand(cursor, 10)  # do not fill random data into the tables
 
 # DEBUG Code
 _tmp = TMP()

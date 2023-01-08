@@ -371,6 +371,7 @@ def onTableSave(table):
             return
     updateDataInDB(cursor, tmp)
     onTableButtonClick(currentTableName)
+    Logger.Logger.log("Saved changes to database")
     # update UI to the current DB to avoid any bugs
     #updateUI(tmp)
 
