@@ -43,7 +43,7 @@ checkbox = None
 
 def castColumns2(tableName, columnNames, newDataThatNeedsToBeCasted):
     typesOfTables = {
-        "Serverworld": {"serverworld_id": int, "name": str, "icon": str},
+        "Serverworld": {"serverworld_id": int, "name": str, "icon": str}, # icon can be None, but that is handled somewhere else
         "Player": {"player_id": int, "username": str, "skin": str},
         # same with others...
         "MEntities": {
