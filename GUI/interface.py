@@ -520,16 +520,17 @@ def fillAllDataRand():
     global currentTableName
     SQL.dropAllTables(cursor)  # reset the current db
     SQL.createAllTables(cursor)  # create all tables
-    dataNumber = customtkinter.CTkInputDialog(text="Wie viele Datensätze willst du pro Tabelle random generieren lassen?", title="Test")
+    dataNumber = customtkinter.CTkInputDialog(text="Wie viele Datensätze willst du pro Tabelle random generieren lassen?", title="Minecraft Database ")
     result = 0
     try:
-        result = int(dataNumber)
+        result = int(dataNumber.get_input())
         if(result < 0):
             Logger.Logger.error("Du hast keine negative zahlen eingegeben!")
+            return
     except:
         Logger.Logger.error("Du hast keine valide zahl eingegeben!")
         return
-    SQL.fillAllTablesRand(cursor, 151)
+    SQL.fillAllTablesRand(cursor, result)
     # musst halt das global tmp meinen!! und tableName muss stimmen...
     tmp.setData(SQL.selectTable(cursor,currentTableName) , SQL.selectTableColumns(cursor, currentTableName), currentTableName)
 
