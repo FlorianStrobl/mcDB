@@ -31,10 +31,6 @@ currentSelectedButtonId = None
 arrow = None
 
 
-def setLogLabel(logText, color):
-    logsLabel.configure(text=logText, text_color=color)
-
-
 def setArrowToPos(heightIndex):
     arrow.place(x=10, y=14 + heightIndex * 35)
     # start 14 difference de 34
@@ -86,7 +82,7 @@ def loadGUI():
         command=onExport,
         fg_color=["#3a7ebf", "#1f538d"],
     )
-    exportButton.place(x=10, y=10, width=90)
+    exportButton.place(x=10, y=40, width=90)
     exportButton.configure(fg_color="#343638", bg_color="#302c2c")
 
     importButton = customtkinter.CTkButton(
@@ -95,29 +91,38 @@ def loadGUI():
         command=onImport,
         fg_color=["#3a7ebf", "#1f538d"],
     )
-    importButton.place(x=105, y=10, width=90)
+    importButton.place(x=105, y=40, width=90)
     importButton.configure(fg_color="#343638", bg_color="#302c2c", command=onImport)
 
     emptyButton = customtkinter.CTkButton(
-        master=titleFrame,
+        master=app,
         text="empty db",
         fg_color=["#3a7ebf", "#1f538d"],
+         command=deleteAllData
     )
-    emptyButton.place(x=10, y=40, width=90)
-    emptyButton.configure(fg_color="#343638", bg_color="#302c2c", command=deleteAllData)
+    emptyButton.place(x=20, y=457, width=90)
+    emptyButton.configure(fg_color="#343638",bg_color="#282424")
 
     fillRand = customtkinter.CTkButton(
-        master=titleFrame,
+        master=app,
         text="fill rand",
         fg_color=["#3a7ebf", "#1f538d"],
+        command=fillAllDataRand
     )
-    fillRand.place(x=105, y=40, width=90)
-    fillRand.configure(fg_color="#343638", bg_color="#302c2c", command=fillAllDataRand)
+    fillRand.place(x=115, y=457, width=90)
+    fillRand.configure(fg_color="#343638",bg_color="#282424")
 
+    loadDefault = customtkinter.CTkButton(
+        master=app,
+        text="load default values",
+        fg_color=["#3a7ebf", "#1f538d"],
+        command=loadDefaultValues
+    )
+    loadDefault.place(x=210, y=457, width=130)
+    loadDefault.configure(fg_color="#343638",bg_color="#282424")
 
-
-    #label = customtkinter.CTkLabel(master=titleFrame, text="Minecraft Database")
-    #label.place(x=40, y=5)
+    label = customtkinter.CTkLabel(master=titleFrame, text="Minecraft Database")
+    label.place(x=40, y=5)
 
     navigateBackground = customtkinter.CTkFrame(
         master=app, width=200, height=333, corner_radius=5
@@ -227,14 +232,6 @@ def loadGUI():
     )
     SaveButton.place(x=680, y=457, width=70, height=33)
 
-    logsDisplayFrame = customtkinter.CTkFrame(master=app, corner_radius=7)
-    logsDisplayFrame.place(x=20, y=458, width=500, height=30)
-
-    logsLabel = customtkinter.CTkLabel(
-        master=app, bg_color="#302c2c", font=("Helvetica bold", 13)
-    )
-    logsLabel.place(x=25, y=460)
-
     navigatorFrame = customtkinter.CTkFrame(
         master=app,
         corner_radius=7,
@@ -288,7 +285,6 @@ def loadGUI():
     )
     navigatorNavRightEnd.place(x=110, y=2, width=23, height=25)
 
-    setLogLabel("","grey")
 
     pageSystem.onUIReady()
     onGuiReady2(

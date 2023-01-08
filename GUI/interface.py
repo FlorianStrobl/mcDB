@@ -124,6 +124,10 @@ def previewFunc(delay=500, count=0):
     query = searchEntry.get().strip()
     mode = segemented_button_var.get()
 
+
+    if(lastMode != "sql" and mode == "sql"):
+        Logger.Logger.warn("Preview mode does not work here")
+
     # check if the preview mode is on
     if not checkbox.get():
         # The preview mode is off
@@ -351,16 +355,21 @@ def onTableSave(table):
     global cursor
     global tmp
     global showActivated
+    global searchEntry
+    global checkbox
     # TODO, No! because if there is a preview
     # which was NOT confirmed by the "Ok" button
     # you may not want to save it/apply the changes
     # BUT what to do if there is a preview and then
     # the user changes a field of the previews
     # saving the preview and replacing TMP then?
-
+    query = searchEntry.get().strip()
     # wenn
 
     # when the preview mode is not activated
+    if(query != "" or checkbox.get()):
+        Logger.Logger.warn("You are saving without the preview applied")
+
     if not showActivated:
         x = castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput())
         if x != None:
@@ -487,7 +496,6 @@ def onResetButtonClick():
 
     searchEntry.delete(0, customtkinter.END)
 
-
 def onImport():
     filepath = customtkinter.filedialog.askopenfilename(
         filetypes=[
@@ -514,12 +522,10 @@ def onExport():
         # Kopiere die Datei "test.db" an den von der Benutzer ausgewählten Speicherort
         shutil.copy("minecraftDatabase.db", filepath)
 
-
-
 def fillAllDataRand():
     global currentTableName
 
-    dataNumber = customtkinter.CTkInputDialog(text="Wie viele Datensätze willst du pro Tabelle random generieren lassen?", title="Minecraft Database ")
+    dataNumber = customtkinter.CTkInputDialog(text="Wie viele Datensätze willst du pro Tabelle random generieren lassen?", title="Minecraft Database ", )
     result = 0
     try:
         result = int(dataNumber.get_input())
@@ -540,4 +546,9 @@ def deleteAllData():
     SQL.dropAllTables(cursor)  # reset the current db
     SQL.createAllTables(cursor)  # create all tables
 
+    onTableButtonClick(currentTableName)
+
+def loadDefaultValues():
+    global currentTableName
+    shutil.copy("defaultDatabase.db", "minecraftDatabase.db")
     onTableButtonClick(currentTableName)
