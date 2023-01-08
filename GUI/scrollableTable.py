@@ -175,7 +175,6 @@ class scrollableTable(customtkinter.CTkFrame):
         ):
             return "none"
 
-
         # -1 because there is always a müllemer
         rowsLengthOld = len(self.tableDataBodyWidgets)
         rowsLength = len(tableBody)
@@ -202,7 +201,7 @@ class scrollableTable(customtkinter.CTkFrame):
                 inputField = widgetsRow[widgetCounter]
                 inputField.delete(0, customtkinter.END)
 
-                #Bis hier werden alle richtigen Daten angezeigt
+                # Bis hier werden alle richtigen Daten angezeigt
 
                 # IL PEUT PAS INSERTEN QUAND TOUT EST DUR DESACTIVATE
                 inputField.insert(
@@ -221,7 +220,6 @@ class scrollableTable(customtkinter.CTkFrame):
             row = self.tableDataBodyWidgets[i]
             deleteButton = row[len(self.tableDataBodyWidgets[0]) - 1]
             deleteButton.configure(command=lambda i=i: self.onRemove(i))
-
 
     def fill(self, tableBody):
         self.updateEvents()
@@ -343,7 +341,7 @@ class scrollableTable(customtkinter.CTkFrame):
             command=self.appendEmptyRowOnTop,
             corner_radius=0,
             fg_color="#343638",
-            state=self.currentState
+            state=self.currentState,
         )
         self.createButton.place(
             x=startX - 5,
@@ -366,7 +364,8 @@ class scrollableTable(customtkinter.CTkFrame):
     def setState(self, _state):
 
         self.currentState = _state
-        try: self.createButton.configure(state=_state)
+        try:
+            self.createButton.configure(state=_state)
         except:
             x = 0
         try:
@@ -374,7 +373,8 @@ class scrollableTable(customtkinter.CTkFrame):
                 for widget in range(len(widgetRow)):
                     widgetRow[widget].configure(state=_state)
         except:
-            print("Error on set state")
+            # Error
+            x = 0
 
     # Sender erwähnt,default fase, ob diese Funktion direkt vom user aufgerufen wird (über button klick) oder ob die funktion von einer for schleife oder sowas aufgerufen wurde
     def onRemove(self, rowNumber, fromAutoScript=False):

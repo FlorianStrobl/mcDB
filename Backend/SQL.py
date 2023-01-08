@@ -80,14 +80,14 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
             tmpData = GTD.generateWoods(nr, cursor)
             if tmpData is None:
                 Logger.Logger.error(
-                   "While generating Wood. Maybe the table 'Block' is empty"
+                    "While generating Wood. Maybe the table 'Block' is empty"
                 )
                 return None
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr, cursor)
             if tmpData is None:
                 Logger.Logger.error(
-                   "While generating Dirt. Maybe the table 'Block' is empty"
+                    "While generating Dirt. Maybe the table 'Block' is empty"
                 )
                 return None
         elif table == "plays":
@@ -143,7 +143,7 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
         "Dirt": "INSERT INTO Dirt (absolute_position, hasGrass) VALUES (?, ?)",
         "plays": "INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES (?, ?, ?, ?, ?)",
         "populatedBy": "INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES (?, ?)",
-        "buildOf":"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES (?, ?)",
+        "buildOf": "INSERT INTO buildOf (absolute_position, serverworld_id) VALUES (?, ?)",
     }
 
     try:
@@ -175,15 +175,11 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
 
 # sqlite3: SELECT
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
-def selectTable(
-    cursor, tableName: str, columnNames: str = "*"
-) -> Optional[list[list]]:
+def selectTable(cursor, tableName: str, columnNames: str = "*") -> Optional[list[list]]:
     try:
         return [
             list(v)
-            for v in cursor.execute(
-                f"SELECT {columnNames} FROM {tableName}"
-            ).fetchall()
+            for v in cursor.execute(f"SELECT {columnNames} FROM {tableName}").fetchall()
         ]
     except:
         Logger.Logger.error(

@@ -1,17 +1,16 @@
 import sqlite3
 import random
 import addImport
-from Logger import *
 import SQL
 from TmpData import *
-from InputStrToMapFilterSort import *
 from GUI.main import loadGUI
-#comment
+
+# comment
 cursor: sqlite3.Connection.cursor = sqlite3.connect("minecraftDatabase.db").cursor()
 
-#SQL.dropAllTables(cursor)  # do not reset the current db at the start
+# SQL.dropAllTables(cursor)  # do not reset the current db at the start
 SQL.createAllTables(cursor)  # create all tables if not exist
-#SQL.fillAllTablesRand(cursor, 10)  # do not fill random data into the tables
+# SQL.fillAllTablesRand(cursor, 10)  # do not fill random data into the tables
 
 # DEBUG Code
 _tmp = TMP()

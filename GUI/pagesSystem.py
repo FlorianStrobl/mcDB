@@ -149,7 +149,7 @@ class PageSystem:
         self.table.setState(self.tableState)
 
     def setTableState(self, _state):
-        if(_state == self.tableState):
+        if _state == self.tableState:
             return
 
         self.tableState = _state
@@ -168,7 +168,6 @@ class PageSystem:
             self.navigatorIndicator.configure("1" + "/" + "1")
 
             return
-
 
         try:
             self.table.fill(dArray[self.currentPage])
@@ -231,6 +230,5 @@ class PageSystem:
         self.navigatorIndicator.configure(
             text=str(self.currentPage + 1) + "/" + str(len(dArray))
         )
-
 
         self.setTableState(tableStateBefore)
