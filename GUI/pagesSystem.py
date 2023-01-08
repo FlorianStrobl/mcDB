@@ -156,6 +156,7 @@ class PageSystem:
         self.table.setState(_state)
 
     def changeTableBody(self, tableBody):
+        self.table.setState(customtkinter.NORMAL)
         self.currentPage = 0
         self.tableBody = tableBody
         self.givenArray = copy.copy(tableBody)
