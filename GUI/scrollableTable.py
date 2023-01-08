@@ -88,7 +88,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.app = app
         self.colors = ["#343638", "#2d2f31"]
         self.actionColumnWidth = 25
-
+        self.currentState = customtkinter.DISABLED
         self.createButton = None
 
         self.numberCreatedRows = 0
@@ -117,6 +117,8 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # Event Listener: 0:Delete  1: Add
         self.eventListenerFunctions = [[], []]
+
+
 
     def calculateStepsFromStart(self, row):
         # Berechnet wie die Rows ID's sein sollen relativ zu den vom Anfang also "row" hier im parameter(für den delete Event)
@@ -162,6 +164,8 @@ class scrollableTable(customtkinter.CTkFrame):
             self.eventListenerFunctions[1].append(function)
 
     def textFill(self, tableBody):
+        tableBody = tableBody.copy()
+        print(tableBody)
         # "-1" wegen den Mülleimer object
 
         if self.tableDataBodyWidgets == []:
@@ -171,6 +175,7 @@ class scrollableTable(customtkinter.CTkFrame):
             tableBody[0]
         ):
             return "none"
+
 
         # -1 because there is always a müllemer
         rowsLengthOld = len(self.tableDataBodyWidgets)
@@ -191,19 +196,25 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # Einsetzen aller Texte von TABLEBODY in die Tabelle
 
+        print(tableBody)
         for widgetsRowCounter in range(len(self.tableDataBodyWidgets)):
             widgetsRow = self.tableDataBodyWidgets[widgetsRowCounter]
             # -1 Because we want to ignore the Mülleimer
             for widgetCounter in range(len(widgetsRow) - 1):
                 inputField = widgetsRow[widgetCounter]
                 inputField.delete(0, customtkinter.END)
+                print(tableBody[widgetsRowCounter][widgetCounter])
                 inputField.insert(
                     0,
                     tableBody[widgetsRowCounter][widgetCounter]
                     if tableBody[widgetsRowCounter][widgetCounter] != None
                     else "null",
                 )
+
+        self.updateEvents()
         return "succes"
+
+
 
     def updateEvents(self):
         self.steps = []
@@ -277,8 +288,8 @@ class scrollableTable(customtkinter.CTkFrame):
 
             self.colorIndex += 1
             self.tableDataBodyWidgets.append(rowWidgets)
-
             self.tableData[1] = tableBody
+            self.updateEvents()
 
     def setTableHeader(self, arr):
         # Ein bisschen gehardcoded damit die headers bei ner bestimmten tabelle kleiner werden
@@ -332,6 +343,7 @@ class scrollableTable(customtkinter.CTkFrame):
             command=self.appendEmptyRowOnTop,
             corner_radius=0,
             fg_color="#343638",
+            state=self.currentState
         )
         self.createButton.place(
             x=startX - 5,
@@ -352,6 +364,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.tableData[0] = arr
 
     def setState(self, _state):
+        self.currentState = _state
         self.createButton.configure(state=_state)
         for widgetRow in self.tableDataBodyWidgets:
             for widget in range(len(widgetRow)):

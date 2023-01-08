@@ -118,18 +118,29 @@ def previewFunc(delay=500, count=0):
     global checkbox
     global lastCheckBoxMode
 
-    # check if the preview mode is even on
+    query = searchEntry.get().strip()
+    mode = segemented_button_var.get()
+
+    # check if the preview mode is on
     if not checkbox.get():
+        # The preview mode is off
         # Recall this function to check if preview modes changed
         tk.after(delay, lambda: previewFunc(delay, count + 1))
 
-        # When checkbox is off
-        if lastCheckBoxMode != checkbox.get():
 
+        if lastCheckBoxMode != checkbox.get():
+            # Preview Mode was toggled from on to off
+            # When not in preview mode you can edit the data
+            pageSystem.setTableState(customtkinter.NORMAL)
             # tmp.setData(pageSystem.getInput())
 
             updateUI(tmp)
+        elif(query != ""):
+            # The preview is off BUT the user has written something
 
+            pageSystem.setTableState(customtkinter.DISABLED)
+        elif(query == ""):
+            pageSystem.setTableState(customtkinter.NORMAL)
         lastCheckBoxMode = checkbox.get()
         return
     else:
@@ -138,11 +149,16 @@ def previewFunc(delay=500, count=0):
             # preview mode was just toggeld
             # from off to on
             # so save UI data to TMP
-            tmp.setData(pageSystem.getInput())
+            tmp.setData(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+            #print()
+            updateUI(tmp)
+            #print(castColumns2(currentTableName, tmp.columnNames, pageSystem.getInput().copy()))
+        pageSystem.setTableState(customtkinter.DISABLED)
+
         lastCheckBoxMode = checkbox.get()
 
-    query = searchEntry.get()
-    mode = segemented_button_var.get()
+
+
 
     # DIE NÄCHSTEN 3 ABSCHNITTE GEHEN NUR WENN
 
@@ -162,7 +178,7 @@ def previewFunc(delay=500, count=0):
 
     # Wenn plötzlich letztlich alles gelöscht wird (z.B mit strg a delete ) dann wird der UP  geupdaded
     if lastQuery.strip() != "" and query.strip() == "":
-        pageSystem.setTableState(customtkinter.NORMAL)
+        pageSystem.setTableState(customtkinter.DISABLED)
         updateUI(tmp)
         showActivated = False
         # tableUpdadedBefore = True
@@ -175,21 +191,23 @@ def previewFunc(delay=500, count=0):
 
         # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
         pageSystem.setTableState(customtkinter.DISABLED)
-        if currentShowVar is None:
-            # - Table resetten
-            pageSystem.setTableState(customtkinter.NORMAL)
-            updateUI(tmp)
-            pageSystem.setTableState(customtkinter.DISABLED)
-        # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
-        else:
-            # - "val" anzeigen
-            pageSystem.setTableState(customtkinter.NORMAL)
-            updateUI(currentShowVar.deepCpy())
-            # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
-            pageSystem.setTableState(customtkinter.DISABLED)
+        if(lastQuery != query):
+            #Only update UI when user field was changed
+            if currentShowVar is None:
+                # - Table resetten
+                updateUI(tmp)
+                #Mach das nur einmal
+            # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
+            else:
+                # - "val" anzeigen
+                updateUI(currentShowVar.deepCpy())
+                #Mach das nur einmal
+                # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
 
     # Wenn auf save geklickt wird:
     # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
+
+    #print(pageSystem.getInput())
 
     lastQuery = query
     tk.after(delay, lambda: previewFunc(delay, count + 1))
@@ -197,7 +215,9 @@ def previewFunc(delay=500, count=0):
 
 def updateUI(data):
     data = data.deepCpy()
+
     pageSystem.changeTableBody(data.deepCpyData())
+    #print(data.deepCpyData())
     table.setTableHeader(data.columnNames)
 
 
@@ -228,7 +248,6 @@ def onGuiReady2(
 
     setButtonSelected = _setButtonSelected
 
-    Logger.Logger.log("")
 
     onTableButtonClick("Serverworld")
 
@@ -254,13 +273,16 @@ def onTableButtonClick(tableName):
     )
     columnNames = list(map(lambda x: x[0], cursor.description))
 
-    pageSystem.changeTableBody(tmp.getData())
+    #print(tmp.getData())
+    pageSystem.changeTableBody(tmp.getData().copy())
     table.setTableHeader(columnNames)
 
     currentTableName = tableName
     # pageSystem.changeTableBody([[i,"j","l","l","l"] for i in range(100)])
 
     setButtonSelected(tableName)
+
+
 
 
 def onOkButtonClick():
