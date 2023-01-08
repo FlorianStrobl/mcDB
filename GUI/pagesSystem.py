@@ -149,6 +149,9 @@ class PageSystem:
         self.table.setState(self.tableState)
 
     def setTableState(self, _state):
+        if(_state == self.tableState):
+            return
+
         self.tableState = _state
         self.table.setState(_state)
 
@@ -165,16 +168,19 @@ class PageSystem:
 
             return
 
+
         try:
             self.table.fill(dArray[self.currentPage])
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
             )
         except:
+            print("except case")
             self.table.fill(self.givenArray)
             self.navigatorIndicator.configure(
                 text=str(self.currentPage + 1) + "/" + str(len(dArray))
             )
+        self.table.setState(self.tableState)
 
     def onUIReady(self):
         dArray = self.convertToPages2dArray(self.givenArray)
@@ -214,9 +220,15 @@ class PageSystem:
                 Logger.Logger.warn("Du kannst nicht weiter nach vorne!")
             else:
                 self.currentPage += 1
+
+        #print(self.convertToPages2dArray(self.givenArray)[self.currentPage])
+        #print(self.convertToPages2dArray(self.givenArray)[self.currentPage])
         self.table.textFill(
             self.convertToPages2dArray(self.givenArray)[self.currentPage]
         )
+
+
+        print(self.currentPage)
         self.navigatorIndicator.configure(
             text=str(self.currentPage + 1) + "/" + str(len(dArray))
         )

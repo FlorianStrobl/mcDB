@@ -270,10 +270,7 @@ def loadGUI():
     )
     navigatorNavRightEnd.place(x=110, y=2, width=23, height=25)
 
-    setLogLabel(
-        "Warning: Hola que pasa das ist der log (noch nicht mit logger verbunden)",
-        "orange",
-    )
+    setLogLabel("","grey")
 
     pageSystem.onUIReady()
     onGuiReady2(
