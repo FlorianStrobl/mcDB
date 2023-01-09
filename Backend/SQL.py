@@ -80,14 +80,14 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
             tmpData = GTD.generateWoods(nr, cursor)
             if tmpData is None:
                 Logger.Logger.error(
-                   "While generating Wood. Maybe the table 'Block' is empty"
+                    "While generating Wood. Maybe the table 'Block' is empty"
                 )
                 return None
         elif table == "Dirt":
             tmpData = GTD.generateDirt(nr, cursor)
             if tmpData is None:
                 Logger.Logger.error(
-                   "While generating Dirt. Maybe the table 'Block' is empty"
+                    "While generating Dirt. Maybe the table 'Block' is empty"
                 )
                 return None
         elif table == "plays":
@@ -117,22 +117,12 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 
 
 # sqlite3: INSERT INTO values for a certain table
-# returns True if successful, None if not
+# returns True if successful, False if not
 def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
-    BULK_INSERT_LIMIT = 5000
+    BULK_INSERT_LIMIT = 5000 # switch between inserting data one by one and doing a bulk insert
 
-    tmpData = list(tmpData)
-    _data = None  # data for potential error messag
-    # fix strings with " or ' in them
-    for i, v in enumerate(tmpData):
-        if type(tmpData[i]) == type((1, "some tuple")):
-            tmpData[i] = list(tmpData[i])  # fix tuples
-        for ii, vv in enumerate(v):
-            MAX_INT = 9007199254740991
-            if type(vv) == type(""):  # if its a string
-                # fix ' and " in strings
-                tmpData[i][ii] = tmpData[i][ii].replace("'", "`", MAX_INT)
-                tmpData[i][ii] = tmpData[i][ii].replace('"', "`", MAX_INT)
+    tmpData = list(tmpData) # make sure it is an actual list and not a tuple
+    _data = None  # data which could not be saved for potential error message
 
     tableSQLInsert = {
         "Serverworld": "INSERT INTO Serverworld (serverworld_id, name, icon) VALUES (?, ?, ?)",
@@ -143,7 +133,7 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
         "Dirt": "INSERT INTO Dirt (absolute_position, hasGrass) VALUES (?, ?)",
         "plays": "INSERT INTO plays (player_id, serverworld_id, session_begin, player_position, role) VALUES (?, ?, ?, ?, ?)",
         "populatedBy": "INSERT INTO populatedBy (m_entities_id, serverworld_id) VALUES (?, ?)",
-        "buildOf":"INSERT INTO buildOf (absolute_position, serverworld_id) VALUES (?, ?)",
+        "buildOf": "INSERT INTO buildOf (absolute_position, serverworld_id) VALUES (?, ?)",
     }
 
     try:
@@ -155,7 +145,7 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
         if len(tmpData) < BULK_INSERT_LIMIT:
             # single insert for better error messages
             for data in tmpData:
-                _data = data
+                _data = data # set _data for later use
                 cursor.execute(tableSQLInsert[table], data)
         else:
             # bulk insert for better performance:
@@ -175,15 +165,11 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
 
 # sqlite3: SELECT
 # e.g. selectTable(cursor, "Wood", "absolute_position", "isOnFire==1")
-def selectTable(
-    cursor, tableName: str, columnNames: str = "*"
-) -> Optional[list[list]]:
+def selectTable(cursor, tableName: str, columnNames: str = "*") -> Optional[list[list]]:
     try:
         return [
             list(v)
-            for v in cursor.execute(
-                f"SELECT {columnNames} FROM {tableName}"
-            ).fetchall()
+            for v in cursor.execute(f"SELECT {columnNames} FROM {tableName}").fetchall()
         ]
     except:
         Logger.Logger.error(

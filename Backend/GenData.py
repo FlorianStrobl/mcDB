@@ -14,11 +14,11 @@ def searchForFirstDoublePair(arr1: list, arr2: list) -> int:
     arr = list(zip(arr1, arr2))  # combine the two lists into a list of tuples
     theSet = set([])
     for i in range(len(arr)):
-      oldLen = len(theSet)
-      theSet.add(arr[i])
-      # keep adding the next element to the set and check if it got replaced
-      if oldLen + 1 != len(theSet):
-        return i
+        oldLen = len(theSet)
+        theSet.add(arr[i])
+        # keep adding the next element to the set and check if it got replaced
+        if oldLen + 1 != len(theSet):
+            return i
     return -1
 
 
@@ -258,14 +258,18 @@ class GenerateTableData:
         # fix double pairs for unique constraint
         tries = 0  # only try it up to 50% of the ids
         # cannot be None since it was already checked
-        cache = getRealServerworldIds(cursor, n) # instead of getting all the ids over and over, cache them and use them
+        cache = getRealServerworldIds(
+            cursor, n
+        )  # instead of getting all the ids over and over, cache them and use them
         idx = searchForFirstDoublePair(player_ids, serverworld_ids)
         # only try it while there are collisions and up to once all of the n times
         while idx != -1 and tries < n:
             # replace the serverworld_id at idx with a new one
             serverworld_ids[idx] = random.choice(cache)
 
-            idx = searchForFirstDoublePair(player_ids, serverworld_ids) # search for new collision
+            idx = searchForFirstDoublePair(
+                player_ids, serverworld_ids
+            )  # search for new collision
 
         # idx is still set from the very last while loop iteration
         if idx != -1:
@@ -313,18 +317,19 @@ class GenerateTableData:
 
         # fix double pairs for unique constraint
         tries = 0  # only try it up to 50% of the ids
-        cache = getRealServerworldIds(cursor, n) # instead of getting all the ids over and over, cache them and use them
+        cache = getRealServerworldIds(
+            cursor, n
+        )  # instead of getting all the ids over and over, cache them and use them
         # cannot be None since it was already checked
         idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids)
         # only try it while there are collisions and up to once all of the n times
-        while (
-            idx != -1
-            and tries < n
-        ):
+        while idx != -1 and tries < n:
             # replace the serverworld_id at idx with a new one
             serverworld_ids[idx] = random.choice(cache)
 
-            idx = searchForFirstDoublePair(m_entities_ids, serverworld_ids) # search for new collision
+            idx = searchForFirstDoublePair(
+                m_entities_ids, serverworld_ids
+            )  # search for new collision
 
         # idx is still set from the very last while loop iteration
         if idx != -1:
@@ -361,17 +366,18 @@ class GenerateTableData:
         # fix double pairs for unique constraint
         tries = 0  # only try it up to 50% of the ids
         # cannot be None since it was already checked
-        cache = getRealServerworldIds(cursor, n) # instead of getting all the ids over and over, cache them and use them
+        cache = getRealServerworldIds(
+            cursor, n
+        )  # instead of getting all the ids over and over, cache them and use them
         idx = searchForFirstDoublePair(absolute_positions, serverworld_ids)
         # only try it while there are collisions and up to once all of the n times
-        while (
-            idx != -1
-            and tries < n
-        ):
+        while idx != -1 and tries < n:
             # replace the serverworld_id at idx with a new one
             serverworld_ids[idx] = random.choice(cache)
 
-            idx = searchForFirstDoublePair(absolute_positions, serverworld_ids) # search for new collision
+            idx = searchForFirstDoublePair(
+                absolute_positions, serverworld_ids
+            )  # search for new collision
 
         if idx != -1:
             Logger.Logger.error(

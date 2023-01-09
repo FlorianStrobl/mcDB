@@ -84,7 +84,8 @@ tablesWeak: dict[str, str] = {
       FOREIGN KEY(absolute_position) REFERENCES Block(absolute_position)
         on UPDATE cascade
         on DELETE cascade
-    );""",
+    );
+    """,
 }
 
 # plays, populatedBy, buildOf
@@ -111,7 +112,8 @@ tableRelations: dict[str, str] = {
       FOREIGN KEY(serverworld_id) REFERENCES Serverworld(serverworld_id)
       on UPDATE cascade
       on DELETE cascade
-    );""",
+    );
+    """,
     "populatedBy": """
     CREATE TABLE IF NOT EXISTS populatedBy (
       m_entities_id bigint NOT NULL
@@ -128,7 +130,8 @@ tableRelations: dict[str, str] = {
       FOREIGN KEY(serverworld_id) REFERENCES Serverworld(serverworld_id)
       on UPDATE cascade
       on DELETE cascade
-    );""",
+    );
+    """,
     "buildOf": """
     CREATE TABLE IF NOT EXISTS buildOf (
       absolute_position TEXT NOT NULL
@@ -145,5 +148,6 @@ tableRelations: dict[str, str] = {
       FOREIGN KEY(serverworld_id) REFERENCES Serverworld(serverworld_id)
       on UPDATE cascade
       on DELETE cascade
-    );""",
+    );
+    """,
 }
