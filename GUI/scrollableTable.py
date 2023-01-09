@@ -234,10 +234,11 @@ class scrollableTable(customtkinter.CTkFrame):
                 inputField = widgetsRow[widgetCounter]
                 # Editieren des Input Fields
                 inputField.delete(0, customtkinter.END)
+                #print(tableBody[widgetsRowCounter][widgetCounter], type(tableBody[widgetsRowCounter][widgetCounter]))
                 inputField.insert(
                     0,
                     tableBody[widgetsRowCounter][widgetCounter]
-                    if tableBody[widgetsRowCounter][widgetCounter] != None
+                    if tableBody[widgetsRowCounter][widgetCounter] is not None
                     else "null",
                 )
 
@@ -295,7 +296,7 @@ class scrollableTable(customtkinter.CTkFrame):
         numberRows = len(tableBody)
         for row in range(numberRows):
             rowWidgets = []
-            if tableBody[row] == None:
+            if tableBody[row] is None:
                 continue
             for col in range(numberColumns + 1):
                 if col < numberColumns:
@@ -313,7 +314,7 @@ class scrollableTable(customtkinter.CTkFrame):
                         myEntry.insert(
                             0,
                             tableBody[row][col]
-                            if tableBody[row][col] != None
+                            if tableBody[row][col] is not None
                             else "null",
                         )
                     except:
@@ -356,7 +357,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.tableDataHeaderWidgets = []
 
         acL = self.actionColumnWidth
-        if fillstart != None and fillstartLength != None:
+        if fillstart is not None and fillstartLength is not None:
             myLabel = customtkinter.CTkLabel(
                 master=self.app,
                 text="",
