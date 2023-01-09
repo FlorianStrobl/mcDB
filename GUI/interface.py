@@ -175,6 +175,17 @@ def previewFunc(delay=500, count=0):
             "Der Preview modus funktionniert nicht mit SQL Eingaben.\nWenn der OK Button gedrückt wird, wird der save-Button automatisch mitgedrückt"
         )
 
+    if userQuery != "" and lastQuery == "":
+        # the user just wrote something in the query field
+        # so make sure that all the change by bin-button and co are saved in tmp
+        tmp.setData(
+            castColumns(
+                currentColumnNames, pageSystem.getInput().copy()
+            ),
+            currentColumnNames,
+        )
+        updateUI(tmp)
+
     if not previewMode:
         # the preview mode is disabled
 
@@ -327,19 +338,20 @@ def onOkButtonClick():
         return
 
     if segemented_button_var.get() == "sql":
-        # TODO
-        tmp.setData(
-            castColumns(
-                currentColumnNames, pageSystem.getInput().copy()
-            ),
-            currentColumnNames,
-        )
-        # Das SQL nicht auf tmp läuft, muss erst die DB geupdated werden
-        updateDataInDB(cursor, tmp)
-        sqlQuery = searchEntry.get().strip()
-        # Logger.Logger.log(
-        #     "SQL Querys will be applied immediately. This means that you can not undo them if they change something in the database."
+        # TODO what if the user query was invalid, then we tried to save something without it even beging valid
+        # TODO no need to save since if something was written in the search entry, it had to be saved before that since all the buttons are disabled else
+        # tmp.setData(
+        #     castColumns(
+        #         currentColumnNames, pageSystem.getInput().copy()
+        #     ),
+        #     currentColumnNames,
         # )
+        # Da SQL nicht auf tmp läuft, muss erst die DB geupdated werden
+        print("need to update the DB now")
+        # TODO error, what if this is the second select * from other table, then the tables will be wrong anyways
+        # TODO hacky, it just does not show if an error happens and recovers from it
+        updateDataInDB(cursor, tmp, False)
+        sqlQuery = searchEntry.get().strip()
         try:
             cursor.execute(sqlQuery)
             cursor.connection.commit()
@@ -399,6 +411,7 @@ def onTableSave(table):
 
     if not showActivated:
         # Preview mode is off
+        # TODO
         x = castColumns(tmp.columnNames, pageSystem.getInput())
         if x != None:
             tmp.setData(x, currentColumnNames)

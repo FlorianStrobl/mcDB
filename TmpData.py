@@ -321,7 +321,7 @@ class TMP:
 
 
 # SQLite3: TMP -> Table
-def updateDataInDB(cursor, data: TMP) -> Union[None, False]:
+def updateDataInDB(cursor, data: TMP, showError: bool = True) -> bool:
     def reorderArr(array: list, orderArray: list) -> list:
         array = array[:]
         newArray = [None for x in orderArray]
@@ -330,20 +330,23 @@ def updateDataInDB(cursor, data: TMP) -> Union[None, False]:
         return newArray
 
     if data.tableName is None:
-        Logger.Logger.error("No table name provided to save data to database")
-        return  # no table for data to save
+        if showError:
+            Logger.Logger.error("No table name provided to save data to database")
+        return False # no table for data to save
 
     if data.columnNames is None:
-        Logger.Logger.error(
+        if showError:
+            Logger.Logger.error(
             f"No column names provided to save table {data.tableName} to database"
         )
-        return
+        return False
 
     if data.data is None:
-        Logger.Logger.error(
+        if showError:
+            Logger.Logger.error(
             f"No data provided to save table {data.tableName} to database"
         )
-        return
+        return False
 
     # check if column names are like the original ones
     originalColumns = SQL.selectTableColumns(cursor, data.tableName)
@@ -354,14 +357,16 @@ def updateDataInDB(cursor, data: TMP) -> Union[None, False]:
 
     # check if they have the same length
     if len(data.columnNames) != len(originalColumns):
-        Logger.Logger.error(errStr, data.columnNames, originalColumns)
-        return
+        if showError:
+            Logger.Logger.error(errStr, data.columnNames, originalColumns)
+        return False
 
     # check if they have the same exact values
     for c in originalColumns:
         if not c in data.columnNames:
-            Logger.Logger.error(errStr, data.columnNames, originalColumns)
-            return
+            if showError:
+                Logger.Logger.error(errStr, data.columnNames, originalColumns)
+            return False
 
     # check if the data is in the same order as the columns
     if data.columnNames != originalColumns:
@@ -390,4 +395,4 @@ def updateDataInDB(cursor, data: TMP) -> Union[None, False]:
         SQL.createAllTables(cursor)
         SQL.insertIntoTable(cursor, data.tableName, backupOldData)
         return False
-    return
+    return True
