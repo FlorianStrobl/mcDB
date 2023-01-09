@@ -53,7 +53,6 @@ class PageSystem:
         # Was ist das Ziel?
         # Das Ziel ist hier, den Datensatz der hinzugefügt wurde richtig in dem ""givenArray" zu kopieren
 
-
         if len(self.givenArray) == 0:
             self.__init__(
                 self.table,
@@ -83,7 +82,6 @@ class PageSystem:
             # Insert the new Table Input Array
             # self.givenArray.insert(pageStart-1, abschnitt)
             self.givenArray = insert_position(pageStart, self.givenArray, abschnitt)
-
 
             self.table.textFill(self.givenArray[pageStart:pageEnd])
 
@@ -160,7 +158,7 @@ class PageSystem:
         self.tableState = _state
         self.table.setState(_state)
 
-    #Ändert den Inhalt des tableAnzeige
+    # Ändert den Inhalt des tableAnzeige
     def changeTableBody(self, tableBody):
         for i in range(len(tableBody)):
             for y in range(len(tableBody[i])):
@@ -173,7 +171,6 @@ class PageSystem:
         # Leider kann man nicht mit eine table interagieren, wenn der tableState auf DISABLED ist
         # --> Deswegen muss man diesen hier sicherheitshalber aktualisieren
         self.table.setState(customtkinter.NORMAL)
-
 
         self.currentPage = 0
         self.tableBody = tableBody

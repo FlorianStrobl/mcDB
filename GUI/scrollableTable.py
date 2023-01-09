@@ -6,7 +6,6 @@ import platform
 # kommt von diesem Code: https://gist.github.com/mp035/9f2027c3ef9172264532fcd6262f3b01
 # Ein ScrollFrame ist einfach WIE ein Frame, außer dass man scrollen wenn dieser zu voll ist
 class ScrollFrame(customtkinter.CTkFrame):
-
     def __init__(self, parent):
 
         # Ctk Frame in self erstellen
@@ -30,7 +29,6 @@ class ScrollFrame(customtkinter.CTkFrame):
         self.canvas_window = self.canvas.create_window(
             (4, 4), window=self.viewPort, anchor="nw", tags="self.viewPort"
         )
-
 
         # Andere events setzen
         self.viewPort.bind("<Configure>", self.onFrameConfigure)
@@ -117,7 +115,7 @@ class scrollableTable(customtkinter.CTkFrame):
         self.widthFrame = pos[2]
         self.heightFrame = pos[3]
 
-        #Speichert die Daten die in der Tabelle gespeichert sind in diesem Format [tableTitle, tableHeader, tableBody]
+        # Speichert die Daten die in der Tabelle gespeichert sind in diesem Format [tableTitle, tableHeader, tableBody]
         self.tableData = tableData
 
         # inkl. Mülleimer
@@ -142,7 +140,7 @@ class scrollableTable(customtkinter.CTkFrame):
 
         # Event Listener: 0:Delete  1: Add
 
-        #Speichern der EventListener: wird untern bei der eventLister funktion erklärt
+        # Speichern der EventListener: wird untern bei der eventLister funktion erklärt
         self.eventListenerFunctions = [[], []]
 
     # Aktualisiert die Table: die gespeicherten Columsn names und datensätze (im tableData Array) werden visual aktualisiert
@@ -212,7 +210,6 @@ class scrollableTable(customtkinter.CTkFrame):
         rowsLengthOld = len(self.tableDataBodyWidgets)
         rowsLength = len(tableBody)
 
-
         # Ausrechnen der Differenz um zu wissen ob datensätze hinzugefügt / deleted werden müssen
         rowsDifference = (rowsLengthOld - rowsLength) * -1
         if rowsDifference > 0:
@@ -234,7 +231,6 @@ class scrollableTable(customtkinter.CTkFrame):
                 inputField = widgetsRow[widgetCounter]
                 # Editieren des Input Fields
                 inputField.delete(0, customtkinter.END)
-                #print(tableBody[widgetsRowCounter][widgetCounter], type(tableBody[widgetsRowCounter][widgetCounter]))
                 inputField.insert(
                     0,
                     tableBody[widgetsRowCounter][widgetCounter]
@@ -268,7 +264,7 @@ class scrollableTable(customtkinter.CTkFrame):
     # Und wenn dort "tableBody" weniger/mehr visuelle Datensätze hat als die die von die vorherig erstelle Tabelle hat,
     # werden dann so auch welche dementsprechend welche gelöscht, hinzugefüht
     # SONST WENN es nicht die gleiche Anzahl an columns wie in der vorherigen Tabelle gibt:
-        # Dann werden alle widgets geclear und mit der richtigen columns anzehal neu gesetzt
+    # Dann werden alle widgets geclear und mit der richtigen columns anzehal neu gesetzt
     def fill(self, tableBody):
         self.updateEvents()
 
@@ -286,7 +282,6 @@ class scrollableTable(customtkinter.CTkFrame):
         # Wenn textFill erfolgreich ist, dann kann returnt werden da alles schon ge"textfilled" ist
         if self.textFill(tableBody) == "succes":
             return
-
 
         self.clearTableDataBodyWidgets()
         # Wichtig damit, wenn man die table breiter macht dass es auch bei den rows widgets angepasst wird
@@ -337,7 +332,7 @@ class scrollableTable(customtkinter.CTkFrame):
             self.tableData[1] = tableBody
             self.updateEvents()
 
-    #Ändert die visuellen columsn beschrifften auf "array"
+    # Ändert die visuellen columsn beschrifften auf "array"
     def setTableHeader(self, arr):
         # Ein bisschen gehardcoded damit die headers bei ner bestimmten tabelle kleiner werden
         isTheTablePlays = arr[0] == "player_id" and arr[len(arr) - 1] == "role"
@@ -454,11 +449,11 @@ class scrollableTable(customtkinter.CTkFrame):
             result.append(subresult)
         return result
 
-   # Fügt eine Leer zeile in der datenbase oben hinzu
+    # Fügt eine Leer zeile in der datenbase oben hinzu
     def appendEmptyRowOnTop(self, fromAutoScript=False):
         numberColumns = len(self.tableData[0])
 
-        #Alle widgets auf der grid um eins nach unten verschieben um platz für die topRow zu erstellen
+        # Alle widgets auf der grid um eins nach unten verschieben um platz für die topRow zu erstellen
         def moveAllRowsHorizontalyDownOne():
             for y in range(len(self.tableDataBodyWidgets)):
                 widgetRow = self.tableDataBodyWidgets[y]

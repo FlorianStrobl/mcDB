@@ -71,12 +71,9 @@ def castColumns(columnNames, newDataThatNeedsToBeCasted):
             try:
                 if columnNames[j] in typesOfColumns:
                     caster = typesOfColumns[columnNames[j]]
-                # if newDataThatNeedsToBeCasted[i][j].strip().lower() == "null":
-                # print("got a UI none", columnNames[j])
                 if newDataThatNeedsToBeCasted[i][j] == "null" and (
                     columnNames[j] == "icon"
                 ):
-                    # print("and correct column!")
                     newDataThatNeedsToBeCasted[i][j] = None
                 else:
                     if caster is not None:
@@ -179,9 +176,7 @@ def previewFunc(delay=500, count=0):
         # the user just wrote something in the query field
         # so make sure that all the change by bin-button and co are saved in tmp
         tmp.setData(
-            castColumns(
-                currentColumnNames, pageSystem.getInput().copy()
-            ),
+            castColumns(currentColumnNames, pageSystem.getInput().copy()),
             currentColumnNames,
         )
         updateUI(tmp)
@@ -221,9 +216,7 @@ def previewFunc(delay=500, count=0):
             # save the UI to tmp because of
             # bin button, add button etc
             tmp.setData(
-                castColumns(
-                    currentColumnNames, pageSystem.getInput().copy()
-                ),
+                castColumns(currentColumnNames, pageSystem.getInput().copy()),
                 currentColumnNames,
             )
 
@@ -338,17 +331,7 @@ def onOkButtonClick():
         return
 
     if segemented_button_var.get() == "sql":
-        # TODO what if the user query was invalid, then we tried to save something without it even beging valid
-        # TODO no need to save since if something was written in the search entry, it had to be saved before that since all the buttons are disabled else
-        # tmp.setData(
-        #     castColumns(
-        #         currentColumnNames, pageSystem.getInput().copy()
-        #     ),
-        #     currentColumnNames,
-        # )
         # Da SQL nicht auf tmp läuft, muss erst die DB geupdated werden
-        print("need to update the DB now")
-        # TODO error, what if this is the second select * from other table, then the tables will be wrong anyways
         # TODO hacky, it just does not show if an error happens and recovers from it
         updateDataInDB(cursor, tmp, False)
         sqlQuery = searchEntry.get().strip()
@@ -406,7 +389,7 @@ def onTableSave(table):
     # wenn
 
     # when the preview mode is not activated
-    if query != "" or checkbox.get():
+    if query != "" and checkbox.get():
         Logger.Logger.warn("You are saving without the preview applied")
 
     if not showActivated:

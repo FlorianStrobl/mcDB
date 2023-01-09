@@ -30,9 +30,11 @@ currentSelectedButtonId = None
 
 arrow = None
 
+
 def setArrowToPos(heightIndex):
     arrow.place(x=10, y=14 + heightIndex * 35)
     # start 14 difference de 34
+
 
 # Setzet einen bestimmten button auf "selected" (also der button bekommt (als einziger) eine dunkelblaue Farbe )
 # --> Pfeil wird auch auf "button" name verschoben
@@ -53,6 +55,7 @@ def setButtonSelected(buttonName):
     )
 
     setArrowToPos(currentSelectedButtonId)
+
 
 # Erstellt einen Hilfe Popup und erklärt den aktuellen Modus der an ist
 def createHelperPopup():
@@ -105,6 +108,7 @@ def createHelperPopup():
     textbox.configure(state="disabled")
     # label = customtkinter.CTkLabel(window, text=helpMessagesLanguage[mode],font=('Helvetica bold', 15))
     # label.place(relx=0.05, rely=0.25)
+
 
 # Lädt die ganze GUI und erstellt die ganzen Widgets
 def loadGUI():
@@ -297,7 +301,7 @@ def loadGUI():
         master=navigatorFrame,
         text="<",
         fg_color="#343638",
-        command=lambda: pageSystem.onNavigateButtonClick(2)
+        command=lambda: pageSystem.onNavigateButtonClick(2),
     )
     navigatorNavLeft.place(x=25, y=2, width=20, height=25)
     navigatorNavLeftEnd = customtkinter.CTkButton(
@@ -305,7 +309,7 @@ def loadGUI():
         text="<<",
         fg_color="#343638",
         font=("Helvetica", 11),
-        command=lambda: pageSystem.onNavigateButtonClick(1)
+        command=lambda: pageSystem.onNavigateButtonClick(1),
     )
     navigatorNavLeftEnd.place(x=5, y=2, width=23, height=25)
 
@@ -313,7 +317,7 @@ def loadGUI():
         master=navigatorFrame,
         text=">",
         fg_color="#343638",
-        command=lambda: pageSystem.onNavigateButtonClick(3)
+        command=lambda: pageSystem.onNavigateButtonClick(3),
     )
     navigatorNavRight.place(x=90, y=2, width=20, height=25)
     navigatorNavRightEnd = customtkinter.CTkButton(
@@ -321,7 +325,7 @@ def loadGUI():
         text=">>",
         fg_color="#343638",
         font=("Helvetica", 11),
-        command=lambda: pageSystem.onNavigateButtonClick(4)
+        command=lambda: pageSystem.onNavigateButtonClick(4),
     )
     navigatorNavRightEnd.place(x=110, y=2, width=23, height=25)
 

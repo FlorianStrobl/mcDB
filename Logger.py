@@ -1,5 +1,6 @@
 import sys
 import customtkinter
+import re
 
 sys.path.append("./GUI")
 import GUI.main as main
@@ -7,13 +8,19 @@ import GUI.main as main
 # from main import setLogLabel
 
 # Macht nach jeden n ten character im String einen "\n" rein
-def text_zu_mehrehren_Linien(string, n=38):
+def text_zu_mehrere_Linien(string, n=38):
     result = []
     for i in range(len(string)):
         char = string[i]
         result.append(char)
         # Wenn durch index durch n teilbar dann kann da im neuen aerary dies erstett werden
         if (i + 1) % n == 0:
+            if (
+                len(string) > i + 1
+                and re.search("^[A-Za-z]$", char) is not None
+                and re.search("^[A-Za-z]$", string[i + 1]) is not None
+            ):
+                result.append("-")
             result.append("\n")
 
     return "".join(result)
@@ -35,11 +42,12 @@ def updateWindowsEvents():
         button = allWindowsAndLabels[i][1]
         # Ok wird aufgerunfen wenn ok ok geklickt wird
 
-        #lambda i=i muss existieren da sonst das erste i genommen wird (also 0)
+        # lambda i=i muss existieren da sonst das erste i genommen wird (also 0)
         button.configure(command=lambda i=i: onOkClick(i))
-        window =allWindowsAndLabels[i][0]
+        window = allWindowsAndLabels[i][0]
         # ok wird aufgreufen wenn das Fenstergeschlossen wurde
         window.protocol("WM_DELETE_WINDOW", lambda i=i: onOkClick(i))
+
 
 # Wird aufgerufen wenn auf ok geklickt wurde oder wenn auf das Fensterkreuz gheklickt wurde
 def onOkClick(id):
@@ -48,10 +56,11 @@ def onOkClick(id):
     del allWindowsAndLabels[id]
     updateWindowsEvents()
 
+
 # Erstellt mit den message "message" und der farbe "color"
 def createErrorPopup(message, color):
 
-    #calculateAdditionalHigh ist praktisch wenn den Label aus mehr als einer Linie besteht
+    # calculateAdditionalHigh ist praktisch wenn den Label aus mehr als einer Linie besteht
     höheLabel = calculateAdditionalHigh(message)
     global window
 
@@ -68,7 +77,7 @@ def createErrorPopup(message, color):
     allWindowsAndLabels.append((window, button))
     updateWindowsEvents()
 
-# TODO clear message after 5 seconds
+
 class Logger:
 
     # log a message to the console and the GUI
@@ -78,7 +87,7 @@ class Logger:
         print("Log: " + data[0], other)
         x = str(" ".join(map(str, data)))
         # setLogLabel("Log: " + data[0] + str(other), "green")
-        createErrorPopup(text_zu_mehrehren_Linien(x), "gray")
+        createErrorPopup(text_zu_mehrere_Linien(x), "gray")
 
     # log an error to the console and the GUI
     # first parameter must be a str, the rest can be further data of any printable type
@@ -89,7 +98,7 @@ class Logger:
         # setLogLabel("Error: " + data[0] + str(other), "red")
         x = str(" ".join(map(str, data)))
         # setLogLabel("Log: " + data[0] + str(other), "green")
-        createErrorPopup(text_zu_mehrehren_Linien(x), "red")
+        createErrorPopup(text_zu_mehrere_Linien(x), "red")
 
     # log a warning to the console and the GUI
     # first parameter must be a str, the rest can be further data of any printable type
@@ -100,4 +109,4 @@ class Logger:
         # setLogLabel("Warning: " + data[0] + str(other), "orange")
         x = str(" ".join(map(str, data)))
         # setLogLabel("Log: " + data[0] + str(other), "green")15
-        createErrorPopup(text_zu_mehrehren_Linien(x), "orange")
+        createErrorPopup(text_zu_mehrere_Linien(x), "orange")

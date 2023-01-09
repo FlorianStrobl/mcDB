@@ -332,20 +332,20 @@ def updateDataInDB(cursor, data: TMP, showError: bool = True) -> bool:
     if data.tableName is None:
         if showError:
             Logger.Logger.error("No table name provided to save data to database")
-        return False # no table for data to save
+        return False  # no table for data to save
 
     if data.columnNames is None:
         if showError:
             Logger.Logger.error(
-            f"No column names provided to save table {data.tableName} to database"
-        )
+                f"No column names provided to save table {data.tableName} to database"
+            )
         return False
 
     if data.data is None:
         if showError:
             Logger.Logger.error(
-            f"No data provided to save table {data.tableName} to database"
-        )
+                f"No data provided to save table {data.tableName} to database"
+            )
         return False
 
     # check if column names are like the original ones

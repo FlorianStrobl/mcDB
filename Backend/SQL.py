@@ -119,9 +119,11 @@ def fillAllTablesRand(cursor, nr: int = 1) -> None:
 # sqlite3: INSERT INTO values for a certain table
 # returns True if successful, False if not
 def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
-    BULK_INSERT_LIMIT = 5000 # switch between inserting data one by one and doing a bulk insert
+    BULK_INSERT_LIMIT = (
+        5000  # switch between inserting data one by one and doing a bulk insert
+    )
 
-    tmpData = list(tmpData) # make sure it is an actual list and not a tuple
+    tmpData = list(tmpData)  # make sure it is an actual list and not a tuple
     _data = None  # data which could not be saved for potential error message
 
     tableSQLInsert = {
@@ -145,7 +147,7 @@ def insertIntoTable(cursor, table: str, tmpData: list[list]) -> bool:
         if len(tmpData) < BULK_INSERT_LIMIT:
             # single insert for better error messages
             for data in tmpData:
-                _data = data # set _data for later use
+                _data = data  # set _data for later use
                 cursor.execute(tableSQLInsert[table], data)
         else:
             # bulk insert for better performance:
