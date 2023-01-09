@@ -35,6 +35,7 @@ setButtonSelected = None
 
 currentShowVar = None
 
+# preview mode
 showActivated = False
 # originalData has the correct types for each row
 # newDataThatNeedsToBeCasted has ONLY string types
@@ -43,7 +44,7 @@ showActivated = False
 checkbox = None
 
 
-def castColumns(tableName, columnNames, newDataThatNeedsToBeCasted):
+def castColumns(columnNames, newDataThatNeedsToBeCasted):
     typesOfColumns = {
         "serverworld_id": int,
         "name": str,
@@ -51,7 +52,6 @@ def castColumns(tableName, columnNames, newDataThatNeedsToBeCasted):
         "player_id": int,
         "username": str,
         "skin": str,
-        # same with others...
         "m_entities_id": int,
         "entity_position": str,
         "birthday": int,
@@ -71,10 +71,12 @@ def castColumns(tableName, columnNames, newDataThatNeedsToBeCasted):
             try:
                 if columnNames[j] in typesOfColumns:
                     caster = typesOfColumns[columnNames[j]]
-
+                # if newDataThatNeedsToBeCasted[i][j].strip().lower() == "null":
+                # print("got a UI none", columnNames[j])
                 if newDataThatNeedsToBeCasted[i][j] == "null" and (
                     columnNames[j] == "icon"
                 ):
+                    # print("and correct column!")
                     newDataThatNeedsToBeCasted[i][j] = None
                 else:
                     if caster is not None:
@@ -83,8 +85,10 @@ def castColumns(tableName, columnNames, newDataThatNeedsToBeCasted):
                                 newDataThatNeedsToBeCasted[i][j]
                             )
                         except:
-                            print(f"strange stuff '{caster}', '{newDataThatNeedsToBeCasted[i][j]}', '{columnNames}'")
-                            return None # TODO really???
+                            print(
+                                f"strange stuff '{caster}', '{newDataThatNeedsToBeCasted[i][j]}', '{columnNames}'"
+                            )
+                            # return None # TODO really???
                     else:
                         # no casting if the type unknown
                         newDataThatNeedsToBeCasted[i][j] = newDataThatNeedsToBeCasted[
@@ -99,12 +103,11 @@ def castColumns(tableName, columnNames, newDataThatNeedsToBeCasted):
                     type(newDataThatNeedsToBeCasted[i][j]),
                     caster,
                 )
-                return None
+                # return None
 
     return newDataThatNeedsToBeCasted
 
 
-tableUpdadedBefore = False
 lastQuery = ""
 justSwitchedTable = False
 
@@ -113,136 +116,140 @@ lastMode = "auto"
 
 
 def previewFunc(delay=500, count=0):
+    # the user input
     global searchEntry
-    global segemented_button_var
     global lastQuery
-    global currentShowVar
-    global tableUpdadedBefore
-    global currentTableName
-    global showActivated
-    global checkbox
-    global lastCheckBoxMode
-    global justSwitchedTable
+
+    # the current mode [auto, filter, ...]
+    global segemented_button_var
     global lastMode
 
-    query = searchEntry.get().strip()
+    # what is currently shown at the screen
+    global currentShowVar
+
+    # the currently drawn (or at least was drawn) table
+    global currentTableName
+    # the CURRENTLY drawn column names which dont have to be the one in TMP
+    global currentColumnNames
+
+    # the preview mode toggle
+    global checkbox
+    global lastCheckBoxMode
+    # shows also if preview mode is activated
+    global showActivated
+
+    # if the currentTableName swiched or was reclicked
+    global justSwitchedTable
+
+    userQuery = searchEntry.get().strip()
     mode = segemented_button_var.get()
+    previewMode = checkbox.get()
+    lastPreviewMode = lastCheckBoxMode
+
+    def runAQueryOrNot(query):
+        if query == "" or mode == "sql":
+            # maybe the query is now empty but maybe wasnt before
+            # so reset the UI to TMP
+            updateUI(tmp)
+            return
+
+        # execute the user query on tmp and save it in a temporary preview var
+        previewTmp = tmp.editData(userQuery, mode, False)
+
+        if previewTmp is None:
+            # the user input is invalid
+            # show the current state then
+            updateUI(tmp)
+        else:
+            # the user input is valid, show the preview
+            updateUI(previewTmp)
+
+    # possible reasons the code has to be callen:
+    # - preview mode was toggled
+    # - user changed the query
+    # - user changed the mode
+    # - user switched to another table (or the same one)
 
     if lastMode != "sql" and mode == "sql":
         Logger.Logger.warn(
-            "Der Preview modus funktionniert nicht mit SQL Eingaben. \nWenn der OK Button gedrückt wird, der save button automatisch mitgedrückt"
+            "Der Preview modus funktionniert nicht mit SQL Eingaben.\nWenn der OK Button gedrückt wird, wird der save-Button automatisch mitgedrückt"
         )
 
-    # check if the preview mode is on
-    if not checkbox.get():
-        # The preview mode is off
-        if lastCheckBoxMode != checkbox.get():
-            tmp.setData(
-                castColumns(
-                    currentTableName, tmp.columnNames, pageSystem.getInput().copy()
-                ),
-                currentColumnNames,
-            )
-            # Preview Mode was toggled from on to off
-            # When not in preview mode you can edit the data
-            pageSystem.setTableState(customtkinter.NORMAL)
+    if not previewMode:
+        # the preview mode is disabled
 
-            updateUI(
-                tmp
-            )  # TODO doesnt work as intended: its like it was really updated by just the preview code
-        elif query != "":
-            # The preview is off BUT the user has written something
+        # - the switching from one mode to another does not matter to a disabled preview
+        # - the switching from one table to another does not matter to a disabled preview
+
+        justSwitchedTable = False  # we finished the complete switch by not applying the query since we dont want that
+
+        # save performance by just reset the UI after a toggle
+        if lastPreviewMode != previewMode:
+            # the preview mode was toggled
+            updateUI(tmp)  # reset UI back to normal
+
+        if userQuery == "":
+            # if the user has no query (and the preview mode is off) then activate the buttons (like bin and add button)
+            pageSystem.setTableState(customtkinter.NORMAL)
+        else:
+            # the preview mode is not active
+            # but the user has written something so disable the UI
             pageSystem.setTableState(customtkinter.DISABLED)
-        elif query == "":
-            pageSystem.setTableState(customtkinter.NORMAL)
 
-        lastCheckBoxMode = checkbox.get()
-        lastMode = mode
-        lastQuery = query
-        # Recall this function to check if preview modes changed
-        tk.after(delay, lambda: previewFunc(delay, count + 1))
-        return
-    else:
-        # preview mode is on
-        if lastCheckBoxMode != checkbox.get() or lastMode != mode:
-            # preview mode was just toggeld from off to on
-            # so save UI data to TMP
-            if lastMode == mode:
-                tmp.setData(
-                    castColumns(
-                        currentTableName, tmp.columnNames, pageSystem.getInput().copy()
-                    ),
-                    currentColumnNames,
-                )
-            previewTmp = tmp.editData(query, mode, False)
-            if previewTmp is not None:
-                updateUI(previewTmp)
-            else:
-                updateUI(tmp)
+    elif previewMode:
+        # the preview mode is enabled
+
+        # if the preview mode is enabled
+        # NEVER allow any buttons like trash and add
         pageSystem.setTableState(customtkinter.DISABLED)
 
-    # Wenn was für das erste mal im Input Field steht:
-    # wir sind im preview mode
-    if lastQuery.strip() == "" and query.strip() != "":
-        # TODO
-        # we know the preview mode is on
-        if not justSwitchedTable:
+        # check if preview mode was toggled
+        if lastPreviewMode != previewMode:
+            # the preview mode was toggled
+
+            # save the UI to tmp because of
+            # bin button, add button etc
             tmp.setData(
                 castColumns(
-                    currentTableName, tmp.columnNames, pageSystem.getInput().copy()
+                    currentColumnNames, pageSystem.getInput().copy()
                 ),
                 currentColumnNames,
             )
-        justSwitchedTable = False
 
-        pageSystem.setTableState(customtkinter.DISABLED)
-        updateUI(tmp)
-        # Table in TMP saven
+            # since the query itself has not changed but we are now in active mode, we need to rerun the query and update the UI accordingly
+            runAQueryOrNot(userQuery)
 
-    # Wenn plötzlich letztlich alles gelöscht wird (z.B mit strg a delete ) dann wird der UP  geupdaded
-    if lastQuery.strip() != "" and query.strip() == "":
-        pageSystem.setTableState(customtkinter.DISABLED)
-        updateUI(tmp)
-        showActivated = False
-        # tableUpdadedBefore = True
+        # check if the query has changed
+        if lastQuery != userQuery:
+            # the user query has changed
+            runAQueryOrNot(userQuery)
 
-    # Wenn was im Input field steht:
-    if query.strip() != "":
-        # - Editierte Datenbank bekommen als "currentShowVar"
-        showActivated = True
-        currentShowVar = tmp.editData(query, mode, False)
-        # -> Wenn "currentShowVar" None ist bzw. der Command Invalid ist dann:
-        pageSystem.setTableState(customtkinter.DISABLED)
+        if lastMode != mode:
+            # the mode has changed, so rerun the query
+            runAQueryOrNot(userQuery)
 
-        if lastQuery != query:
-            # Only update UI when user field was changed
-            if currentShowVar is None:
-                # - Table resetten
-                updateUI(tmp)
-                # Mach das nur einmal
-            # -> Wenn "currentShowVar" ein Array ist bzw nicht None ist:
-            else:
-                # - "val" anzeigen
-                updateUI(currentShowVar.deepCpy())
-                # Mach das nur einmal
-                # - alle Buttons AUF DISABLED machen mit der pagesystem.setState Funktion
+        if justSwitchedTable:
+            # the user switched to another table
+            runAQueryOrNot(userQuery)
+            justSwitchedTable = (
+                False  # we finished the complete switch by just applying the query
+            )
 
-    # Wenn auf save geklickt wird:
-    # TMP in DB speichern (wenn gleiche columns names wird backend als error gemeldet sonst)
-
-    lastQuery = query
+    lastCheckBoxMode = previewMode
+    lastQuery = userQuery
     lastMode = mode
-    lastCheckBoxMode = checkbox.get()
-    # recall itself in a loop
+
     tk.after(delay, lambda: previewFunc(delay, count + 1))
 
 
 def updateUI(data):
     global currentColumnNames
-    currentColumnNames = data.columnNames
+
     data = data.deepCpy()
-    pageSystem.changeTableBody(data.deepCpyData())
+
+    currentColumnNames = data.columnNames
     table.setTableHeader(data.columnNames)
+    pageSystem.changeTableBody(data.deepCpyData())
 
 
 def onGuiReady2(
@@ -323,7 +330,7 @@ def onOkButtonClick():
         # TODO
         tmp.setData(
             castColumns(
-                currentTableName, currentColumnNames, pageSystem.getInput().copy()
+                currentColumnNames, pageSystem.getInput().copy()
             ),
             currentColumnNames,
         )
@@ -392,7 +399,7 @@ def onTableSave(table):
 
     if not showActivated:
         # Preview mode is off
-        x = castColumns(currentTableName, tmp.columnNames, pageSystem.getInput())
+        x = castColumns(tmp.columnNames, pageSystem.getInput())
         if x != None:
             tmp.setData(x, currentColumnNames)
         else:
@@ -403,10 +410,12 @@ def onTableSave(table):
             return
     ans = updateDataInDB(cursor, tmp)
     if ans == False:
-        Logger.Logger.error("Could not save change to database so reverted to last valid values")
+        Logger.Logger.error(
+            "Could not save change to database so reverted to last valid values"
+        )
     else:
         Logger.Logger.log("Saved changes to database")
-    onTableButtonClick(currentTableName)
+        onTableButtonClick(currentTableName)
     # update UI to the current DB to avoid any bugs
     # updateUI(tmp)
 

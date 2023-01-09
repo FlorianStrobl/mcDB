@@ -162,6 +162,14 @@ class PageSystem:
 
     #Ändert den Inhalt des tableAnzeige
     def changeTableBody(self, tableBody):
+        for i in range(len(tableBody)):
+            for y in range(len(tableBody[i])):
+                # Wenn ein Wert in der tableBody None ist, wird er zu "null" geändert
+                # damit auf ALLEN Seiten der tableBody den Wert "null" haben
+                # und nicht nur die erste durch einmalige ausführung
+                if tableBody[i][y] == None:
+                    tableBody[i][y] = "null"
+
         # Leider kann man nicht mit eine table interagieren, wenn der tableState auf DISABLED ist
         # --> Deswegen muss man diesen hier sicherheitshalber aktualisieren
         self.table.setState(customtkinter.NORMAL)

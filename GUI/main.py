@@ -83,7 +83,7 @@ def createHelperPopup():
     # textbox.insert("0.0", "new text to insert\ntest"*600)
     result = ""
     if mode == "auto":
-        result = "Der Auto Befehl kann automatisch herausfinden, welchen Modus er anwenden soll. Mit && können Sie desweiteren mehrere Befehle hintereinander ausführen"
+        result = "SQL SUPPORT IST NICHT GEGEBEN! Der Auto Befehl kann automatisch herausfinden, welchen Modus er anwenden soll. Mit && können Sie desweiteren mehrere Befehle hintereinander ausführen"
         result += "\n\nErklärung von columns:\n\n"
         result += helpMessagesLanguage["columns"]
 
