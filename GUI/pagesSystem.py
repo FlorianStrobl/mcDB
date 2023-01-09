@@ -160,6 +160,13 @@ class PageSystem:
 
     # Ändert den Inhalt des tableAnzeige
     def changeTableBody(self, tableBody):
+
+        # Die seite MUSS 1/1 sein wenn die table leer ist
+        if(len(tableBody) == 0):
+            self.navigatorIndicator.configure(
+                text="1/1"
+            )
+
         for i in range(len(tableBody)):
             for y in range(len(tableBody[i])):
                 # Wenn ein Wert in der tableBody None ist, wird er zu "null" geändert
@@ -225,6 +232,14 @@ class PageSystem:
     # Wird ausgeführt wenn auf einer Pfeiltaste geklickt wurde
     def onNavigateButtonClick(self, n):
         # Saving current page
+
+        # Wenn die
+        if(self.currentPage == 0 and len(self.givenArray) == 0):
+            if(n==2): Logger.Logger.warn("Du kannst nicht weiter nach hinten!")
+            elif(n==3): Logger.Logger.warn("Du kannst nicht weiter nach vorne!")
+            self.navigatorIndicator.configure(text="1/1")
+            return
+
         dArray = self.convertToPages2dArray(self.givenArray)
         dArray[self.currentPage] = self.table.getTablesInputs()
         self.givenArray = self.convert2dArrayBack(dArray)
