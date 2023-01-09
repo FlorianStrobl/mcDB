@@ -24,30 +24,49 @@ def calculateAdditionalHigh(string, maxAnzahlLinien=38):
     return ((len(string) // maxAnzahlLinien) * heighOneLine) - heighOneLine
 
 
-allWindows = []
+# Inhalt: [[fenster, button]]
+allWindowsAndLabels = []
 
+# Setzt alle ids von den Array neu damit sie dann auch beim ok klick richtig deletet werden können
+# Funktionniert wie bei updateEvents bei "scrollableTable"
+def updateWindowsEvents():
+    global allWindowsAndLabels
+    for i in range(len(allWindowsAndLabels)):
+        button = allWindowsAndLabels[i][1]
+        # Ok wird aufgerunfen wenn ok ok geklickt wird
 
+        #lambda i=i muss existieren da sonst das erste i genommen wird (also 0)
+        button.configure(command=lambda i=i: onOkClick(i))
+        window =allWindowsAndLabels[i][0]
+        # ok wird aufgreufen wenn das Fenstergeschlossen wurde
+        window.protocol("WM_DELETE_WINDOW", lambda i=i: onOkClick(i))
+
+# Wird aufgerufen wenn auf ok geklickt wurde oder wenn auf das Fensterkreuz gheklickt wurde
+def onOkClick(id):
+    global allWindowsAndLabels
+    allWindowsAndLabels[id][0].destroy()
+    del allWindowsAndLabels[id]
+    updateWindowsEvents()
+
+# Erstellt mit den message "message" und der farbe "color"
 def createErrorPopup(message, color):
 
+    #calculateAdditionalHigh ist praktisch wenn den Label aus mehr als einer Linie besteht
     höheLabel = calculateAdditionalHigh(message)
-
     global window
-
-    def onOkClick():
-        allWindows[len(allWindows) - 1].destroy()
-        del allWindows[len(allWindows) - 1]
 
     window = customtkinter.CTkToplevel()
     window.geometry("300x" + str(120 + (höheLabel if höheLabel > 0 else 0)))
     window.title("Hinweis")
-    allWindows.append(window)
+
     label = customtkinter.CTkLabel(window, text=message, text_color=color)
     label.place(x=40, y=30)
 
-    button = customtkinter.CTkButton(master=window, text="Ok", command=onOkClick)
+    button = customtkinter.CTkButton(master=window, text="Ok")
 
     button.place(x=75, y=75 + (höheLabel if höheLabel > 0 else 0))
-
+    allWindowsAndLabels.append((window, button))
+    updateWindowsEvents()
 
 # TODO clear message after 5 seconds
 class Logger:
