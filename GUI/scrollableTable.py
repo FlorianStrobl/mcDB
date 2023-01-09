@@ -350,7 +350,7 @@ class scrollableTable(customtkinter.CTkFrame):
         adding = 19
 
         self.tableDataHeaderWidgets = []
-
+        # Width von der column
         acL = self.actionColumnWidth
         if fillstart is not None and fillstartLength is not None:
             myLabel = customtkinter.CTkLabel(

@@ -1,38 +1,25 @@
-def einpflegen(tableBody):
-  for row in range(numberRows):
-            rowWidgets = []
-            if tableBody[row] is None:
-                continue
-            for col in range(numberColumns + 1):
-                if col < numberColumns:
-                    myEntry = customtkinter.CTkEntry(
-                        self.scrollFrame.viewPort,
-                        corner_radius=0,
-                        width=(widthCurrentFrame - self.actionColumnWidth)
-                        / numberColumns,
-                        fg_color=self.colors[self.colorIndex % 2],
-                    )
-                    myEntry.grid(row=row, column=col)
 
-                    rowWidgets.append(myEntry)
-                    try:
-                        myEntry.insert(
-                            0,
-                            tableBody[row][col]
-                            if tableBody[row][col] is not None
-                            else "null",
-                        )
-                    except:
-                        myEntry.insert(0, "Data not found")
-                else:
-                    deleteButton = customtkinter.CTkButton(
-                        self.scrollFrame.viewPort,
-                        text="🗑",
-                        command=lambda row=row: self.onRemove(row),
-                        corner_radius=0,
-                        width=self.actionColumnWidth,
-                        fg_color=self.colors[self.colorIndex % 2],
-                    )
-                    deleteButton["state"] = customtkinter.DISABLED
-                    deleteButton.grid(row=row, column=col)
-                    rowWidgets.append(deleteButton)
+# Einpflegen
+import sqlite3
+# 1. Holt alle Daten aus Tabelle
+# 2. Macht sie in die Datenbank rein
+
+# Gegebene Variablen:
+#  - tableDataBodyWidgets -> Enthält alle Input Fields als Widget in einem Table 2d Array
+#  - insertIntoTable: Funktion die Daten in einer Table insertet
+
+cursor: sqlite3.Connection.cursor = sqlite3.connect("minecraftDatabase.db").cursor()
+def einpflegen(tableName):
+  def getTablesInputs():
+      result = []
+      # Es wird jede row durchgegangen
+      for widgetRow in tableDataBodyWidgets:
+          subresult = []
+          # Es wird jedes element durchgegangen bis auf das letzte und ui subresult appended -> weil das letzte das Mülleimer Objekt ist
+          for widget in range(len(widgetRow) - 1):
+              subresult.append(widgetRow[widget].get())
+          # Dieser row input wird dem result array appended
+          result.append(subresult)
+      return result
+  # Daten werden von den inputs in einer BeispielTable hinzugefügt
+  insertIntoTable(cursor, getTablesInputs(), "BeispielTable")
