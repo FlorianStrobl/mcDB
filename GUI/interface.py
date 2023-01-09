@@ -83,7 +83,7 @@ def castColumns(tableName, columnNames, newDataThatNeedsToBeCasted):
                                 newDataThatNeedsToBeCasted[i][j]
                             )
                         except:
-                            print("strange stuff")
+                            print(f"strange stuff '{caster}', '{newDataThatNeedsToBeCasted[i][j]}', '{columnNames}'")
                             return None # TODO really???
                     else:
                         # no casting if the type unknown
