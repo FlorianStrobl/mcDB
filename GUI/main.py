@@ -30,12 +30,12 @@ currentSelectedButtonId = None
 
 arrow = None
 
-
 def setArrowToPos(heightIndex):
     arrow.place(x=10, y=14 + heightIndex * 35)
     # start 14 difference de 34
 
-
+# Setzet einen bestimmten button auf "selected" (also der button bekommt (als einziger) eine dunkelblaue Farbe )
+# --> Pfeil wird auch auf "button" name verschoben
 def setButtonSelected(buttonName):
     # Reset Old button
 
@@ -53,11 +53,8 @@ def setButtonSelected(buttonName):
     )
 
     setArrowToPos(currentSelectedButtonId)
-    # Reset color of current selected
 
-    # Uneable all buttons:
-
-
+# Erstellt einen Hilfe Popup und erklärt den aktuellen Modus der an ist
 def createHelperPopup():
     # bei mode == "auto", join() alle Messages mit \n\n und jeweils welcher Befehl das ist
     helpMessagesLanguage = {
@@ -109,7 +106,7 @@ def createHelperPopup():
     # label = customtkinter.CTkLabel(window, text=helpMessagesLanguage[mode],font=('Helvetica bold', 15))
     # label.place(relx=0.05, rely=0.25)
 
-
+# Lädt die ganze GUI und erstellt die ganzen Widgets
 def loadGUI():
     global logsLabel
     global table
@@ -193,7 +190,6 @@ def loadGUI():
 
     arrow = customtkinter.CTkLabel(master=navigateBackground, text="➜")
     arrow.place(x=10, y=48)
-    # start 14 difference de 34
 
     tablesNames = {
         "Serverworld": lambda: onTableButtonClick("Serverworld"),
@@ -228,18 +224,6 @@ def loadGUI():
         tableData=[[""], []],
         pos=(235, 145, 515, 300),
     )
-    # table.setTableHeader([random.randint(0, 1000), "t", "j", "j", "x"])
-    # table.setTableHeader("x")
-
-    # table.fill([[random.randint(0, 1000), "t", "j", "j", "j"] for i in range(50)])
-
-    # table.pagesFillInit([[i, "t", "j", "j", "j"] for i in range(160)])
-    # table.showPage(0)
-
-    # table.appendEmptyRowOnTop()
-
-    # button = customtkinter.CTkButton(master=app,text="+",command=table.appendEmptyRowOnTop,  corner_radius=0,fg_color="#343638")
-    # button.place(x = 500, y = 420, width=25, height=25)
 
     searchFrame = customtkinter.CTkFrame(master=app, corner_radius=7)
     searchFrame.place(x=235, y=20, width=515, height=75)
@@ -314,17 +298,14 @@ def loadGUI():
         text="<",
         fg_color="#343638",
         command=lambda: pageSystem.onNavigateButtonClick(2)
-        # command=onTableSave
     )
     navigatorNavLeft.place(x=25, y=2, width=20, height=25)
     navigatorNavLeftEnd = customtkinter.CTkButton(
         master=navigatorFrame,
         text="<<",
         fg_color="#343638",
-        # bg_color="gray",
         font=("Helvetica", 11),
         command=lambda: pageSystem.onNavigateButtonClick(1)
-        # command=onTableSave
     )
     navigatorNavLeftEnd.place(x=5, y=2, width=23, height=25)
 
@@ -333,17 +314,14 @@ def loadGUI():
         text=">",
         fg_color="#343638",
         command=lambda: pageSystem.onNavigateButtonClick(3)
-        # command=onTableSave
     )
     navigatorNavRight.place(x=90, y=2, width=20, height=25)
     navigatorNavRightEnd = customtkinter.CTkButton(
         master=navigatorFrame,
         text=">>",
         fg_color="#343638",
-        # bg_color="gray",
         font=("Helvetica", 11),
         command=lambda: pageSystem.onNavigateButtonClick(4)
-        # command=onTableSave
     )
     navigatorNavRightEnd.place(x=110, y=2, width=23, height=25)
 
