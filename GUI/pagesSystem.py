@@ -162,10 +162,8 @@ class PageSystem:
     def changeTableBody(self, tableBody):
 
         # Die seite MUSS 1/1 sein wenn die table leer ist
-        if(len(tableBody) == 0):
-            self.navigatorIndicator.configure(
-                text="1/1"
-            )
+        if len(tableBody) == 0:
+            self.navigatorIndicator.configure(text="1/1")
 
         for i in range(len(tableBody)):
             for y in range(len(tableBody[i])):
@@ -234,9 +232,11 @@ class PageSystem:
         # Saving current page
 
         # Wenn die
-        if(self.currentPage == 0 and len(self.givenArray) == 0):
-            if(n==2): Logger.Logger.warn("Du kannst nicht weiter nach hinten!")
-            elif(n==3): Logger.Logger.warn("Du kannst nicht weiter nach vorne!")
+        if self.currentPage == 0 and len(self.givenArray) == 0:
+            if n == 2:
+                Logger.Logger.warn("Du kannst nicht weiter nach hinten!")
+            elif n == 3:
+                Logger.Logger.warn("Du kannst nicht weiter nach vorne!")
             self.navigatorIndicator.configure(text="1/1")
             return
 
