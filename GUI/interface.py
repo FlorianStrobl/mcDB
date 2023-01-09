@@ -368,15 +368,6 @@ def onOkButtonClick():
 
     return
 
-    # global preview
-    # global searchEntry
-    if preview is not None:
-        tmp.replaceTmp(preview)
-    # preview = None
-
-    searchEntry.delete(0, customtkinter.END)
-    return
-
 
 def onTableSave(table):
     global pageSystem
@@ -410,9 +401,12 @@ def onTableSave(table):
             # TODO, no error message??
             Logger.Logger.error("Invalid data in UI")
             return
-    updateDataInDB(cursor, tmp)
+    ans = updateDataInDB(cursor, tmp)
+    if ans == False:
+        Logger.Logger.error("Could not save change to database so reverted to last valid values")
+    else:
+        Logger.Logger.log("Saved changes to database")
     onTableButtonClick(currentTableName)
-    Logger.Logger.log("Saved changes to database")
     # update UI to the current DB to avoid any bugs
     # updateUI(tmp)
 

@@ -321,7 +321,7 @@ class TMP:
 
 
 # SQLite3: TMP -> Table
-def updateDataInDB(cursor, data: TMP) -> None:
+def updateDataInDB(cursor, data: TMP) -> Union[None, False]:
     def reorderArr(array: list, orderArray: list) -> list:
         array = array[:]
         newArray = [None for x in orderArray]
@@ -389,4 +389,5 @@ def updateDataInDB(cursor, data: TMP) -> None:
         SQL.dropTable(cursor, data.tableName)
         SQL.createAllTables(cursor)
         SQL.insertIntoTable(cursor, data.tableName, backupOldData)
+        return False
     return
